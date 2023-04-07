@@ -1,0 +1,31 @@
+<nav class="navbar is-info is-transparent has-centered-menu" role="navigation" aria-label="main navigation">
+  <div class="navbar-brand columns is-vcentered pt-2 pl-2 logo">
+    <div class="navbar-item image column is-3 ">
+      <img class="is-rounded" src="../../assets/img/logo_ulpgc.png">
+    </div>
+
+    <div class="navbar-item column">
+      <div class="has-text-centered">Instituto Universitario de Ciencias y Tencologías Cibernéticas</div>
+    </div>
+  </div>
+
+  <div id="navbarBasicExample" class="navbar-menu">
+      <div class="navbar-start">
+          <a class="navbar-item" routerLink="/home"> Inicio </a>
+          <a class="navbar-item"> Gráficas y estadísticas</a>
+          <div class="navbar-item has-dropdown is-hoverable" (mouseenter)="showDropdown = true" (click)="hideDropdown()">
+              <a class="navbar-link"> Gestión de campaña </a>
+              <div class="navbar-dropdown" [ngClass]="{'is-hidden': !showDropdown}">
+                  <a class="navbar-item" routerLink="/upload-campaign"> Importar nueva campaña </a>
+                  <hr class="navbar-divider">
+                  <a class="navbar-item"> Aplicar métodos IPS </a>
+              </div>
+          </div>
+          
+      </div>
+      <div class="navbar-end">
+          <a href="#" class="navbar-item"><i class="fa fa-search"></i></a>
+          <a href="#" class="navbar-item"><i class="fa fa-shopping-bag"></i></a>
+      </div>
+  </div>
+</nav>

@@ -1,0 +1,30 @@
+<div class="card column m-4">
+    <header class="column card-header has-background-white-bis">
+        <div class="column card-header-title is-clipped has-text-centered">
+            {{ campaign.Name }}
+        </div>
+        <hr id="header-divider" class="is-divider has-background-grey-lighter">
+        <div class=" has-text-centered has-text-grey">
+            {{ campaign.Date| date: 'dd-MM-yyyy'  }}
+        </div>
+    </header>
+
+    <div class="content">
+        <div class="image card-image">
+            <img [src]="campaignImage ? campaignImage : 'assets/img/campaignImage.png'" alt="Campaign Image">
+        </div>
+    </div>
+
+    <hr id="body-divider" class="is-divider has-background-grey-lighter">
+    <div class="container has-text-left is-clipped ">
+        <div class="column is-full">
+            <div class="content-container has-text-grey">
+                {{ campaign.Description }}
+            </div>
+        </div>
+      </div>
+    <footer class="card-footer">
+        <a routerLink="/campaign-details" [queryParams]="{ data: stringifyCampaign() }"class="card-footer-item">Ver detalles</a>
+        <a (click)="deleteConfirmDialog()" class="card-footer-item has-text-danger">Borrar campaña</a>
+    </footer>
+</div>

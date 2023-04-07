@@ -1,0 +1,82 @@
+<form [formGroup]="uploadForm">
+  <div class="is-centered mt-5 columns" >
+    <div class="field column is-3">
+      <label class="label">Nombre de campaña*</label>
+      <div class="control">
+        <input class="input" type="text" placeholder="Nueva campaña de datos" formControlName="name">
+      </div>
+      <div class="help is-danger" *ngIf="uploadForm.get('name')?.invalid && (uploadForm.get('name')?.dirty || uploadForm.get('name')?.touched)">
+        <p *ngIf="uploadForm.get('name')?.hasError('required')">El nombre de la campaña es obligatorio</p>
+      </div>
+    </div>
+    <div class="field column is-3">
+      <label class="label">Fecha*</label>
+      <div class="control">
+        <input class="input" type="date" formControlName="date">
+      </div>
+      <div class="help is-danger" *ngIf="uploadForm.get('date')?.invalid && (uploadForm.get('date')?.dirty || uploadForm.get('date')?.touched)">
+        <p *ngIf="uploadForm.get('date')?.hasError('required')">La fecha es obligatoria</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="is-centered columns">
+    <div class="field column is-6">
+      <label class="label">Descripción</label>
+      <div class="control">
+        <textarea class="textarea has-fixed-size" type="text" placeholder="Datos adicionales..." formControlName="description"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <div class="is-centered mt-5 columns">
+    <label class="label is-half">Sección de subida de archivos</label>
+  </div>
+
+  <div class="columns is-centered">
+    <div class="file has-name is-boxed is-centered mt-5 p-1" >
+      <label class="file-label" (dragover)="onDragOver($event,'image')" (dragleave)="onDragLeave($event, 'image') "(drop)="onDrop($event, 'image')"
+      [ngClass]="{'dragging': isDraggingImage}">
+        <input  class="file-input" type="file" name="resume" accept="image/*" (change)="onSelected($event, 'image')" >
+        <span class="file-cta">
+          <span class="file-icon is-centered ">
+            <i class="fa-solid fa-image fa-2xl fa-fade mt-5"></i>
+          </span>
+          <span class="file-label mt-5">
+            Arrastra o selecciona una imágen de la campaña
+          </span>
+          <span class="file-label">
+            (Opcional)
+          </span>
+        </span>
+        <span class="file-name" [ngClass]="{'has-background-warning has-text-dark': !imageUploaded, 'has-background-primary-dark has-text-white': imageUploaded}">
+          {{imageName ?? "No hay ningún archivo cargado"}}
+        </span>
+      </label>
+    </div>
+
+    <div class="file has-name is-boxed is-centered mt-5 p-1">
+      <label class="file-label" (dragover)="onDragOver($event, 'file')" (dragleave)="onDragLeave($event, 'file') "(drop)="onDrop($event, 'file')"
+      [ngClass]="{'dragging': isDraggingFile}">
+        <input  class="file-input" type="file" name="resume" accept=".sqlite3" (change)="onSelected($event, 'file')" >
+        <span class="file-cta">
+          <span class="file-icon is-centered ">
+              <i class="fa-solid fa-upload fa-2xl fa-fade mt-5"></i>
+          </span>
+          <span class="file-label mt-5">
+            Arrastra o selecciona una campaña de datos sqlite3
+          </span>
+          <span class="file-label">
+            (Obligatorio)
+          </span>
+        </span>
+        <span class="file-name" [ngClass]="{'has-background-warning has-text-dark': !fileUploaded, 'has-background-primary-dark has-text-white': fileUploaded}">
+          {{fileName ?? "No hay ningún archivo cargado"}}
+        </span>
+      </label>
+    </div>
+  </div>
+  <div class="container has-text-centered mt-6">
+    <button class="button is-link is-rounded" (click)="uploadCampaign()" [disabled]="!fileUploaded || !uploadForm.valid">Guardar campaña</button>
+  </div>
+</form>

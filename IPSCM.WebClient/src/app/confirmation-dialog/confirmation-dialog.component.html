@@ -1,0 +1,6 @@
+<h2 mat-dialog-title>¿Desea confirmar la acción?</h2>
+<mat-dialog-content>{{message}}</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-button mat-dialog-close mat-button color="primary">Cancelar</button>
+  <button mat-button [mat-dialog-close]="true" mat-button color="warn">Borrar</button>
+</mat-dialog-actions>

@@ -1,0 +1,31 @@
+<div class="card columns is-centered p-5">
+    <div class="column is-4">
+        <div class="card-content">
+        <div class="media">
+            <div class="media-content">
+            <p class="title is-4">{{ campaign.Name }}</p>
+            <p class="subtitle is-6">{{ campaign.Description}}</p>
+            </div>
+        </div>
+    
+        <div class="content">
+            <p><strong>Detalles:</strong></p>
+            <ul>
+                <li>Dongle:</li>
+                <li>Capturas:</li>
+                <li>Señales de Beacon BLE:</li>
+                <li>Cofiguraciones de Beacons:</li>
+            </ul>
+        </div>
+        </div>
+    </div>   
+
+    <div class="column is-4">
+        <div class="card-image ">
+            <img [src]="campaignImage ? campaignImage : 'assets/img/campaignImage.png'" alt="Campaña de datos">
+        </div>
+          
+    </div>
+  </div>
+
+
