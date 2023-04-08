@@ -1,3 +1,4 @@
+from flask import jsonify
 from controllers.BeaconBleSignalCrud import getBeaconBleSignalIdentificatorByCampaignId
 from models.BeaconConfiguration import BeaconConfiguration, BeaconConfigurationAux
 from config import db
@@ -22,7 +23,7 @@ def createBeaconConfiguration():
     db.session.commit()
     db.session.remove()
 
-def getBeaconConfigurationByCampaignId(campaignId:int):
+def getBeaconConfigurationByCampaignId2(campaignId:int):
     identificators = getBeaconBleSignalIdentificatorByCampaignId(campaignId)
     print(len(identificators))
 
@@ -31,3 +32,7 @@ def deleteBeaconConfigurationByCampaignId(campaignId):
 
     if existingCapture:
         db.session.commit()
+
+
+def getBeaconConfigurationByCampaignId(campaignId:int):
+    return jsonify([config.serialize() for config in BeaconConfiguration.query.filter_by(Id_campaign=campaignId).all()])

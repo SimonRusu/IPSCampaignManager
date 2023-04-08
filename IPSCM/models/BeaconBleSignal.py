@@ -25,6 +25,7 @@ class BeaconBleSignalBase(db.Model):
 
     def serialize(self):
             return{
+                'Id': self.Id,
                 'Id_capture': self.Id_capture,
                 'N_reading': self.N_reading,
                 'Date_hour': self.Date_hour,

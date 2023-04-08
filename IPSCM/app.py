@@ -14,6 +14,11 @@ with app.app_context():
     api.add_resource(GetCampaigns, '/api/campaigns')
     api.add_resource(GetCampaignImageById, '/api/campaignImage/<int:campaignId>')
     api.add_resource(DeteteCampaignById, '/api/deleteCampaign/<int:campaignId>')
+    api.add_resource(GetDongleReceptor, '/api/dongleReceptor/<int:dongleId>')
+    api.add_resource(GetCampaignSequence, '/api/campaignSequence/<int:sequenceId>')
+    api.add_resource(GetCapturesByCampaignId, '/api/capturesByCampaign/<int:campaignId>')
+    api.add_resource(GetBeaconBleSignalByCampaignId, '/api/signalsByCampaign/<int:campaignId>')
+    api.add_resource(GetBeaconConfigurationByCampaignId, '/api/configsByCampaign/<int:campaignId>')
     
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)

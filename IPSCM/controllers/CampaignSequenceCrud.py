@@ -21,3 +21,6 @@ def deleteCampaignSequenceByCampaignId(sequenceId):
     if existingSequence:
         db.session.delete(existingSequence)
         db.session.commit()
+
+def getCampaignSequence(id:int):
+    return CampaignSequence().query.filter_by(Id=id).first().serialize()

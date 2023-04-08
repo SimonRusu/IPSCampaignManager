@@ -32,7 +32,7 @@ import { MatIconModule } from '@angular/material/icon';
     UploadCampaignComponent,
     CampaignCardComponent,
     CampaignDetailsComponent,
-    ConfirmationDialogComponent
+    ConfirmationDialogComponent,
   ],
   imports: [
     BrowserModule,

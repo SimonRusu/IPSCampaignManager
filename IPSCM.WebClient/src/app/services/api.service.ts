@@ -28,7 +28,7 @@ export class ApiService {
     );
   }
 
-  deleteCampaignById(id: any) {
+  deleteCampaignById(id: any){
     return this.http.delete(this.baseUrl + `deleteCampaign/${id}`);
   }
 
@@ -39,10 +39,33 @@ export class ApiService {
         this.router.navigate(['/home']);
       }),
       catchError(() => {
-        this.toastr.error('Ha ocurrido un error durante la operación', 'Operación no completada');
+        this.toastr.error('El formato de la base de datos no es compatible', 'Operación no completada');
         return of(null);
       })
     );
   }
+
+  getDongleName(id: any){
+    return this.http.get(this.baseUrl + `dongleReceptor/${id}`);
+  }
+
+  getCampaignSequence(id: any){
+    return this.http.get(this.baseUrl + `campaignSequence/${id}`);
+  }
+
+  getCaptures(id: any){
+    return this.http.get(this.baseUrl + `capturesByCampaign/${id}`);
+  }
+
+  getSignals(id: any){
+    return this.http.get(this.baseUrl + `signalsByCampaign/${id}`);
+  }
+
+  getConfigs(id: any){
+    return this.http.get(this.baseUrl + `configsByCampaign/${id}`);
+  }
+
+
+
   
 }

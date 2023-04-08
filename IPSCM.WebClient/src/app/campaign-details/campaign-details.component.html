@@ -1,4 +1,4 @@
-<div class="card columns is-centered p-5">
+<div class="card columns is-centered p-5 mb-5">
     <div class="column is-4">
         <div class="card-content">
         <div class="media">
@@ -11,10 +11,10 @@
         <div class="content">
             <p><strong>Detalles:</strong></p>
             <ul>
-                <li>Dongle:</li>
-                <li>Capturas:</li>
-                <li>Señales de Beacon BLE:</li>
-                <li>Cofiguraciones de Beacons:</li>
+                <li>Capturas tomadas: <a (click)="optionSelected('captures')"> {{sequence?.Capture}} </a></li> 
+                <li>Señales de Beacon BLE: <a (click)="optionSelected('beacon_signal')">{{sequence?.Beacon_BLE_Signal}}</a></li>
+                <li>Cofiguraciones de Beacon: <a (click)="optionSelected('beacon_config')">{{sequence?.Beacon_configuration}}</a></li>
+                <li>Dongle utilizado: {{dongleName}}</li>
             </ul>
         </div>
         </div>
@@ -24,8 +24,116 @@
         <div class="card-image ">
             <img [src]="campaignImage ? campaignImage : 'assets/img/campaignImage.png'" alt="Campaña de datos">
         </div>
-          
     </div>
-  </div>
+</div>
+
+
+<ng-container *ngIf="opt === 1; then opt1">
+</ng-container>
+<ng-template #opt1>
+    <div class="table-container p-5">
+        <table class="table is-fullwidth">
+          <thead>
+          <tr>
+            <th>Id</th>
+            <th>Fecha</th>
+            <th>Lux</th>
+            <th>Temperatura</th>
+            <th>Humedad relativa</th>
+            <th>Humedad absoluta</th>
+            <th>Posición X</th>
+            <th>Posición Y</th>
+            <th>Posición Z</th>
+            <th>Ángulo de plataforma</th>
+            <th>Rotación de Dongle</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let capture of captures">
+            <td>{{capture.Id}}</td>
+            <td>{{capture.Date}}</td>
+            <td>{{capture.Light}}</td>
+            <td>{{capture.Temperature}}</td>
+            <td>{{capture.Relative_humidity}}</td>
+            <td>{{capture.Absolute_humidity}}</td>
+            <td>{{capture.Position_x}}</td>
+            <td>{{capture.Position_y}}</td>
+            <td>{{capture.Position_z}}</td>
+            <td>{{capture.Platform_angle}}</td>
+            <td>{{capture.Dongle_rotation}}</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+</ng-template>
+
+<ng-container *ngIf="opt === 2; then opt2">
+</ng-container>
+<ng-template #opt2>
+    <div class="table-container p-5">
+        <table class="table is-fullwidth">
+          <thead>
+          <tr>
+            <th>Id</th>
+            <th>Número de lectura</th>
+            <th>Fecha</th>
+            <th>Mac</th>
+            <th>Tamaño de paquete</th>
+            <th>Canal</th>
+            <th>RSSI</th>
+            <th>Tipo de PDU</th>
+            <th>CRC</th>
+            <th>Protocolo</th>
+            <th>Identificador</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let signal of beaconBleSignals">
+            <td>{{signal.Id}}</td>
+            <td>{{signal.N_reading}}</td>
+            <td>{{signal.Date_hour}}</td>
+            <td>{{signal.Mac}}</td>
+            <td>{{signal.Pack_size}}</td>
+            <td>{{signal.Channel}}</td>
+            <td>{{signal.RSSI}}</td>
+            <td>{{signal.PDU_type}}</td>
+            <td>{{signal.CRC}}</td>
+            <td>{{signal.Protocol}}</td>
+            <td>{{signal.Identificator}}</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+</ng-template>
+
+<ng-container *ngIf="opt === 3; then opt3">
+</ng-container>
+<ng-template #opt3>
+    <div class="table-container p-5">
+        <table class="table is-fullwidth">
+          <thead>
+          <tr>
+            <th>Id</th>
+            <th>Mac</th>
+            <th>Potencia</th>
+            <th>Potencia calibrada</th>
+            <th>Frecuencia de actualización</th>
+            <th>Identificador</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let conf of beaconConfs">
+            <td>{{conf.Id}}</td>
+            <td>{{conf.Mac}}</td>
+            <td>{{conf.Power}}</td>
+            <td>{{conf.Calibrated_power}}</td>
+            <td>{{conf.Update_frequency}}</td>
+            <td>{{conf.Identificator}}</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+</ng-template>
+
 
 

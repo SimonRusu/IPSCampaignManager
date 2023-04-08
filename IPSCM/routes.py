@@ -2,10 +2,43 @@ from flask import request
 from flask_restful import Resource
 from werkzeug.utils import secure_filename
 from uuid import uuid4
+from controllers.BeaconBleSignalCrud import getBeaconBleSignalByCampaignId
+from controllers.BeaconConfigurationCrud import getBeaconConfigurationByCampaignId
+from controllers.CampaignSequenceCrud import getCampaignSequence
+from controllers.CaptureCrud import getCapturesByCampaignId
 from services.DatabaseGeneration import insert_data
 from controllers.CampaignCrud import *
+from controllers.DongleReceptorCrud import getDongleReceptor
 import os
 
+class GetCampaigns(Resource):
+    def get(self):
+        return getCampaigns()
+
+class GetCampaignImageById(Resource):
+    def get(self, campaignId):
+        return getCampaignImageById(campaignId)
+    
+class GetDongleReceptor(Resource):
+    def get(self, dongleId):
+        return getDongleReceptor(dongleId)
+    
+class GetCampaignSequence(Resource):
+    def get(self, sequenceId):
+        return getCampaignSequence(sequenceId)
+    
+class GetCapturesByCampaignId(Resource):
+    def get(self, campaignId):
+        return getCapturesByCampaignId(campaignId)
+    
+class GetBeaconBleSignalByCampaignId(Resource):
+    def get(self, campaignId):
+        return getBeaconBleSignalByCampaignId(campaignId)
+
+class GetBeaconConfigurationByCampaignId(Resource):
+    def get(self, campaignId):
+        return getBeaconConfigurationByCampaignId(campaignId)
+    
 class UploadCampaign(Resource):
     def post(self):
         name = request.form.get('name')
@@ -31,18 +64,7 @@ class UploadCampaign(Resource):
             file.save(os.path.join('db', filename))
             insert_data(name, date, description, secRanFilename)
             os.remove('db/auxDB.sqlite3')
-
-
-class GetCampaigns(Resource):
-    def get(self):
-        return getCampaigns()
-
-class GetCampaignImageById(Resource):
-    def get(self, campaignId):
-        return getCampaignImageById(campaignId)
     
 class DeteteCampaignById(Resource):
     def delete(self, campaignId):
         return deleteCampaignById(campaignId)
-
-

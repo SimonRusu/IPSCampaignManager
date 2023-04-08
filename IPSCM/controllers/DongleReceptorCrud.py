@@ -1,3 +1,4 @@
+from flask import jsonify
 from models.DongleReceptor import DongleReceptor, DongleReceptorAux
 from config import db
 
@@ -14,4 +15,7 @@ def createDongleReceptor():
     
     db.session.commit()
     db.session.remove()
+
+def getDongleReceptor(id:int):
+    return jsonify(DongleReceptor().query.filter_by(Id=id).first().Name)
 

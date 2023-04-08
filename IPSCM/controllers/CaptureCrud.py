@@ -1,3 +1,4 @@
+from flask import jsonify
 from models.Capture import Capture,CaptureAux
 from models.Campaign import Campaign
 from config import db
@@ -29,6 +30,9 @@ def createCapture():
 
 def getCaptureIdsByCampaignId(campaignId):
     return [capture.Id for capture in Capture.query.filter_by(Id_campaign=campaignId).all()]
+
+def getCapturesByCampaignId(campaignId):
+    return jsonify([capture.serialize() for capture in Capture.query.filter_by(Id_campaign=campaignId).all()])
 
 def deleteCaptureByCampaignId(campaignId):
     existingCapture = Capture().query.filter_by(Id_campaign=campaignId).delete()

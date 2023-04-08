@@ -1,9 +1,9 @@
+from flask import jsonify
 from sqlalchemy import and_, or_
 from controllers.CaptureCrud import getCaptureIdsByCampaignId
 from models.BeaconBleSignal import BeaconBleSignal, BeaconBleSignalAux
 from models.Capture import Capture
 from config import db
-from models.BeaconConfiguration import BeaconConfiguration
 
 def createBeaconBleSignal():
     db.create_all()
@@ -28,6 +28,10 @@ def createBeaconBleSignal():
     db.session.commit()
     db.session.remove()
 
+
+def getBeaconBleSignalByCampaignId(campaignId:int):
+    captureIds = getCaptureIdsByCampaignId(campaignId)
+    return jsonify([signal.serialize() for signal in BeaconBleSignal.query.filter(BeaconBleSignal.Id_capture.in_(captureIds))])
 
 
 def deleteBeaconBleSignalByCampaignId(campaignId:int):
