@@ -74,11 +74,13 @@ export class UploadCampaignComponent {
         this.toastr.error('El archivo no posee un formato válido (JPEG, JPG, PNG, GIF)', 'Error de formato');
         this.imageName = "No hay ningún archivo cargado"
         this.imageUploaded = false;
+        this.selectedImage = null;
         return;
       }
-      
-      this.imageUploaded = true;
-      this.imageName = this.selectedImage?.name;
+      else{
+        this.imageUploaded = true;
+        this.imageName = this.selectedImage?.name;
+      }
     }
     else{
       this.selectedFile = file;
@@ -88,11 +90,13 @@ export class UploadCampaignComponent {
         this.toastr.error('El archivo no posee un formato válido (SQLITE3)', 'Error de formato');
         this.fileName = "No hay ningún archivo cargado"
         this.fileUploaded = false;
+        this.selectedFile = null;
         return;
       }
-      
-      this.fileUploaded = true;
-      this.fileName = this.selectedFile?.name;
+      else{
+        this.fileUploaded = true;
+        this.fileName = this.selectedFile?.name;
+      }
     } 
   }
   
@@ -106,12 +110,13 @@ export class UploadCampaignComponent {
         this.toastr.error('El archivo no posee un formato válido (JPEG, JPG, PNG, GIF)', 'Error de formato');
         this.imageName = "No hay ningún archivo cargado"
         this.imageUploaded = false;
+        this.selectedImage = null;
         return;
       }
-        
+      else{
         this.imageName = this.selectedImage?.name;
         this.imageUploaded = this.imageName ? true : false;
-
+      }
 
     } else{
       this.selectedFile = file;
@@ -120,11 +125,13 @@ export class UploadCampaignComponent {
         this.toastr.error('El archivo no posee un formato válido (SQLITE3)', 'Error de formato');
         this.fileName = "No hay ningún archivo cargado"
         this.fileUploaded = false;
+        this.selectedFile = null;
         return;
       }
-
+      else{
         this.fileName = this.selectedFile?.name;
         this.fileUploaded = this.fileName ? true : false;
+      }    
     }
   }
 

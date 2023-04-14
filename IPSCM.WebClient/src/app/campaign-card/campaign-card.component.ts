@@ -55,7 +55,7 @@ export class CampaignCardComponent {
           tap(() => {
               this.toastr.success('¡La campaña se ha borrado correctamente!', 'Operación completada');
               this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
-                this.router.navigate(['/home'])
+                this.router.navigate(['/campaigns'])
               });
             }),
             catchError(() => {

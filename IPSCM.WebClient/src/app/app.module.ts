@@ -5,14 +5,13 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 
-import { HomeComponent } from './home/home.component';
+import { CampaignsComponent } from './campaigns/campaigns.component';
 import { HeaderComponent } from './header/header.component';
 import { FooterComponent } from './footer/footer.component';
 import { UploadCampaignComponent } from './upload-campaign/upload-campaign.component';
 import { CampaignCardComponent } from './campaign-card/campaign-card.component';
 import { CampaignDetailsComponent } from './campaign-details/campaign-details.component';
 import { ConfirmationDialogComponent } from './confirmation-dialog/confirmation-dialog.component';
-
 
 import { ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
@@ -21,18 +20,22 @@ import { MAT_DIALOG_DEFAULT_OPTIONS, MatDialogModule } from '@angular/material/d
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { IpsMethodsComponent } from './ips-methods/ips-methods.component';
+import { IpsCampaignCardComponent } from './ips-campaign-card/ips-campaign-card.component';
 
 
 @NgModule({
   declarations: [
     AppComponent,
-    HomeComponent,
+    CampaignsComponent,
     HeaderComponent,
     FooterComponent,
     UploadCampaignComponent,
     CampaignCardComponent,
     CampaignDetailsComponent,
     ConfirmationDialogComponent,
+    IpsMethodsComponent,
+    IpsCampaignCardComponent,
   ],
   imports: [
     BrowserModule,

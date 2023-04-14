@@ -1,0 +1,24 @@
+<div class="card column m-4">
+    <div class="content has-background-white-bis">
+        <div class="columns">
+            <div class="column image card-image is-2">
+                <img [src]="campaignImage ? campaignImage : 'assets/img/campaignImage.png'" alt="Campaign Image">
+            </div>
+            <div class="column is-2">
+                <div class="card-header-title is-clipped has-text-centered">
+                    {{ campaign.Name }}
+                </div>
+                <hr id="header-divider" class="is-divider has-background-grey-lighter">
+                <div class=" has-text-centered has-text-grey">
+                    {{ campaign.Date| date: 'dd-MM-yyyy'  }}
+                </div>
+            </div>
+            <div class="column is-offset-2 mt-5">
+                <button type="checkbox">x</button> Fingerprinting
+                <button type="checkbox">x</button> Fingerprinting
+                <button type="checkbox">x</button> Fingerprinting
+                <button type="checkbox">x</button> Fingerprinting
+            </div>
+        </div>
+    </div>
+</div>

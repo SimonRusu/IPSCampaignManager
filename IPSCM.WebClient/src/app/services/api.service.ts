@@ -36,7 +36,7 @@ export class ApiService {
     return this.http.post(this.baseUrl + 'upload_campaign', formData).pipe(
     tap(() => {
         this.toastr.success('¡La campaña se ha guardado correctamente!', 'Operación completada');
-        this.router.navigate(['/home']);
+        this.router.navigate(['/campaigns']);
       }),
       catchError(() => {
         this.toastr.error('El formato de la base de datos no es compatible', 'Operación no completada');
