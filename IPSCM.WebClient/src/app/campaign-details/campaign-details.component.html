@@ -1,62 +1,39 @@
-<div class="card columns is-centered p-5 mb-5">
-    <div class="column is-4">
-        <div class="card-content">
+<div class="row p-5">
+    <div class="col-md-6 offset-md-1">
+      <div class="card-content">
         <div class="media">
-            <div class="media-content">
+          <div class="media-content">
             <p class="title is-4">{{ campaign.Name }}</p>
             <p class="subtitle is-6">{{ campaign.Description}}</p>
-            </div>
+          </div>
         </div>
-    
         <div class="content">
-            <p><strong>Detalles:</strong></p>
-            <ul>
-                <li>Capturas tomadas: <a (click)="optionSelected('captures')"> {{sequence?.Capture}} </a></li> 
-                <li>Señales de Beacon BLE: <a (click)="optionSelected('beacon_signal')">{{sequence?.Beacon_BLE_Signal}}</a></li>
-                <li>Cofiguraciones de Beacon: <a (click)="optionSelected('beacon_config')">{{sequence?.Beacon_configuration}}</a></li>
-                <li>Dongle utilizado: {{dongleName}}</li>
-            </ul>
+          <p><strong>Detalles:</strong></p>
+          <ul>
+            <li>Capturas tomadas: <a (click)="optionSelected('captures')"> {{sequence?.Capture}} </a></li> 
+            <li>Señales de Beacon BLE: <a (click)="optionSelected('beacon_signal')">{{sequence?.Beacon_BLE_Signal}}</a></li>
+            <li>Cofiguraciones de Beacon: <a (click)="optionSelected('beacon_config')">{{sequence?.Beacon_configuration}}</a></li>
+            <li>Dongle utilizado: {{dongleName}}</li>
+          </ul>
         </div>
-        </div>
+      </div>
     </div>   
-
-    <div class="column is-4">
-        <div class="card-image ">
-            <img [src]="campaignImage ? campaignImage : 'assets/img/campaignImage.png'" alt="Campaña de datos">
-        </div>
-
-        <div id="myCarousel" class="carousel slide" data-ride="carousel">
-          <!-- Indicators -->
-          <ol class="carousel-indicators">
-            <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
-            <li data-target="#myCarousel" data-slide-to="1"></li>
-            <li data-target="#myCarousel" data-slide-to="2"></li>
-          </ol>
-        
-          <!-- Wrapper for slides -->
-          <div class="carousel-inner item active">
-            <div *ngFor="let campaignImage of campaignImages" class="carousel-item">
-              <img [src]="campaignImage">
-            </div>
-        
-          <!-- Left and right controls -->
-          <a class="left carousel-control" href="#myCarousel" data-slide="prev">
-            <span class="glyphicon glyphicon-chevron-left"></span>
-            <span class="sr-only">Previous</span>
-          </a>
-          <a class="right carousel-control" href="#myCarousel" data-slide="next">
-            <span class="glyphicon glyphicon-chevron-right"></span>
-            <span class="sr-only">Next</span>
-          </a>
-        </div>
-        
+    <div class="col-md-4">
+      <div class="card-image">
+        <carousel >
+          <slide *ngFor="let campaignImage of campaignImages">
+            <img [src]="campaignImage">
+          </slide>
+        </carousel>
+      </div>
     </div>
 </div>
 
+<hr class="is-divider has-background-grey-lighter">
 
-<ng-container *ngIf="opt === 1; then opt1">
-</ng-container>
-<ng-template #opt1>
+  <ng-container *ngIf="opt === 1; then opt1">
+  </ng-container>
+  <ng-template #opt1>
     <div class="table-container p-5">
         <table class="table is-fullwidth">
           <thead>
@@ -91,11 +68,11 @@
           </tbody>
         </table>
       </div>
-</ng-template>
-
-<ng-container *ngIf="opt === 2; then opt2">
-</ng-container>
-<ng-template #opt2>
+  </ng-template>
+  
+  <ng-container *ngIf="opt === 2; then opt2">
+  </ng-container>
+  <ng-template #opt2>
     <div class="table-container p-5">
         <table class="table is-fullwidth">
           <thead>
@@ -130,11 +107,11 @@
           </tbody>
         </table>
       </div>
-</ng-template>
-
-<ng-container *ngIf="opt === 3; then opt3">
-</ng-container>
-<ng-template #opt3>
+  </ng-template>
+  
+  <ng-container *ngIf="opt === 3; then opt3">
+  </ng-container>
+  <ng-template #opt3>
     <div class="table-container p-5">
         <table class="table is-fullwidth">
           <thead>
@@ -159,7 +136,4 @@
           </tbody>
         </table>
       </div>
-</ng-template>
-
-
-
+  </ng-template>

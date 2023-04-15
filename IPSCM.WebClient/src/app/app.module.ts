@@ -12,6 +12,8 @@ import { UploadCampaignComponent } from './upload-campaign/upload-campaign.compo
 import { CampaignCardComponent } from './campaign-card/campaign-card.component';
 import { CampaignDetailsComponent } from './campaign-details/campaign-details.component';
 import { ConfirmationDialogComponent } from './confirmation-dialog/confirmation-dialog.component';
+import { IpsMethodsComponent } from './ips-methods/ips-methods.component';
+import { IpsCampaignCardComponent } from './ips-campaign-card/ips-campaign-card.component';
 
 import { ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
@@ -20,8 +22,9 @@ import { MAT_DIALOG_DEFAULT_OPTIONS, MatDialogModule } from '@angular/material/d
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { IpsMethodsComponent } from './ips-methods/ips-methods.component';
-import { IpsCampaignCardComponent } from './ips-campaign-card/ips-campaign-card.component';
+import { CarouselModule } from 'ngx-bootstrap/carousel';
+
+
 
 
 @NgModule({
@@ -35,9 +38,10 @@ import { IpsCampaignCardComponent } from './ips-campaign-card/ips-campaign-card.
     CampaignDetailsComponent,
     ConfirmationDialogComponent,
     IpsMethodsComponent,
-    IpsCampaignCardComponent,
+    IpsCampaignCardComponent
   ],
   imports: [
+    CarouselModule,
     BrowserModule,
     AppRoutingModule,
     ReactiveFormsModule,
@@ -51,7 +55,6 @@ import { IpsCampaignCardComponent } from './ips-campaign-card/ips-campaign-card.
     MatToolbarModule,
     MatButtonModule,
     MatIconModule,
-    
   ],
   providers: [
     {provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: {hasBackdrop: true}}

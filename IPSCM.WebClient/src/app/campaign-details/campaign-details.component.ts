@@ -2,12 +2,20 @@ import { Component, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ApiService } from '../services/api.service';
 import JSZip from 'jszip';
+import { CarouselConfig } from 'ngx-bootstrap/carousel';
 
 
 @Component({
   selector: 'app-campaign-details',
   templateUrl: './campaign-details.component.html',
-  styleUrls: ['./campaign-details.component.sass']
+  styleUrls: ['./campaign-details.component.sass'],
+  providers: [
+    { provide: CarouselConfig, useValue: {
+      interval: 3000,
+      noPause: false,
+      showIndicators: true,
+      isAnimated: true } }
+ ],
 })
 export class CampaignDetailsComponent {
 
@@ -28,17 +36,8 @@ export class CampaignDetailsComponent {
       }
     })
 
-    
  
-  }
-
-  ngOnInit(){
-    this.getApiData();
-  }
-
-
-  getApiData(){
-    this.apiService.getCampaignImagesById(this.campaign.Id).subscribe((response: Blob) => {
+  apiService.getCampaignImagesById(this.campaign.Id).subscribe((response: Blob) => {
       const zipImages = new JSZip();
       zipImages.loadAsync(response).then(images =>{
         Object.keys(images.files).forEach(filename => {

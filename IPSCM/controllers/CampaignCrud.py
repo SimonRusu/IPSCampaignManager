@@ -1,6 +1,4 @@
-import mimetypes
-import os
-from flask import jsonify, send_file
+from flask import jsonify
 from datetime import datetime
 from config import db
 from controllers.BeaconBleSignalCrud import deleteBeaconBleSignalByCampaignId
@@ -11,7 +9,7 @@ from models.CampaignSequence import CampaignSequence
 from controllers.CampaignSequenceCrud import deleteCampaignSequenceByCampaignId
 from controllers.CaptureCrud import deleteCaptureByCampaignId
 from sqlalchemy import desc
-import zipfile
+from services.ImageService import sendZipWithImages
 
 
 def createCampaign(name, date, description, images):
@@ -41,28 +39,12 @@ def getCampaigns():
 
 def getCampaignImagesById(campaignId):
     campaign = Campaign.query.filter_by(Id=campaignId).first()
-    images_directory = 'db/campaign_images/'
-    image_directory = images_directory + campaign.Images_ref
-    image_names = os.listdir(image_directory)
+
     if campaign.Images_ref is None:
         return {'message': 'Campaign has no image'}, 404
-    
 
-    zip_filename = f"{campaign.Images_ref}.zip"
-    with zipfile.ZipFile(zip_filename, "w") as zip:
-        for image_name in image_names:
-            image_path = os.path.join(image_directory, image_name)
-            zip.write(image_path, arcname=image_name)
-
-    return send_file(
-        zip_filename,
-        mimetype='application/zip',
-        as_attachment=True,
-        download_name=zip_filename
-    )
-
-
-
+    response = sendZipWithImages(campaign.Images_ref)
+    return response
 
 def deleteCampaignById(campaignId):
     existingCampaign = Campaign().query.filter_by(Id=campaignId).first()
