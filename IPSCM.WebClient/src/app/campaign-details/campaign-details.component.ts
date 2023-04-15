@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ApiService } from '../services/api.service';
-import { sequence } from '@angular/animations';
+import JSZip from 'jszip';
+
 
 @Component({
   selector: 'app-campaign-details',
@@ -9,6 +10,8 @@ import { sequence } from '@angular/animations';
   styleUrls: ['./campaign-details.component.sass']
 })
 export class CampaignDetailsComponent {
+
+  campaignImages: string[] = [];
   campaign: any;
   campaignImage: any;
   dongleName: any;
@@ -24,22 +27,28 @@ export class CampaignDetailsComponent {
         this.campaign = JSON.parse(params['data']);
       }
     })
+
+    
+ 
   }
 
   ngOnInit(){
     this.getApiData();
   }
 
+
   getApiData(){
-    this.apiService.getCampaignImageById(this.campaign.Id).subscribe(
-      campaignImage =>{
-        const reader = new FileReader();
-        reader.onload = () => {
-          this.campaignImage = reader.result as string;
-        };
-        reader.readAsDataURL(campaignImage);
-      }
-    )
+    this.apiService.getCampaignImagesById(this.campaign.Id).subscribe((response: Blob) => {
+      const zipImages = new JSZip();
+      zipImages.loadAsync(response).then(images =>{
+        Object.keys(images.files).forEach(filename => {
+          images.files[filename].async('base64').then(imageData => {
+            const imageUrl = 'data:image/jpeg;base64,' + imageData;
+            this.campaignImages.push(imageUrl);
+          })
+        })
+      })
+    })
 
     this.apiService.getDongleName(this.campaign.Id_dongle).subscribe(
       dongleName =>{

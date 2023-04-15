@@ -16,7 +16,7 @@ constructor(
   private apiService: ApiService){}
 
   ngOnInit(){
-    this.apiService.getCampaignImageById(this.campaign.Id).subscribe(
+    this.apiService.getCampaignImagesById(this.campaign.Id).subscribe(
       apiService =>{
         const reader = new FileReader();
         reader.onload = () => {

@@ -18,7 +18,7 @@ class Campaign(db.Model):
     Name = db.Column(db.String(32), nullable=False)
     Description = db.Column(db.String(500))
     Date = db.Column(db.DateTime, nullable=False)
-    Image_ref = db.Column(db.String(50))
+    Images_ref = db.Column(db.String(50))
 
     def serialize(self):
         return {
@@ -28,5 +28,5 @@ class Campaign(db.Model):
             'Name': self.Name,
             'Description': self.Description,
             'Date': self.Date,
-            'Image_ref': self.Image_ref
+            'Images_ref': self.Images_ref
         }

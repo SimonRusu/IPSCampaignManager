@@ -19,13 +19,8 @@ export class ApiService {
     return this.http.get(this.baseUrl+ "campaigns");
   }
 
-  getCampaignImageById(id: any): Observable<any> {
-    return this.http.get(this.baseUrl + `campaignImage/${id}`, { responseType: 'blob' })
-    .pipe(
-      map(response => {
-        return response;
-      })
-    );
+  getCampaignImagesById(id: any): Observable<any> {
+    return this.http.get(this.baseUrl + `campaignImages/${id}`, { responseType: 'blob' })
   }
 
   deleteCampaignById(id: any){

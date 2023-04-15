@@ -30,11 +30,11 @@ export class UploadCampaignComponent {
   }
   
   selectedFile: File | null = null;
-  selectedImage: File | null = null;
+  selectedImages: File[] = [];
   fileUploaded = false;
   imageUploaded = false;
   fileName: string | undefined;
-  imageName: string | undefined;
+  imageNames: string[] = [];
   isDraggingFile = false;
   isDraggingImage = false;
   fileAllowedExtensions = /(\.sqlite3)$/i;
@@ -64,26 +64,27 @@ export class UploadCampaignComponent {
     event.preventDefault();
     event.stopPropagation();
 
-    const file = event.dataTransfer.files[0];
+    const files = event.dataTransfer.files;
 
     if(type == 'image'){
-      this.selectedImage = file;
-      this.isDraggingImage = false;
 
-      if (this.selectedImage && !this.imageAllowedExtensions.includes(this.selectedImage.type)) {
-        this.toastr.error('El archivo no posee un formato válido (JPEG, JPG, PNG, GIF)', 'Error de formato');
-        this.imageName = "No hay ningún archivo cargado"
-        this.imageUploaded = false;
-        this.selectedImage = null;
-        return;
-      }
-      else{
-        this.imageUploaded = true;
-        this.imageName = this.selectedImage?.name;
+      this.isDraggingImage = false;
+      for(let i = 0; i < files.length; i++){
+        var file = files[i];
+
+        if (!this.imageAllowedExtensions.includes(file.type)) {
+          this.toastr.error('El archivo no posee un formato válido (JPEG, JPG, PNG, GIF)', 'Error de formato');
+        }
+        else{
+          this.imageUploaded = true;
+          this.selectedImages?.push(file);
+          this.imageNames?.push(file.name);
+          console.log(this.selectedImages)
+        }
       }
     }
     else{
-      this.selectedFile = file;
+      this.selectedFile = files[0];
       this.isDraggingFile = false;
 
       if (this.selectedFile && !this.fileAllowedExtensions.exec(this.selectedFile.name)) {
@@ -101,21 +102,23 @@ export class UploadCampaignComponent {
   }
   
   onSelected(event: any, type: string) {
-    const file = event.target.files[0];
+    const files = event.dataTransfer.files;
 
-    if(type == "image"){
-      this.selectedImage = file;
+    if(type == 'image'){
+      for(let i = 0; i < files.length; i++)
+        var file = files[i];
 
-      if (this.selectedImage && !this.imageAllowedExtensions.includes(this.selectedImage.type)) {
+      this.isDraggingImage = false;
+
+      if (!this.imageAllowedExtensions.includes(file.type)) {
         this.toastr.error('El archivo no posee un formato válido (JPEG, JPG, PNG, GIF)', 'Error de formato');
-        this.imageName = "No hay ningún archivo cargado"
-        this.imageUploaded = false;
-        this.selectedImage = null;
+
         return;
       }
       else{
-        this.imageName = this.selectedImage?.name;
-        this.imageUploaded = this.imageName ? true : false;
+
+        this.selectedImages?.push(file);
+        this.imageNames?.push(file.name);
       }
 
     } else{
@@ -142,8 +145,10 @@ export class UploadCampaignComponent {
     formData.append('date', this.uploadForm.get('date')?.value);
     formData.append('description', this.uploadForm.get('description')?.value);
 
-    if (this.selectedImage) {
-      formData.append('image', this.selectedImage);
+    if (this.selectedImages) {
+      for (let i = 0; i < this.selectedImages.length; i++) {
+        formData.append('image', this.selectedImages[i]);
+      }
     }
 
     if (this.selectedFile) {

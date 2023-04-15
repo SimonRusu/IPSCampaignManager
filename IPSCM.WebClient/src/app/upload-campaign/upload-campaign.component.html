@@ -34,26 +34,26 @@
   </div>
 
   <div class="columns is-centered">
-    <div class="file has-name is-boxed is-centered mt-5 p-1" >
-      <label class="file-label" (dragover)="onDragOver($event,'image')" (dragleave)="onDragLeave($event, 'image') "(drop)="onDrop($event, 'image')"
-      [ngClass]="{'dragging': isDraggingImage}">
-        <input  class="file-input" type="file" name="resume" accept="image/*" (change)="onSelected($event, 'image')" >
+    <div class="file has-name is-boxed is-centered mt-5 p-1">
+      <label class="file-label" (dragover)="onDragOver($event, 'image')" (dragleave)="onDragLeave($event, 'image') "(drop)="onDrop($event, 'image')"
+        [ngClass]="{'dragging': isDraggingImage}">
+        <input class="file-input" type="file" name="images" accept="image/*" multiple (change)="onSelected($event, 'image')">
         <span class="file-cta">
           <span class="file-icon is-centered ">
             <i class="fa-solid fa-image fa-2xl fa-fade mt-5"></i>
           </span>
           <span class="file-label mt-5">
-            Arrastra o selecciona una imágen de la campaña
+            Arrastra o selecciona varias imágenes de la campaña
           </span>
           <span class="file-label">
             (Opcional)
           </span>
         </span>
-        <span class="file-name" [ngClass]="{'has-background-warning has-text-dark': !imageUploaded, 'has-background-primary-dark has-text-white': imageUploaded}">
-          {{imageName ?? "No hay ningún archivo cargado"}}
+        <span class="file-name" [ngClass]="{'has-background-warning has-text-dark': !imageUploaded, 'has-background-primary-dark has-text-white': imageUploaded, 'vertical-center': !imageUploaded}">
+          {{imageNames.length ? imageNames.join('\n') : "No hay ningún archivo cargado"}}
         </span>
       </label>
-    </div>
+</div>
 
     <div class="file has-name is-boxed is-centered mt-5 p-1">
       <label class="file-label" (dragover)="onDragOver($event, 'file')" (dragleave)="onDragLeave($event, 'file') "(drop)="onDrop($event, 'file')"

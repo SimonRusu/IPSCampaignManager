@@ -5,6 +5,7 @@ import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation
 import { ToastrService } from 'ngx-toastr';
 import { catchError, of, tap } from 'rxjs';
 import { Router } from '@angular/router';
+import JSZip from 'jszip';
 
 
 
@@ -15,7 +16,7 @@ import { Router } from '@angular/router';
 })
 export class CampaignCardComponent {
   @Input() campaign!: any;
-  campaignImage: any;
+  campaignImages: string[] = [];
   
 
   constructor(
@@ -27,15 +28,17 @@ export class CampaignCardComponent {
   }
 
   ngOnInit(){
-    this.apiService.getCampaignImageById(this.campaign.Id).subscribe(
-      apiService =>{
-        const reader = new FileReader();
-        reader.onload = () => {
-          this.campaignImage = reader.result as string;
-        };
-        reader.readAsDataURL(apiService);
-      }
-    )
+    this.apiService.getCampaignImagesById(this.campaign.Id).subscribe((response: Blob) => {
+      const zipImages = new JSZip();
+      zipImages.loadAsync(response).then(images =>{
+        Object.keys(images.files).forEach(filename => {
+          images.files[filename].async('base64').then(imageData => {
+            const imageUrl = 'data:image/jpeg;base64,' + imageData;
+            this.campaignImages.push(imageUrl);
+          })
+        })
+      })
+    })
   }
   
   stringifyCampaign() {
