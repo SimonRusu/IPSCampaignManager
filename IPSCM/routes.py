@@ -1,16 +1,13 @@
 from flask import request
 from flask_restful import Resource
-from werkzeug.utils import secure_filename
+from controllers.CampaignCrud import *
 from controllers.BeaconBleSignalCrud import getBeaconBleSignalByCampaignId
 from controllers.BeaconConfigurationCrud import getBeaconConfigurationByCampaignId
 from controllers.CampaignSequenceCrud import getCampaignSequence
 from controllers.CaptureCrud import getCapturesByCampaignId
-from services.DatabaseService import insert_data
-from controllers.CampaignCrud import *
 from controllers.DongleReceptorCrud import getDongleReceptor
-import os
-
-from services.ImageService import generateZipWithImages
+from services.DatabaseService import insertIntoDatabase
+from services.ImageService import generateZipImages
 
 
 class GetCampaigns(Resource):
@@ -20,6 +17,10 @@ class GetCampaigns(Resource):
 class GetCampaignImagesById(Resource):
     def get(self, campaignId):
         return getCampaignImagesById(campaignId)
+    
+class GetRelatedCampaignById(Resource):
+    def get(self, relatedCampaignId):
+        return getRelatedCampaignById(relatedCampaignId)
     
 class GetDongleReceptor(Resource):
     def get(self, dongleId):
@@ -45,22 +46,19 @@ class UploadCampaign(Resource):
     def post(self):
         name = request.form.get('name')
         date = request.form.get('date')
-        file = request.files['file']
         description = None
-        zipRef = None
+        imagesRef = None
+        files = request.files
 
         if 'description' in request.form:
             description = request.form.get('description')
 
-        if 'image' in request.files:
-            images = request.files.getlist('image')
-            zipRef = generateZipWithImages(images)
+        if 'images' in request.files:
+            images = request.files.getlist('images')
+            imagesRef = generateZipImages(images)
         
-        if file:
-            filename = secure_filename("auxDB.sqlite3")
-            file.save(os.path.join('db', filename))
-            insert_data(name, date, description, zipRef)
-            os.remove('db/auxDB.sqlite3')
+        files = request.files.getlist('files')
+        insertIntoDatabase(name, date, description, imagesRef, files)
     
 class DeteteCampaignById(Resource):
     def delete(self, campaignId):

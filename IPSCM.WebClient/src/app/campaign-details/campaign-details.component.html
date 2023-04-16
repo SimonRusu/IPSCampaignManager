@@ -8,23 +8,29 @@
           </div>
         </div>
         <div class="content">
-          <p><strong>Detalles:</strong></p>
+          <mat-button-toggle-group name="fontStyle" aria-label="Font Style">
+            <mat-button-toggle value="bold">Puntos aleatorios</mat-button-toggle>
+            <mat-button-toggle value="italic">Puntos de referencia</mat-button-toggle>
+          </mat-button-toggle-group>
           <ul>
-            <li>Capturas tomadas: <a (click)="optionSelected('captures')"> {{sequence?.Capture}} </a></li> 
-            <li>Señales de Beacon BLE: <a (click)="optionSelected('beacon_signal')">{{sequence?.Beacon_BLE_Signal}}</a></li>
-            <li>Cofiguraciones de Beacon: <a (click)="optionSelected('beacon_config')">{{sequence?.Beacon_configuration}}</a></li>
-            <li>Dongle utilizado: {{dongleName}}</li>
+            <li>Capturas tomadas: <a (click)="optionSelected('captures')"> {{campaignDetails?.campaignSequence.Capture}} </a></li> 
+            <li>Señales de Beacon BLE: <a (click)="optionSelected('beacon_signal')">{{campaignDetails?.campaignSequence.Beacon_BLE_Signal}}</a></li>
+            <li>Cofiguraciones de Beacon: <a (click)="optionSelected('beacon_config')">{{campaignDetails?.campaignSequence.Beacon_configuration}}</a></li>
+            <li>Dongle utilizado: {{campaignDetails?.dongleName}}</li>
           </ul>
         </div>
       </div>
     </div>   
     <div class="col-md-4">
       <div class="card-image">
-        <carousel >
-          <slide *ngFor="let campaignImage of campaignImages">
-            <img [src]="campaignImage">
-          </slide>
-        </carousel>
+        <owl-carousel-o [options]="customOptions">
+          <ng-container *ngFor="let campaignImage of campaignImages">
+            <ng-template carouselSlide>
+              <img [src]="campaignImage">
+            </ng-template>
+          </ng-container> 
+        </owl-carousel-o>
+
       </div>
     </div>
 </div>
@@ -52,7 +58,7 @@
           </tr>
           </thead>
           <tbody>
-          <tr *ngFor="let capture of captures">
+          <tr *ngFor="let capture of campaignDetails?.captures">
             <td>{{capture.Id}}</td>
             <td>{{capture.Date}}</td>
             <td>{{capture.Light}}</td>
@@ -91,7 +97,7 @@
           </tr>
           </thead>
           <tbody>
-          <tr *ngFor="let signal of beaconBleSignals">
+          <tr *ngFor="let signal of campaignDetails?.signals">
             <td>{{signal.Id}}</td>
             <td>{{signal.N_reading}}</td>
             <td>{{signal.Date_hour}}</td>
@@ -109,9 +115,9 @@
       </div>
   </ng-template>
   
-  <ng-container *ngIf="opt === 3; then opt3">
+  <!--<ng-container *ngIf="opt === 3; then opt3">
   </ng-container>
-  <ng-template #opt3>
+<ng-template #opt3>
     <div class="table-container p-5">
         <table class="table is-fullwidth">
           <thead>
@@ -136,4 +142,4 @@
           </tbody>
         </table>
       </div>
-  </ng-template>
+  </ng-template>-->

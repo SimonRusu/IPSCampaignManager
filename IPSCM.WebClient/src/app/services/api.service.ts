@@ -19,25 +19,12 @@ export class ApiService {
     return this.http.get(this.baseUrl+ "campaigns");
   }
 
+  getRelatedCampaignById(id: any){
+    return this.http.get(this.baseUrl + `relatedCampaign/${id}`);
+  }
+
   getCampaignImagesById(id: any): Observable<any> {
     return this.http.get(this.baseUrl + `campaignImages/${id}`, { responseType: 'blob' })
-  }
-
-  deleteCampaignById(id: any){
-    return this.http.delete(this.baseUrl + `deleteCampaign/${id}`);
-  }
-
-  uploadCampaign(formData: FormData): Observable<any> {
-    return this.http.post(this.baseUrl + 'upload_campaign', formData).pipe(
-    tap(() => {
-        this.toastr.success('¡La campaña se ha guardado correctamente!', 'Operación completada');
-        this.router.navigate(['/campaigns']);
-      }),
-      catchError(() => {
-        this.toastr.error('El formato de la base de datos no es compatible', 'Operación no completada');
-        return of(null);
-      })
-    );
   }
 
   getDongleName(id: any){
@@ -59,6 +46,24 @@ export class ApiService {
   getConfigs(id: any){
     return this.http.get(this.baseUrl + `configsByCampaign/${id}`);
   }
+
+  uploadCampaign(formData: FormData): Observable<any> {
+    return this.http.post(this.baseUrl + 'upload_campaign', formData).pipe(
+    tap(() => {
+        this.toastr.success('¡La campaña se ha guardado correctamente!', 'Operación completada');
+        this.router.navigate(['/campaigns']);
+      }),
+      catchError(() => {
+        this.toastr.error('El formato de la base de datos no es compatible', 'Operación no completada');
+        return of(null);
+      })
+    );
+  }
+
+  deleteCampaignById(id: any){
+    return this.http.delete(this.baseUrl + `deleteCampaign/${id}`);
+  }
+
 
 
 

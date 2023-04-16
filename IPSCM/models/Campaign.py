@@ -8,6 +8,10 @@ class Campaign(db.Model):
     Id = db.Column(db.Integer, nullable=False, primary_key=True)
 
     @declared_attr
+    def Id_related_campaign(cls):
+         return db.Column(db.Integer, db.ForeignKey('Campaign.Id'), nullable=True)
+
+    @declared_attr
     def Id_dongle(cls):
          return db.Column(db.Integer, db.ForeignKey('Dongle_Receptor.Id'), nullable=False)
     
@@ -23,6 +27,7 @@ class Campaign(db.Model):
     def serialize(self):
         return {
             'Id': self.Id,
+            'Id_related_campaign': self.Id_related_campaign, 
             'Id_dongle': self.Id_dongle,
             'Id_campaign_sequence': self.Id_campaign_sequence,
             'Name': self.Name,

@@ -34,7 +34,7 @@
   </div>
 
   <div class="columns is-centered">
-    <div class="file has-name is-boxed is-centered mt-5 p-1">
+    <div class="file has-name is-boxed is-centered mt-2 p-1">
       <label class="file-label" (dragover)="onDragOver($event, 'image')" (dragleave)="onDragLeave($event, 'image') "(drop)="onDrop($event, 'image')"
         [ngClass]="{'dragging': isDraggingImage}">
         <input class="file-input" type="file" name="images" accept="image/*" multiple (change)="onSelected($event, 'image')">
@@ -49,34 +49,30 @@
             (Opcional)
           </span>
         </span>
-        <span class="file-name" [ngClass]="{'has-background-warning has-text-dark': !imageUploaded, 'has-background-primary-dark has-text-white': imageUploaded, 'vertical-center': !imageUploaded}">
-          {{imageNames.length ? imageNames.join('\n') : "No hay ningún archivo cargado"}}
-        </span>
+        <span class="file-name" [ngClass]="{'has-background-warning has-text-dark': !imageUploaded, 'has-background-primary-dark has-text-white': imageUploaded, 'vertical-center': !imageUploaded}">{{imageNames.length ? imageNames.join('\n') : "No hay ningún archivo cargado"}}</span>
       </label>
 </div>
 
-    <div class="file has-name is-boxed is-centered mt-5 p-1">
+    <div class="file has-name is-boxed is-centered mt-2 p-1">
       <label class="file-label" (dragover)="onDragOver($event, 'file')" (dragleave)="onDragLeave($event, 'file') "(drop)="onDrop($event, 'file')"
       [ngClass]="{'dragging': isDraggingFile}">
-        <input  class="file-input" type="file" name="resume" accept=".sqlite3" (change)="onSelected($event, 'file')" >
+        <input  class="file-input" type="file" name="resume" accept=".sqlite3" multiple (change)="onSelected($event, 'file')" >
         <span class="file-cta">
           <span class="file-icon is-centered ">
               <i class="fa-solid fa-upload fa-2xl fa-fade mt-5"></i>
           </span>
           <span class="file-label mt-5">
-            Arrastra o selecciona una campaña de datos sqlite3
+            Arrastra o selecciona una pareja de campañas de datos
           </span>
           <span class="file-label">
-            (Obligatorio)
+            (1º Puntos Aleatorios.  2º Puntos de Referencia.)
           </span>
         </span>
-        <span class="file-name" [ngClass]="{'has-background-warning has-text-dark': !fileUploaded, 'has-background-primary-dark has-text-white': fileUploaded}">
-          {{fileName ?? "No hay ningún archivo cargado"}}
-        </span>
+        <span class="file-name" [ngClass]="{'has-background-warning has-text-dark': !secondFileUploaded, 'has-background-primary-dark has-text-white': secondFileUploaded, 'vertical-center': !firstFileUploaded}">{{fileNames.length ? fileNames.join('\n') : "No hay ningún archivo cargado"}}</span>
       </label>
     </div>
   </div>
   <div class="container has-text-centered mt-6">
-    <button class="button is-link is-rounded" (click)="uploadCampaign()" [disabled]="!fileUploaded || !uploadForm.valid">Guardar campaña</button>
+    <button class="button is-link is-rounded" (click)="uploadCampaign()" [disabled]="!secondFileUploaded || !uploadForm.valid">Guardar campaña</button>
   </div>
 </form>

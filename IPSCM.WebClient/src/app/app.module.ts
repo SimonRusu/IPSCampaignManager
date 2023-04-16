@@ -22,10 +22,8 @@ import { MAT_DIALOG_DEFAULT_OPTIONS, MatDialogModule } from '@angular/material/d
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { CarouselModule } from 'ngx-bootstrap/carousel';
-
-
-
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { CarouselModule  } from 'ngx-owl-carousel-o';
 
 @NgModule({
   declarations: [
@@ -54,6 +52,7 @@ import { CarouselModule } from 'ngx-bootstrap/carousel';
     MatDialogModule,
     MatToolbarModule,
     MatButtonModule,
+    MatButtonToggleModule,
     MatIconModule,
   ],
   providers: [

@@ -9,9 +9,9 @@ with app.app_context():
     api = Api(app)
     CORS(app, resources={r"/api/*": {"origins": "*"}})
 
-    #Recursos de la api.
     api.add_resource(UploadCampaign, '/api/upload_campaign')
     api.add_resource(GetCampaigns, '/api/campaigns')
+    api.add_resource(GetRelatedCampaignById, '/api/relatedCampaign/<int:relatedCampaignId>')
     api.add_resource(GetCampaignImagesById, '/api/campaignImages/<int:campaignId>')
     api.add_resource(DeteteCampaignById, '/api/deleteCampaign/<int:campaignId>')
     api.add_resource(GetDongleReceptor, '/api/dongleReceptor/<int:dongleId>')

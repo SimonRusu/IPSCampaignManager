@@ -2,32 +2,61 @@ import { Component, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ApiService } from '../services/api.service';
 import JSZip from 'jszip';
-import { CarouselConfig } from 'ngx-bootstrap/carousel';
+import { OwlOptions } from 'ngx-owl-carousel-o';
+import { Observable, forkJoin, map, switchMap } from 'rxjs';
 
 
 @Component({
   selector: 'app-campaign-details',
   templateUrl: './campaign-details.component.html',
-  styleUrls: ['./campaign-details.component.sass'],
+  styleUrls: ['./campaign-details.component.sass',
+              ],
   providers: [
-    { provide: CarouselConfig, useValue: {
+    /*{ provide: CarouselConfig, useValue: {
       interval: 3000,
       noPause: false,
       showIndicators: true,
-      isAnimated: true } }
+      isAnimated: true } }*/
  ],
 })
 export class CampaignDetailsComponent {
 
   campaignImages: string[] = [];
   campaign: any;
-  campaignImage: any;
+  campaignDetails: any;
+  relatedCampaign: any;
   dongleName: any;
   sequence: any;
   captures: any;
   beaconConfs: any;
   beaconBleSignals: any;
   opt: number = 0;
+  switchData: boolean = false;
+
+  customOptions: OwlOptions = {
+    loop: true,
+    mouseDrag: false,
+    touchDrag: false,
+    pullDrag: false,
+    dots: false,
+    navSpeed: 700,
+    navText: ['', ''],
+    responsive: {
+      0: {
+        items: 1
+      },
+      400: {
+        items: 2
+      },
+      740: {
+        items: 3
+      },
+      940: {
+        items: 4
+      }
+    },
+    nav: true
+  }
 
   constructor(private route: ActivatedRoute, private apiService: ApiService){
     this.route.queryParams.subscribe(params => {
@@ -36,51 +65,59 @@ export class CampaignDetailsComponent {
       }
     })
 
- 
-  apiService.getCampaignImagesById(this.campaign.Id).subscribe((response: Blob) => {
-      const zipImages = new JSZip();
-      zipImages.loadAsync(response).then(images =>{
-        Object.keys(images.files).forEach(filename => {
-          images.files[filename].async('base64').then(imageData => {
-            const imageUrl = 'data:image/jpeg;base64,' + imageData;
-            this.campaignImages.push(imageUrl);
+    apiService.getCampaignImagesById(this.campaign.Id).subscribe((response: Blob) => {
+        const zipImages = new JSZip();
+        zipImages.loadAsync(response).then(images =>{
+          Object.keys(images.files).forEach(filename => {
+            images.files[filename].async('base64').then(imageData => {
+              const imageUrl = 'data:image/jpeg;base64,' + imageData;
+              this.campaignImages.push(imageUrl);
+            })
           })
         })
       })
-    })
 
-    this.apiService.getDongleName(this.campaign.Id_dongle).subscribe(
-      dongleName =>{
-        this.dongleName = dongleName;
-      }
-    )
+    this.campaignData().subscribe(res =>{this.campaignDetails = res})
+    this.relatedCampaignData().subscribe(res => {this.relatedCampaign = res});
+  }
 
-    this.apiService.getCampaignSequence(this.campaign.Id_campaign_sequence).subscribe(
-      sequence =>{
-        this.sequence = sequence;
-      }
-    )
-
-    this.apiService.getCaptures(this.campaign.Id).subscribe(
-      captures =>{
-        this.captures = captures;
-      }
-    )
-
-    this.apiService.getSignals(this.campaign.Id).subscribe(
-      signals =>{
-        this.beaconBleSignals = signals;
-      }
-    )
-
-    this.apiService.getConfigs(this.campaign.Id).subscribe(
-      configs =>{
-        this.beaconConfs = configs;
-      }
-    )
-
-
-    
+  campaignData(): Observable<any> {
+    return forkJoin([
+        this.apiService.getDongleName(this.campaign.Id_dongle),
+        this.apiService.getCampaignSequence(this.campaign.Id_campaign_sequence),
+        this.apiService.getCaptures(this.campaign.Id),
+        this.apiService.getSignals(this.campaign.Id)
+    ]).pipe(
+        map(([dongleName, campaignSequence, captures, signals]) => {
+            return {
+                dongleName,
+                campaignSequence,
+                captures,
+                signals
+            };
+        })
+      );
+  }
+  
+  relatedCampaignData(): Observable<any> {
+    return this.apiService.getRelatedCampaignById(this.campaign.Id_related_campaign).pipe(
+      switchMap((relatedCampaign: any) => {
+        return forkJoin([
+          this.apiService.getDongleName(relatedCampaign.Id_dongle),
+          this.apiService.getCampaignSequence(relatedCampaign.Id_campaign_sequence),
+          this.apiService.getCaptures(relatedCampaign.Id),
+          this.apiService.getSignals(relatedCampaign.Id)
+        ]).pipe(
+          map(([dongleName, campaignSequence, captures, signals]) => {
+            relatedCampaign.dongleName = dongleName;
+            relatedCampaign.campaignSequence = campaignSequence;
+            relatedCampaign.captures = captures;
+            relatedCampaign.signals = signals;
+            return relatedCampaign;
+          })
+        );
+      })
+    );
   }
 
   optionSelected(option: string){
