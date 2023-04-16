@@ -24,7 +24,7 @@
   </div>
   <div class="column is-fullwidth">
     <div class="has-text-centered">
-      <mat-button-toggle-group name="fontStyle" aria-label="Font Style" (change)="switchCampaignData($event)">
+      <mat-button-toggle-group name="fontStyle" aria-label="Font Style" (change)="switchCampaignData($event)" value="aleatory">
         <mat-button-toggle value="aleatory">Puntos aleatorios</mat-button-toggle>
         <mat-button-toggle value="reference">Puntos de referencia</mat-button-toggle>
       </mat-button-toggle-group>
@@ -32,9 +32,9 @@
   </div>
   <div class="content">
     <ul>  
-      <li>Capturas tomadas: <a (click)="optionSelected('captures')"> {{selectedCamaign?.campaignSequence.Capture}} </a></li> 
-      <li>Señales de Beacon BLE: <a (click)="optionSelected('beacon_signal')">{{selectedCamaign?.campaignSequence.Beacon_BLE_Signal}}</a></li>
-      <li>Cofiguraciones de Beacon: <a (click)="optionSelected('beacon_config')">{{selectedCamaign?.campaignSequence.Beacon_configuration}}</a></li>
+      <li [ngClass]="{'opt-selected': opt == 1}">Capturas tomadas: <a (click)="optionSelected('captures')">{{selectedCamaign?.campaignSequence.Capture}}</a></li> 
+      <li [ngClass]="{'opt-selected': opt == 2}">Señales de Beacon BLE: <a (click)="optionSelected('beacon_signal')">{{selectedCamaign?.campaignSequence.Beacon_BLE_Signal}}</a></li>
+      <li [ngClass]="{'opt-selected': opt == 3}">Cofiguraciones de Beacon: <a (click)="optionSelected('beacon_config')">{{selectedCamaign?.campaignSequence.Beacon_configuration}}</a></li>
       <li>Dongle utilizado: {{selectedCamaign?.dongleName}}</li>
     </ul>
   </div>
@@ -44,78 +44,38 @@
 <hr class="is-divider has-background-grey-lighter">
 
 
-  <div class="table-container p-5">
-    <table mat-table [dataSource]="capturesDataSource" class="table is-fullwidth">
-  
-      <ng-container matColumnDef="{{column}}" *ngFor="let column of capturesColumns">
-        <th mat-header-cell *matHeaderCellDef>{{column}}</th>
-        <td mat-cell *matCellDef="let element">{{element[column]}}</td>
-      </ng-container>
-  
-      <tr mat-header-row *matHeaderRowDef="capturesColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: capturesColumns;"></tr>
-    </table>
-  
-    <mat-paginator #capturesPaginator [pageSizeOptions]="pageSizes" [pageSize]="defaultPageSize" [pageIndex]="capturesPageIndex" showFirstLastButtons ></mat-paginator>
-  </div>
+<div #opt2 class="table-container p-5" [hidden]="opt !== 1">
+  <table mat-table [dataSource]="capturesDataSource" class="table is-fullwidth" #capturesTable>
+
+    <ng-container matColumnDef="{{column}}" *ngFor="let column of capturesColumns">
+      <th mat-header-cell *matHeaderCellDef>{{column}}</th>
+      <td mat-cell *matCellDef="let element">{{element[column]}}</td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="capturesColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: capturesColumns;"></tr>
+  </table>
+
+  <mat-paginator #capturesPaginator [pageSizeOptions]="pageSizes" [pageSize]="defaultPageSize"  showFirstLastButtons ></mat-paginator>
+</div>
+
+<div #opt1 class="table-container p-5" [hidden]="opt !== 2">
+  <table mat-table [dataSource]="signalsDataSource" class="table is-fullwidth" #signalsTable>
+
+    <ng-container matColumnDef="{{column}}" *ngFor="let column of signalsColumns">
+      <th mat-header-cell *matHeaderCellDef>{{column}}</th>
+      <td mat-cell *matCellDef="let element">{{element[column]}}</td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="signalsColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: signalsColumns;"></tr>
+  </table>
+
+  <mat-paginator #signalsPaginator [pageSizeOptions]="pageSizes" [pageSize]="defaultPageSize" showFirstLastButtons ></mat-paginator>
+</div>
   
 
 
-
-  <div class="table-container p-5">
-    <table mat-table [dataSource]="signalsDataSource" class="table is-fullwidth">
-  
-      <ng-container matColumnDef="{{column}}" *ngFor="let column of signalsColumns">
-        <th mat-header-cell *matHeaderCellDef>{{column}}</th>
-        <td mat-cell *matCellDef="let element">{{element[column]}}</td>
-      </ng-container>
-  
-      <tr mat-header-row *matHeaderRowDef="signalsColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: signalsColumns;"></tr>
-    </table>
-  
-    <mat-paginator #signalsPaginator [pageSizeOptions]="pageSizes" [pageSize]="defaultPageSize" [pageIndex]="signalsPageIndex" showFirstLastButtons ></mat-paginator>
-  </div>
-  
-
-
-
-  <ng-template #opt2>
-    <div class="table-container p-5">
-        <table class="table is-fullwidth">
-          <thead>
-          <tr>
-            <th>Id</th>
-            <th>Número de lectura</th>
-            <th>Fecha</th>
-            <th>Mac</th>
-            <th>Tamaño de paquete</th>
-            <th>Canal</th>
-            <th>RSSI</th>
-            <th>Tipo de PDU</th>
-            <th>CRC</th>
-            <th>Protocolo</th>
-            <th>Identificador</th>
-          </tr>
-          </thead>
-          <tbody>
-          <tr *ngFor="let signal of selectedCamaign?.signals">
-            <td>{{signal.Id}}</td>
-            <td>{{signal.N_reading}}</td>
-            <td>{{signal.Date_hour}}</td>
-            <td>{{signal.Mac}}</td>
-            <td>{{signal.Pack_size}}</td>
-            <td>{{signal.Channel}}</td>
-            <td>{{signal.RSSI}}</td>
-            <td>{{signal.PDU_type}}</td>
-            <td>{{signal.CRC}}</td>
-            <td>{{signal.Protocol}}</td>
-            <td>{{signal.Identificator}}</td>
-          </tr>
-          </tbody>
-        </table>
-      </div>
-  </ng-template>
   
   <!--<ng-container *ngIf="opt === 3; then opt3">
   </ng-container>

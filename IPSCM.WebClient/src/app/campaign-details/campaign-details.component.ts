@@ -5,7 +5,7 @@ import JSZip from 'jszip';
 import { OwlOptions } from 'ngx-owl-carousel-o';
 import { Observable, forkJoin, map, switchMap } from 'rxjs';
 import { MatButtonToggleChange } from '@angular/material/button-toggle';
-import { MatTableDataSource } from '@angular/material/table';
+import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 
 
@@ -40,8 +40,10 @@ export class CampaignDetailsComponent {
   signalsPageIndex: number = 0;
   capturesColumns = ['Id', 'Date', 'Light', 'Temperature', 'Relative_humidity', 'Absolute_humidity', 'Position_x', 'Position_y', 'Position_z', 'Platform_angle', 'Dongle_rotation'];
   signalsColumns = ['Id', 'N_reading', 'Date_hour', 'Mac', 'Pack_size', 'Channel', 'RSSI', 'PDU_type', 'CRC', 'Protocol', 'Identificator']
-  @ViewChild('capturesPaginator') capturesPaginator: MatPaginator | undefined;
-  @ViewChild('signalsPaginator') signalsPaginator: MatPaginator | undefined;
+  @ViewChild('capturesPaginator') capturesPaginator?: MatPaginator;
+  @ViewChild('signalsPaginator') signalsPaginator?: MatPaginator;
+  @ViewChild('capturesTable') capturesTable: MatTable<any> | undefined;
+  @ViewChild('signalsTable') signalsTable: MatTable<any> | undefined;
 
   customOptions: OwlOptions = {
     loop: true,
@@ -133,9 +135,7 @@ export class CampaignDetailsComponent {
                 captures,
                 signals
             };
-            
         })
-        
       );
   }
   
@@ -163,8 +163,20 @@ export class CampaignDetailsComponent {
   switchCampaignData(event: MatButtonToggleChange){
     if(event.value === 'aleatory'){
       this.selectedCamaign = this.campaignDetails;
-    }else
+      this.capturesDataSource.data = this.campaignDetails.captures;
+      this.signalsDataSource.data = this.campaignDetails.signals;
+    }else{
       this.selectedCamaign = this.relatedCampaignDetails;
+      this.capturesDataSource.data = this.relatedCampaignDetails.captures;
+      this.signalsDataSource.data = this.relatedCampaignDetails.signals;
+    }
+
+    if (this.capturesTable) {
+      this.capturesTable.renderRows();
+    }
+    if (this.signalsTable) {
+      this.signalsTable.renderRows();
+    }
   }
 
   optionSelected(option: string){
