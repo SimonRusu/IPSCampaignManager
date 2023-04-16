@@ -24,6 +24,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { CarouselModule  } from 'ngx-owl-carousel-o';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @NgModule({
   declarations: [
@@ -54,6 +55,7 @@ import { CarouselModule  } from 'ngx-owl-carousel-o';
     MatButtonModule,
     MatButtonToggleModule,
     MatIconModule,
+    MatProgressSpinnerModule
   ],
   providers: [
     {provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: {hasBackdrop: true}}

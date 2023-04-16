@@ -1,3 +1,9 @@
+<div *ngIf="loading" class="overlay">
+  <mat-progress-spinner class="spinner" mode="indeterminate"></mat-progress-spinner>
+</div>
+
+
+
 <div class="row p-5">
     <div class="col-md-6 offset-md-1">
       <div class="card-content">
@@ -6,6 +12,16 @@
             <p class="title is-4">{{ campaign.Name }}</p>
             <p class="subtitle is-6">{{ campaign.Description}}</p>
           </div>
+        </div>
+
+        <div class="card-image">
+          <owl-carousel-o [options]="customOptions">
+            <ng-container *ngFor="let campaignImage of campaignImages">
+              <ng-template carouselSlide>
+                <img [src]="campaignImage">
+              </ng-template>
+            </ng-container> 
+          </owl-carousel-o>
         </div>
         <div class="content">
           <mat-button-toggle-group name="fontStyle" aria-label="Font Style">
@@ -21,19 +37,11 @@
         </div>
       </div>
     </div>   
-    <div class="col-md-4">
-      <div class="card-image">
-        <owl-carousel-o [options]="customOptions">
-          <ng-container *ngFor="let campaignImage of campaignImages">
-            <ng-template carouselSlide>
-              <img [src]="campaignImage">
-            </ng-template>
-          </ng-container> 
-        </owl-carousel-o>
 
-      </div>
-    </div>
+
 </div>
+
+
 
 <hr class="is-divider has-background-grey-lighter">
 
@@ -143,3 +151,4 @@
         </table>
       </div>
   </ng-template>-->
+

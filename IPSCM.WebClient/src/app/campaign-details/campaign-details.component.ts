@@ -11,13 +11,7 @@ import { Observable, forkJoin, map, switchMap } from 'rxjs';
   templateUrl: './campaign-details.component.html',
   styleUrls: ['./campaign-details.component.sass',
               ],
-  providers: [
-    /*{ provide: CarouselConfig, useValue: {
-      interval: 3000,
-      noPause: false,
-      showIndicators: true,
-      isAnimated: true } }*/
- ],
+  providers: [],
 })
 export class CampaignDetailsComponent {
 
@@ -32,14 +26,17 @@ export class CampaignDetailsComponent {
   beaconBleSignals: any;
   opt: number = 0;
   switchData: boolean = false;
+  loading: boolean = true;
 
   customOptions: OwlOptions = {
     loop: true,
-    mouseDrag: false,
+    smartSpeed: 1000,
+    autoplayTimeout: 6000,
+    autoplay: true,
+    mouseDrag: true,
     touchDrag: false,
     pullDrag: false,
-    dots: false,
-    navSpeed: 700,
+    dots: true,
     navText: ['', ''],
     responsive: {
       0: {
@@ -50,12 +47,9 @@ export class CampaignDetailsComponent {
       },
       740: {
         items: 3
-      },
-      940: {
-        items: 4
       }
     },
-    nav: true
+    nav: false
   }
 
   constructor(private route: ActivatedRoute, private apiService: ApiService){
@@ -77,7 +71,10 @@ export class CampaignDetailsComponent {
         })
       })
 
-    this.campaignData().subscribe(res =>{this.campaignDetails = res})
+    this.campaignData().subscribe(res =>{
+      this.campaignDetails = res
+      this.loading=false;})
+      
     this.relatedCampaignData().subscribe(res => {this.relatedCampaign = res});
   }
 
@@ -95,7 +92,9 @@ export class CampaignDetailsComponent {
                 captures,
                 signals
             };
+            
         })
+        
       );
   }
   
