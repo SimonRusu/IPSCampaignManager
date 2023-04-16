@@ -52,17 +52,27 @@ def getCampaignImagesById(campaignId):
     return response
 
 def deleteCampaignById(campaignId):
-    existingCampaign = Campaign().query.filter_by(Id=campaignId).first()
+    campaign = Campaign().query.filter_by(Id=campaignId).first()
+    relatedCampaign = Campaign().query.filter_by(Id=campaign.Id_related_campaign).first()
 
-    if existingCampaign:
+    if campaign:
         deleteCampaignSequenceByCampaignId(campaignId)
-        deleteBeaconConfigurationByCampaignId(campaignId)
-        deleteBeaconBleSignalByCampaignId(campaignId)
-        deleteCaptureByCampaignId(campaignId)
-        if existingCampaign.Images_ref is not None:
-            deleteZipImages(existingCampaign.Images_ref)
+        deleteCampaignSequenceByCampaignId(relatedCampaign.Id)
 
-        db.session.delete(existingCampaign)
+        deleteBeaconConfigurationByCampaignId(campaignId)
+        deleteBeaconConfigurationByCampaignId(relatedCampaign.Id)
+
+        deleteBeaconBleSignalByCampaignId(campaignId)
+        deleteBeaconBleSignalByCampaignId(relatedCampaign.Id)
+
+        deleteCaptureByCampaignId(campaignId)
+        deleteCaptureByCampaignId(relatedCampaign.Id)
+
+        if campaign.Images_ref is not None:
+            deleteZipImages(campaign.Images_ref)
+
+        db.session.delete(campaign)
+        db.session.delete(relatedCampaign)
         db.session.commit()
 
         return {'message': 'Campaign successfully deleted'}, 200
