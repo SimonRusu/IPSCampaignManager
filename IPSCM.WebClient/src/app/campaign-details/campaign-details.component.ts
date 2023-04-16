@@ -4,6 +4,10 @@ import { ApiService } from '../services/api.service';
 import JSZip from 'jszip';
 import { OwlOptions } from 'ngx-owl-carousel-o';
 import { Observable, forkJoin, map, switchMap } from 'rxjs';
+import { MatButtonToggleChange } from '@angular/material/button-toggle';
+import { MatTableDataSource } from '@angular/material/table';
+import { MatPaginator } from '@angular/material/paginator';
+
 
 
 @Component({
@@ -18,15 +22,26 @@ export class CampaignDetailsComponent {
   campaignImages: string[] = [];
   campaign: any;
   campaignDetails: any;
-  relatedCampaign: any;
+  relatedCampaignDetails: any;
+  selectedCamaign: any;
   dongleName: any;
   sequence: any;
   captures: any;
   beaconConfs: any;
   beaconBleSignals: any;
-  opt: number = 0;
-  switchData: boolean = false;
+  opt: number = 1;
+  loadingCampaign: boolean = true;
   loading: boolean = true;
+  defaultPageSize = 10;
+  pageSizes = [10, 25, 50, 100];
+  capturesDataSource = new MatTableDataSource<any>([]);
+  signalsDataSource = new MatTableDataSource<any>([]);
+  capturesPageIndex: number = 0;
+  signalsPageIndex: number = 0;
+  capturesColumns = ['Id', 'Date', 'Light', 'Temperature', 'Relative_humidity', 'Absolute_humidity', 'Position_x', 'Position_y', 'Position_z', 'Platform_angle', 'Dongle_rotation'];
+  signalsColumns = ['Id', 'N_reading', 'Date_hour', 'Mac', 'Pack_size', 'Channel', 'RSSI', 'PDU_type', 'CRC', 'Protocol', 'Identificator']
+  @ViewChild('capturesPaginator') capturesPaginator: MatPaginator | undefined;
+  @ViewChild('signalsPaginator') signalsPaginator: MatPaginator | undefined;
 
   customOptions: OwlOptions = {
     loop: true,
@@ -38,6 +53,7 @@ export class CampaignDetailsComponent {
     pullDrag: false,
     dots: true,
     navText: ['', ''],
+    
     responsive: {
       0: {
         items: 1
@@ -49,10 +65,11 @@ export class CampaignDetailsComponent {
         items: 3
       }
     },
-    nav: false
+    nav: false,
   }
 
   constructor(private route: ActivatedRoute, private apiService: ApiService){
+
     this.route.queryParams.subscribe(params => {
       if(params['data']){
         this.campaign = JSON.parse(params['data']);
@@ -60,22 +77,46 @@ export class CampaignDetailsComponent {
     })
 
     apiService.getCampaignImagesById(this.campaign.Id).subscribe((response: Blob) => {
-        const zipImages = new JSZip();
-        zipImages.loadAsync(response).then(images =>{
-          Object.keys(images.files).forEach(filename => {
-            images.files[filename].async('base64').then(imageData => {
-              const imageUrl = 'data:image/jpeg;base64,' + imageData;
+      const zipImages = new JSZip();
+      zipImages.loadAsync(response).then(images =>{
+        let count = 0;
+        Object.keys(images.files).forEach(filename => {
+          images.files[filename].async('base64').then(imageData => {
+            const imageUrl = 'data:image/jpeg;base64,' + imageData;
+            if (count < 3 && Object.keys(images.files).length == 1) {
+              for (let i = 0; i < 2; i++) {
+                this.campaignImages.push(imageUrl);
+                count++;
+              }
+            } else {
               this.campaignImages.push(imageUrl);
-            })
+              count++;
+            }
           })
         })
       })
-
+    })
+    
+  
     this.campaignData().subscribe(res =>{
-      this.campaignDetails = res
-      this.loading=false;})
+      this.campaignDetails = this.selectedCamaign = res
+      this.capturesDataSource.data = this.campaignDetails.captures;
+      this.signalsDataSource.data = this.campaignDetails.signals;
+    })
       
-    this.relatedCampaignData().subscribe(res => {this.relatedCampaign = res});
+    this.relatedCampaignData().subscribe(res => {
+      this.relatedCampaignDetails = res
+      this.loading=false;
+    });
+  }
+
+  ngAfterViewInit() {
+    if (this.capturesPaginator) {
+      this.capturesDataSource.paginator = this.capturesPaginator;
+    }
+    if (this.signalsPaginator) {
+      this.signalsDataSource.paginator = this.signalsPaginator;
+    }
   }
 
   campaignData(): Observable<any> {
@@ -117,6 +158,13 @@ export class CampaignDetailsComponent {
         );
       })
     );
+  }
+
+  switchCampaignData(event: MatButtonToggleChange){
+    if(event.value === 'aleatory'){
+      this.selectedCamaign = this.campaignDetails;
+    }else
+      this.selectedCamaign = this.relatedCampaignDetails;
   }
 
   optionSelected(option: string){
