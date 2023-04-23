@@ -35,6 +35,8 @@
       <li [ngClass]="{'opt-selected': opt == 1}">Capturas tomadas: <a (click)="optionSelected('captures')">{{selectedCamaign?.campaignSequence.Capture}}</a></li> 
       <li [ngClass]="{'opt-selected': opt == 2}">Señales de Beacon BLE: <a (click)="optionSelected('beacon_signal')">{{selectedCamaign?.campaignSequence.Beacon_BLE_Signal}}</a></li>
       <li [ngClass]="{'opt-selected': opt == 3}">Cofiguraciones de Beacons: <a (click)="optionSelected('beacon_config')">{{this.campaignConfigs}}</a></li>
+      <li>Tiempo de muestreo: {{campaign.Duration}} seg</li>
+      <li>Rotaciones: {{campaign.Rotations}}</li>
       <li>Dongle utilizado: {{selectedCamaign?.dongleName}}</li>
     </ul>
   </div>

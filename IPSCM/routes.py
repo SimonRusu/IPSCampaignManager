@@ -46,6 +46,7 @@ class UploadCampaign(Resource):
     def post(self):
         name = request.form.get('name')
         date = request.form.get('date')
+        conf = request.form.get('conf')
         description = None
         imagesRef = None
         files = request.files
@@ -58,7 +59,8 @@ class UploadCampaign(Resource):
             imagesRef = generateZipImages(images)
         
         files = request.files.getlist('files')
-        insertIntoDatabase(name, date, description, imagesRef, files)
+        conf = request.files.get('conf')
+        insertIntoDatabase(name, date, description, imagesRef, files, conf)
     
 class DeteteCampaignById(Resource):
     def delete(self, campaignId):

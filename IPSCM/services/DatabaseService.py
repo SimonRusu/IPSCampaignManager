@@ -7,13 +7,14 @@ from controllers.BeaconBleSignalCrud import createBeaconBleSignal
 from controllers.CaptureCrud import createCapture
 from controllers.CampaignCrud import createCampaign, getLastInsertedCampaignId
 from controllers.CampaignSequenceCrud import createCampaignSequence
+from services.ConfigReaderService import readBLEConf
 
-def insertIntoDatabase(name, date, description, imagesRef, files):
-
-    filename = secure_filename("auxDB.sqlite3")
+def insertIntoDatabase(name, date, description, imagesRef, files, conf):
     relatedCampaignId = None
     images = None
 
+    filename = secure_filename("auxDB.sqlite3")
+    confParams = readBLEConf(conf)
 
     for i,data in enumerate(files):
         files[i].save(os.path.join('db', filename))
@@ -25,7 +26,7 @@ def insertIntoDatabase(name, date, description, imagesRef, files):
 
         createCampaignSequence()
         createDongleReceptor()
-        createCampaign(name, date, description, images, relatedCampaignId)
+        createCampaign(name, date, description, images, relatedCampaignId, confParams)
     
         lastCampaignId = getLastInsertedCampaignId()
         beaconConfName = getNextBeaconConfName(lastCampaignId, lastBeaconConfName)

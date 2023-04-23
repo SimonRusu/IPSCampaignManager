@@ -22,10 +22,12 @@ class Campaign(db.Model):
     Name = db.Column(db.String(32), nullable=False)
     Description = db.Column(db.String(500))
     Date = db.Column(db.DateTime, nullable=False)
-    Images_ref = db.Column(db.String(50))
-    Manufacturer = db.Column(db.String(50))
-    Chipset = db.Column(db.String(50))
-    Bluetooth_protocol = db.Column(db.String(50))
+    Images_ref = db.Column(db.String(32))
+    Duration = db.Column(db.String(32))
+    Rotations = db.Column(db.String(32))
+    Manufacturer = db.Column(db.String(32))
+    Chipset = db.Column(db.String(32))
+    Bluetooth_protocol = db.Column(db.String(32))
 
 
     def serialize(self):
@@ -38,6 +40,8 @@ class Campaign(db.Model):
             'Description': self.Description,
             'Date': self.Date,
             'Images_ref': self.Images_ref,
+            'Duration': self.Duration,
+            'Rotations': self.Rotations,
             'Manufacturer': self.Manufacturer,
             'Chipset': self.Chipset,
             'Bluetooth_protocol': self.Bluetooth_protocol,

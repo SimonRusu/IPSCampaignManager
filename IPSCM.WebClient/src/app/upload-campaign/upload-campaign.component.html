@@ -51,7 +51,7 @@
         </span>
         <span class="file-name" [ngClass]="{'has-background-warning has-text-dark': !imageUploaded, 'has-background-primary-dark has-text-white': imageUploaded, 'vertical-center': !imageUploaded}">{{imageNames.length ? imageNames.join('\n') : "No hay ningún archivo cargado"}}</span>
       </label>
-</div>
+    </div>
 
     <div class="file has-name is-boxed is-centered mt-2 p-1">
       <label class="file-label" (dragover)="onDragOver($event, 'file')" (dragleave)="onDragLeave($event, 'file') "(drop)="onDrop($event, 'file')"
@@ -71,8 +71,27 @@
         <span class="file-name" [ngClass]="{'has-background-warning has-text-dark': !secondFileUploaded, 'has-background-primary-dark has-text-white': secondFileUploaded, 'vertical-center': !firstFileUploaded}">{{fileNames.length ? fileNames.join('\n') : "No hay ningún archivo cargado"}}</span>
       </label>
     </div>
+
+    <div class="file has-name is-boxed is-centered mt-2 p-1">
+      <label class="file-label" (dragover)="onDragOver($event, 'conf')" (dragleave)="onDragLeave($event, 'conf') "(drop)="onDrop($event, 'conf')"
+      [ngClass]="{'dragging': isDraggingConf}">
+        <input  class="file-input" type="file" name="resume" accept=".conf" multiple (change)="onSelected($event, 'conf')" >
+        <span class="file-cta">
+          <span class="file-icon is-centered ">
+              <i class="fa-solid fa-file fa-2xl fa-fade mt-5"></i>
+          </span>
+          <span class="file-label mt-5">
+            Arrastra o selecciona un fichero de configuración Robomap
+          </span>
+          <span class="file-label">
+            (controladorModule/Config.conf)
+          </span>
+        </span>
+        <span class="file-name" [ngClass]="{'has-background-warning has-text-dark': !confUploaded, 'has-background-primary-dark has-text-white': confUploaded}">{{confNames.length ? confNames.join('\n') : "No hay ningún archivo cargado"}}</span>
+      </label>
+    </div>
   </div>
   <div class="container has-text-centered mt-6">
-    <button class="button is-link is-rounded" (click)="uploadCampaign()" [disabled]="!secondFileUploaded || !uploadForm.valid">Guardar campaña</button>
+    <button class="button is-link is-rounded" (click)="uploadCampaign()" [disabled]="!secondFileUploaded || !uploadForm.valid || !confUploaded">Guardar campaña</button>
   </div>
 </form>
