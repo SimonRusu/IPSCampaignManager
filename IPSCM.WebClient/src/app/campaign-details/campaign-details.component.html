@@ -34,7 +34,7 @@
     <ul>  
       <li [ngClass]="{'opt-selected': opt == 1}">Capturas tomadas: <a (click)="optionSelected('captures')">{{selectedCamaign?.campaignSequence.Capture}}</a></li> 
       <li [ngClass]="{'opt-selected': opt == 2}">Señales de Beacon BLE: <a (click)="optionSelected('beacon_signal')">{{selectedCamaign?.campaignSequence.Beacon_BLE_Signal}}</a></li>
-      <li [ngClass]="{'opt-selected': opt == 3}">Cofiguraciones de Beacon: <a (click)="optionSelected('beacon_config')">{{selectedCamaign?.campaignSequence.Beacon_configuration}}</a></li>
+      <li [ngClass]="{'opt-selected': opt == 3}">Cofiguraciones de Beacons: <a (click)="optionSelected('beacon_config')">{{this.campaignConfigs}}</a></li>
       <li>Dongle utilizado: {{selectedCamaign?.dongleName}}</li>
     </ul>
   </div>
@@ -44,7 +44,7 @@
 <hr class="is-divider has-background-grey-lighter">
 
 
-<div #opt2 class="table-container p-5" [hidden]="opt !== 1">
+<div #opt1 class="table-container p-5" [hidden]="opt !== 1">
   <table mat-table [dataSource]="capturesDataSource" class="table is-fullwidth" #capturesTable>
 
     <ng-container matColumnDef="{{column}}" *ngFor="let column of capturesColumns">
@@ -59,7 +59,7 @@
   <mat-paginator #capturesPaginator [pageSizeOptions]="pageSizes" [pageSize]="defaultPageSize"  showFirstLastButtons ></mat-paginator>
 </div>
 
-<div #opt1 class="table-container p-5" [hidden]="opt !== 2">
+<div #opt2 class="table-container p-5" [hidden]="opt !== 2">
   <table mat-table [dataSource]="signalsDataSource" class="table is-fullwidth" #signalsTable>
 
     <ng-container matColumnDef="{{column}}" *ngFor="let column of signalsColumns">
@@ -73,36 +73,18 @@
 
   <mat-paginator #signalsPaginator [pageSizeOptions]="pageSizes" [pageSize]="defaultPageSize" showFirstLastButtons ></mat-paginator>
 </div>
-  
 
+<div #opt3 class="table-container p-5" [hidden]="opt !== 3">
+  <table mat-table [dataSource]="configsDataSource" class="table is-fullwidth" #configsTable>
 
-  
-  <!--<ng-container *ngIf="opt === 3; then opt3">
-  </ng-container>
-<ng-template #opt3>
-    <div class="table-container p-5">
-        <table class="table is-fullwidth">
-          <thead>
-          <tr>
-            <th>Id</th>
-            <th>Mac</th>
-            <th>Potencia</th>
-            <th>Potencia calibrada</th>
-            <th>Frecuencia de actualización</th>
-            <th>Identificador</th>
-          </tr>
-          </thead>
-          <tbody>
-          <tr *ngFor="let conf of beaconConfs">
-            <td>{{conf.Id}}</td>
-            <td>{{conf.Mac}}</td>
-            <td>{{conf.Power}}</td>
-            <td>{{conf.Calibrated_power}}</td>
-            <td>{{conf.Update_frequency}}</td>
-            <td>{{conf.Identificator}}</td>
-          </tr>
-          </tbody>
-        </table>
-      </div>
-  </ng-template>-->
+    <ng-container matColumnDef="{{column}}" *ngFor="let column of configsColumns">
+      <th mat-header-cell *matHeaderCellDef>{{column}}</th>
+      <td mat-cell *matCellDef="let element">{{element[column]}}</td>
+    </ng-container>
 
+    <tr mat-header-row *matHeaderRowDef="configsColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: configsColumns;"></tr>
+  </table>
+
+  <mat-paginator #configsPaginator [pageSizeOptions]="pageSizes" [pageSize]="defaultPageSize" showFirstLastButtons ></mat-paginator>
+</div>

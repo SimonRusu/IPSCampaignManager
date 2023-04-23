@@ -23,6 +23,7 @@ export class CampaignDetailsComponent {
   campaign: any;
   campaignDetails: any;
   relatedCampaignDetails: any;
+  campaignConfigs: any;
   selectedCamaign: any;
   dongleName: any;
   sequence: any;
@@ -36,14 +37,19 @@ export class CampaignDetailsComponent {
   pageSizes = [10, 25, 50, 100];
   capturesDataSource = new MatTableDataSource<any>([]);
   signalsDataSource = new MatTableDataSource<any>([]);
+  configsDataSource = new MatTableDataSource<any>([]);
   capturesPageIndex: number = 0;
   signalsPageIndex: number = 0;
+  configsPageIndex: number = 0;
   capturesColumns = ['Id', 'Date', 'Light', 'Temperature', 'Relative_humidity', 'Absolute_humidity', 'Position_x', 'Position_y', 'Position_z', 'Platform_angle', 'Dongle_rotation'];
   signalsColumns = ['Id', 'N_reading', 'Date_hour', 'Mac', 'Pack_size', 'Channel', 'RSSI', 'PDU_type', 'CRC', 'Protocol', 'Identificator']
+  configsColumns = ['Id', 'Mac', 'Power', 'Calibrated_power', 'Update_frequency', 'Identificator']
   @ViewChild('capturesPaginator') capturesPaginator?: MatPaginator;
   @ViewChild('signalsPaginator') signalsPaginator?: MatPaginator;
+  @ViewChild('configsPaginator') configsPaginator?: MatPaginator;
   @ViewChild('capturesTable') capturesTable: MatTable<any> | undefined;
   @ViewChild('signalsTable') signalsTable: MatTable<any> | undefined;
+  @ViewChild('configsTable') configsTable: MatTable<any> | undefined;
 
   customOptions: OwlOptions = {
     loop: true,
@@ -104,6 +110,8 @@ export class CampaignDetailsComponent {
       this.campaignDetails = this.selectedCamaign = res
       this.capturesDataSource.data = this.campaignDetails.captures;
       this.signalsDataSource.data = this.campaignDetails.signals;
+      this.configsDataSource.data = this.campaignDetails.configs;
+      this.campaignConfigs = this.campaignDetails.configs.length;
     })
       
     this.relatedCampaignData().subscribe(res => {
@@ -119,6 +127,9 @@ export class CampaignDetailsComponent {
     if (this.signalsPaginator) {
       this.signalsDataSource.paginator = this.signalsPaginator;
     }
+    if (this.configsPaginator) {
+      this.configsDataSource.paginator = this.configsPaginator;
+    }
   }
 
   campaignData(): Observable<any> {
@@ -126,14 +137,16 @@ export class CampaignDetailsComponent {
         this.apiService.getDongleName(this.campaign.Id_dongle),
         this.apiService.getCampaignSequence(this.campaign.Id_campaign_sequence),
         this.apiService.getCaptures(this.campaign.Id),
-        this.apiService.getSignals(this.campaign.Id)
+        this.apiService.getSignals(this.campaign.Id),
+        this.apiService.getConfigs(this.campaign.Id),
     ]).pipe(
-        map(([dongleName, campaignSequence, captures, signals]) => {
+        map(([dongleName, campaignSequence, captures, signals, configs]) => {
             return {
                 dongleName,
                 campaignSequence,
                 captures,
-                signals
+                signals,
+                configs
             };
         })
       );
@@ -146,13 +159,15 @@ export class CampaignDetailsComponent {
           this.apiService.getDongleName(relatedCampaign.Id_dongle),
           this.apiService.getCampaignSequence(relatedCampaign.Id_campaign_sequence),
           this.apiService.getCaptures(relatedCampaign.Id),
-          this.apiService.getSignals(relatedCampaign.Id)
+          this.apiService.getSignals(relatedCampaign.Id),
+          this.apiService.getConfigs(relatedCampaign.Id)
         ]).pipe(
-          map(([dongleName, campaignSequence, captures, signals]) => {
+          map(([dongleName, campaignSequence, captures, signals, configs]) => {
             relatedCampaign.dongleName = dongleName;
             relatedCampaign.campaignSequence = campaignSequence;
             relatedCampaign.captures = captures;
             relatedCampaign.signals = signals;
+            relatedCampaign.configs = configs;
             return relatedCampaign;
           })
         );
@@ -165,10 +180,14 @@ export class CampaignDetailsComponent {
       this.selectedCamaign = this.campaignDetails;
       this.capturesDataSource.data = this.campaignDetails.captures;
       this.signalsDataSource.data = this.campaignDetails.signals;
+      this.configsDataSource.data = this.campaignDetails.configs;
+      this.campaignConfigs = this.campaignDetails.configs.length;
     }else{
       this.selectedCamaign = this.relatedCampaignDetails;
       this.capturesDataSource.data = this.relatedCampaignDetails.captures;
       this.signalsDataSource.data = this.relatedCampaignDetails.signals;
+      this.configsDataSource.data = this.relatedCampaignDetails.configs;
+      this.campaignConfigs = this.relatedCampaignDetails.configs.length;
     }
 
     if (this.capturesTable) {
@@ -176,6 +195,9 @@ export class CampaignDetailsComponent {
     }
     if (this.signalsTable) {
       this.signalsTable.renderRows();
+    }
+    if (this.configsTable) {
+      this.configsTable.renderRows();
     }
   }
 

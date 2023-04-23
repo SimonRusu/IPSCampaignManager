@@ -2,7 +2,6 @@ from flask import jsonify
 from datetime import datetime
 from config import db
 from controllers.BeaconBleSignalCrud import deleteBeaconBleSignalByCampaignId
-from controllers.BeaconConfigurationCrud import deleteBeaconConfigurationByCampaignId
 from models.DongleReceptor import DongleReceptor, DongleReceptorAux
 from models.Campaign import Campaign
 from models.CampaignSequence import CampaignSequence
@@ -58,9 +57,6 @@ def deleteCampaignById(campaignId):
     if campaign:
         deleteCampaignSequenceByCampaignId(campaignId)
         deleteCampaignSequenceByCampaignId(relatedCampaign.Id)
-
-        deleteBeaconConfigurationByCampaignId(campaignId)
-        deleteBeaconConfigurationByCampaignId(relatedCampaign.Id)
 
         deleteBeaconBleSignalByCampaignId(campaignId)
         deleteBeaconBleSignalByCampaignId(relatedCampaign.Id)
