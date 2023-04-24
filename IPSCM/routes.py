@@ -47,13 +47,12 @@ class UploadCampaign(Resource):
         name = request.form.get('name')
         date = request.form.get('date')
         conf = request.form.get('conf')
-        description = None
         imagesRef = None
-        files = request.files
 
-        if 'description' in request.form:
-            description = request.form.get('description')
-
+        description = request.form.get('description')
+        if description=='null':
+            description = "No hay descripción"
+        
         if 'images' in request.files:
             images = request.files.getlist('images')
             imagesRef = generateZipImages(images)

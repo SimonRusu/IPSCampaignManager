@@ -1,23 +1,44 @@
-<div class="card column m-4">
+<div class="card column mb-5">
     <div class="content has-background-white-bis">
-        <div class="columns">
+        <div class="columns wide-card is-clipped">
             <div class="column image card-image is-2">
-                <img [src]="campaignImage ? campaignImage : 'assets/img/campaignImage.png'" alt="Campaign Image">
+                <img [src]="campaignImages.length > 0 ? campaignImages[0] : 'assets/img/campaignImage.png'" alt="Campaign Image">
             </div>
             <div class="column is-2">
-                <div class="card-header-title is-clipped has-text-centered">
+                <div class="has-text-centered has-text-weight-bold">
                     {{ campaign.Name }}
                 </div>
                 <hr id="header-divider" class="is-divider has-background-grey-lighter">
                 <div class=" has-text-centered has-text-grey">
                     {{ campaign.Date| date: 'dd-MM-yyyy'  }}
                 </div>
+                <div class="mt-4 ml-3 has-text-left has-text-grey">
+                    {{ campaign.Description  }}
+                </div>
             </div>
-            <div class="column is-offset-2 mt-5">
-                <button type="checkbox">x</button> Fingerprinting
-                <button type="checkbox">x</button> Fingerprinting
-                <button type="checkbox">x</button> Fingerprinting
-                <button type="checkbox">x</button> Fingerprinting
+            <div class="column is-offset-1 mt-5">
+                <section class="example-section">
+                    <span class="example-list-section">
+                      <mat-checkbox class="example-margin"
+                                    [checked]="allComplete"
+                                    [color]="task.color"
+                                    [indeterminate]="someComplete()"
+                                    (change)="setAll($event.checked)">
+                        {{task.name}}
+                      </mat-checkbox>
+                    </span>
+                    <span class="example-list-section">
+                      <ul>
+                        <a *ngFor="let subtask of task.subtasks">
+                          <mat-checkbox [(ngModel)]="subtask.completed"
+                                        [color]="subtask.color"
+                                        (ngModelChange)="updateAllComplete()">
+                            {{subtask.name}}
+                          </mat-checkbox>
+                        </a>
+                      </ul>
+                    </span>
+                  </section>
             </div>
         </div>
     </div>

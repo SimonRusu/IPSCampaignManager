@@ -7,6 +7,9 @@
   <div class="column is-fullwidth">
     <div class="media-content">
       <p class="title is-4">{{ campaign.Name }}</p>
+      <div class="mb-5 has-text-left has-text-grey">
+        {{ campaign.Date| date: 'dd-MM-yyyy'  }}
+    </div>
       <p class="subtitle is-6">{{ campaign.Description}}</p>
     </div>
   </div>

@@ -9,6 +9,7 @@ import { toArray } from 'rxjs';
 })
 export class CampaignsComponent {
   campaigns: any = [];
+  p: number = 1;
 
   constructor(private apiService: ApiService){
 

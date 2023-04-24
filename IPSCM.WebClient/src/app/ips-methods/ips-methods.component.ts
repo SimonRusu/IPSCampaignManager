@@ -8,6 +8,7 @@ import { ApiService } from '../services/api.service';
 })
 export class IpsMethodsComponent {
   campaigns: any = [];
+  p: number = 1;
 
   constructor(private apiService: ApiService){
 

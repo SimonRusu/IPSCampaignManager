@@ -162,7 +162,6 @@ export class UploadCampaignComponent {
     }
     else{
       this.isDraggingConf = false;
-      if (files.length === 1) {
         var checkFile = files[0];
        
 
@@ -171,19 +170,16 @@ export class UploadCampaignComponent {
           return
         } 
         else {
-          if (this.firstSelectedConf == null)
             this.firstSelectedConf = checkFile;
 
           if (this.firstSelectedConf?.name) {
 
-            if(this.confNames[0] == null){
 
               this.confUploaded = true;
               this.confNames[0] = this.firstSelectedConf?.name
-            }
+            
           }
         }
-      }
     }
   }
 

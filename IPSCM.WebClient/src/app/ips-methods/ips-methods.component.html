@@ -1,3 +1,11 @@
-<div class=" is-centered is-multiline p-6">
-    <app-ips-campaign-card *ngFor="let campaign of campaigns" [campaign]="campaign"></app-ips-campaign-card>
+<div class=" is-centered is-multiline pl-6 pt-6">
+    <app-ips-campaign-card *ngFor="let campaign of campaigns | paginate: { itemsPerPage: 3, currentPage: p }" [campaign]="campaign"></app-ips-campaign-card>
+</div>
+
+<div class="container has-text-centered pt-3">
+    <button class="button is-link is-rounded">Guardar cambios</button>
+</div>
+
+<div class="column pagination is-centered" role="navigation" aria-label="pagination">
+    <pagination-controls (pageChange)="p = $event" previousLabel="Anterior" nextLabel="Siguiente"></pagination-controls>
 </div>
