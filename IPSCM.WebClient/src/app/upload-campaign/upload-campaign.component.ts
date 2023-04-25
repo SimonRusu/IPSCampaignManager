@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ApiService } from '../services/api.service';
+import { Router } from '@angular/router';
+import { catchError, of, tap } from 'rxjs';
 
 
 
@@ -17,7 +19,8 @@ export class UploadCampaignComponent {
   constructor(
     private toastr: ToastrService, 
     private fb: FormBuilder, 
-    private apiService: ApiService)
+    private apiService: ApiService,
+    private router: Router)
   {
     this.uploadForm = this.fb.group({
       name: ['', [Validators.required]],
@@ -205,8 +208,26 @@ export class UploadCampaignComponent {
     if (this.firstSelectedConf){
       formData.append('conf', this.firstSelectedConf);
     }
-
+    this.router.navigate(['/campaigns']);
     this.toastr.warning('Conectando con el servidor...', 'Operación en curso');
-    this.apiService.uploadCampaign(formData).subscribe();
+    this.apiService.uploadCampaign(formData).pipe(
+      tap(response => {
+        setTimeout(() => {
+          this.toastr.clear();
+          this.toastr.success('¡La campaña se ha guardado correctamente!', 'Operación completada', { timeOut: 2000 });
+          this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+            this.router.navigate(['/campaigns'])
+          });
+        }, 0);
+      }),
+      catchError(error => {
+        setTimeout(() => {
+          this.toastr.clear();
+          this.toastr.error('Ocurrió un error al cargar la campaña', 'Operación no completada', { timeOut: 2000 });
+        }, 0);
+        return of(null);
+      })
+    ).subscribe();
+    
   }
 }

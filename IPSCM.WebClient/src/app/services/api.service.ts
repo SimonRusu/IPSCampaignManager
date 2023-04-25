@@ -1,8 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, catchError, map, of, tap } from 'rxjs';
-import { ToastrService } from 'ngx-toastr';
-import { Router } from '@angular/router';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -11,9 +9,7 @@ export class ApiService {
 
   private baseUrl = 'http://localhost:5000/api/';
 
-  constructor(private http: HttpClient, 
-    private toastr: ToastrService,
-    private router: Router) {}
+  constructor(private http: HttpClient) {}
 
   getCampaigns(){
     return this.http.get(this.baseUrl+ "campaigns");
@@ -48,24 +44,10 @@ export class ApiService {
   }
 
   uploadCampaign(formData: FormData): Observable<any> {
-    return this.http.post(this.baseUrl + 'upload_campaign', formData).pipe(
-    tap(() => {
-        this.toastr.success('¡La campaña se ha guardado correctamente!', 'Operación completada');
-        this.router.navigate(['/campaigns']);
-      }),
-      catchError(() => {
-        this.toastr.error('El formato de la base de datos no es compatible', 'Operación no completada');
-        return of(null);
-      })
-    );
+    return this.http.post(this.baseUrl + 'upload_campaign', formData);
   }
 
   deleteCampaignById(id: any){
     return this.http.delete(this.baseUrl + `deleteCampaign/${id}`);
   }
-
-
-
-
-  
 }

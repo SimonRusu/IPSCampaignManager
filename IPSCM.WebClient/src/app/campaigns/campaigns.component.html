@@ -1,7 +1,17 @@
 <div class="columns is-centered is-multiline p-6">
     <app-campaign-card *ngFor="let campaign of campaigns | paginate: { itemsPerPage: 10, currentPage: p }" [campaign]="campaign"></app-campaign-card>
 </div>
-<div class="column pagination is-centered" role="navigation" aria-label="pagination">
+
+
+<div *ngIf = "campaigns.length > 0; else noCampaigns" class="column pagination is-centered" role="navigation" aria-label="pagination">
     <pagination-controls (pageChange)="p = $event" previousLabel="Anterior" nextLabel="Siguiente"></pagination-controls>
 </div>
 
+<ng-template #noCampaigns>
+    <div class="container is-flex is-align-items-center is-justify-content-center">
+      <div class="notification has-text-grey-light has-text-centered box is-rounded">
+        <p class="is-size-4">No hay ninguna campaña disponible</p>
+      </div>
+    </div>
+  </ng-template>
+  

@@ -52,7 +52,7 @@ import { NgxPaginationModule } from 'ngx-pagination';
     ReactiveFormsModule,
     HttpClientModule,
     ToastrModule.forRoot({
-      timeOut: 4000,
+      timeOut: 0,
       positionClass: 'toast-bottom-center'
     }),
     BrowserAnimationsModule,

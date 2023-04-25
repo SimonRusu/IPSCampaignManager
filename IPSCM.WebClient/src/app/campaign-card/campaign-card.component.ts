@@ -56,13 +56,13 @@ export class CampaignCardComponent {
       if(res){
         this.apiService.deleteCampaignById(this.campaign.Id).pipe(
           tap(() => {
-              this.toastr.success('¡La campaña se ha borrado correctamente!', 'Operación completada');
+              this.toastr.success('¡La campaña se ha borrado correctamente!', 'Operación completada', { timeOut: 2000 });
               this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
                 this.router.navigate(['/campaigns'])
               });
             }),
             catchError(() => {
-              this.toastr.error('Ha ocurrido un error durante el borrado', 'Operación no completada');
+              this.toastr.error('Ha ocurrido un error durante el borrado', 'Operación no completada', { timeOut: 2000 });
               return of(null);
             })
           ).subscribe();
