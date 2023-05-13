@@ -47,7 +47,7 @@
             Arrastra o selecciona una pareja de campañas de datos
           </span>
           <span class="file-label">
-            (1º Puntos Aleatorios.  2º Puntos de Referencia.)
+            (1º P. Aleatorios.  2º P. Referencia.)
           </span>
         </span>
         <span class="file-name" [ngClass]="{'has-background-warning has-text-dark': !secondFileUploaded, 'has-background-primary-dark has-text-white': secondFileUploaded, 'vertical-center': !firstFileUploaded}">{{fileNames.length ? fileNames.join('\n') : "No hay ningún archivo cargado"}}</span>
@@ -66,7 +66,7 @@
             Arrastra o selecciona los 3 ficheros de configuración Robomap
           </span>
           <span class="file-label">
-            (1º Config. 2º Puntos Aleatorios. 3º Puntos de Referencia.)
+            (1º Config. 2º P. Aleatorios. 3º P. Referencia.)
           </span>
         </span>
         <span class="file-name" [ngClass]="{'has-background-warning has-text-dark': !allConfsUploaded, 'has-background-primary-dark has-text-white': allConfsUploaded, 'vertical-center': !confUploaded }">{{confNames.length ? confNames.join('\n') : "No hay ningún archivo cargado"}}</span>
