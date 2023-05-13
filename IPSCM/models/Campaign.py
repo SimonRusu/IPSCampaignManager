@@ -25,6 +25,8 @@ class Campaign(db.Model):
     Images_ref = db.Column(db.String(32))
     Duration = db.Column(db.String(32))
     Rotations = db.Column(db.String(32))
+    Ale_points = db.Column(db.String(1000))
+    Ref_points = db.Column(db.String(1000))
     Manufacturer = db.Column(db.String(32))
     Chipset = db.Column(db.String(32))
     Bluetooth_protocol = db.Column(db.String(32))
@@ -42,6 +44,8 @@ class Campaign(db.Model):
             'Images_ref': self.Images_ref,
             'Duration': self.Duration,
             'Rotations': self.Rotations,
+            'Ale_points': self.Ale_points,
+            'Ref_points': self.Ref_points,
             'Manufacturer': self.Manufacturer,
             'Chipset': self.Chipset,
             'Bluetooth_protocol': self.Bluetooth_protocol,

@@ -34,25 +34,7 @@
   </div>
 
   <div class="columns is-centered">
-    <div class="file has-name is-boxed is-centered mt-2 p-1">
-      <label class="file-label" (dragover)="onDragOver($event, 'image')" (dragleave)="onDragLeave($event, 'image') "(drop)="onDrop($event, 'image')"
-        [ngClass]="{'dragging': isDraggingImage}">
-        <input class="file-input" type="file" name="images" accept="image/*" multiple (change)="onSelected($event, 'image')">
-        <span class="file-cta">
-          <span class="file-icon is-centered ">
-            <i class="fa-solid fa-image fa-2xl fa-fade mt-5"></i>
-          </span>
-          <span class="file-label mt-5">
-            Arrastra o selecciona varias imágenes de la campaña
-          </span>
-          <span class="file-label">
-            (Opcional)
-          </span>
-        </span>
-        <span class="file-name" [ngClass]="{'has-background-warning has-text-dark': !imageUploaded, 'has-background-primary-dark has-text-white': imageUploaded, 'vertical-center': !imageUploaded}">{{imageNames.length ? imageNames.join('\n') : "No hay ningún archivo cargado"}}</span>
-      </label>
-    </div>
-
+    
     <div class="file has-name is-boxed is-centered mt-2 p-1">
       <label class="file-label" (dragover)="onDragOver($event, 'file')" (dragleave)="onDragLeave($event, 'file') "(drop)="onDrop($event, 'file')"
       [ngClass]="{'dragging': isDraggingFile}">
@@ -71,26 +53,46 @@
         <span class="file-name" [ngClass]="{'has-background-warning has-text-dark': !secondFileUploaded, 'has-background-primary-dark has-text-white': secondFileUploaded, 'vertical-center': !firstFileUploaded}">{{fileNames.length ? fileNames.join('\n') : "No hay ningún archivo cargado"}}</span>
       </label>
     </div>
+
+    <div class="file has-name is-boxed is-centered mt-2 p-1">
+      <label class="file-label" (dragover)="onDragOver($event, 'conf')" (dragleave)="onDragLeave($event, 'conf') "(drop)="onDrop($event, 'conf')"
+      [ngClass]="{'dragging': isDraggingConf}">
+        <input  class="file-input" type="file" name="resume" accept=".conf" multiple (change)="onSelected($event, 'conf')" >
+        <span class="file-cta">
+          <span class="file-icon is-centered ">
+              <i class="fa-solid fa-file fa-2xl fa-fade mt-5"></i>
+          </span>
+          <span class="file-label mt-5">
+            Arrastra o selecciona los 3 ficheros de configuración Robomap
+          </span>
+          <span class="file-label">
+            (1º Config. 2º Puntos Aleatorios. 3º Puntos de Referencia.)
+          </span>
+        </span>
+        <span class="file-name" [ngClass]="{'has-background-warning has-text-dark': !allConfsUploaded, 'has-background-primary-dark has-text-white': allConfsUploaded, 'vertical-center': !confUploaded }">{{confNames.length ? confNames.join('\n') : "No hay ningún archivo cargado"}}</span>
+      </label>
+    </div>
   </div>
+
   <div class="file has-name is-boxed is-centered mt-2 p-1">
-    <label class="file-label" (dragover)="onDragOver($event, 'conf')" (dragleave)="onDragLeave($event, 'conf') "(drop)="onDrop($event, 'conf')"
-    [ngClass]="{'dragging': isDraggingConf}">
-      <input  class="file-input" type="file" name="resume" accept=".conf" multiple (change)="onSelected($event, 'conf')" >
+    <label class="file-label" (dragover)="onDragOver($event, 'image')" (dragleave)="onDragLeave($event, 'image') "(drop)="onDrop($event, 'image')"
+      [ngClass]="{'dragging': isDraggingImage}">
+      <input class="file-input" type="file" name="images" accept="image/*" multiple (change)="onSelected($event, 'image')">
       <span class="file-cta">
         <span class="file-icon is-centered ">
-            <i class="fa-solid fa-file fa-2xl fa-fade mt-5"></i>
+          <i class="fa-solid fa-image fa-2xl fa-fade mt-5"></i>
         </span>
         <span class="file-label mt-5">
-          Arrastra o selecciona un fichero de configuración Robomap
+          Arrastra o selecciona varias imágenes de la campaña
         </span>
         <span class="file-label">
-          (controladorModule/Config.conf)
+          (Opcional)
         </span>
       </span>
-      <span class="file-name" [ngClass]="{'has-background-warning has-text-dark': !confUploaded, 'has-background-primary-dark has-text-white': confUploaded, 'vertical-center': !confUploaded }">{{confNames.length ? confNames.join('\n') : "No hay ningún archivo cargado"}}</span>
+      <span class="file-name" [ngClass]="{'has-background-warning has-text-dark': !imageUploaded, 'has-background-primary-dark has-text-white': imageUploaded, 'vertical-center': !imageUploaded}">{{imageNames.length ? imageNames.join('\n') : "No hay ningún archivo cargado"}}</span>
     </label>
   </div>
   <div class="container has-text-centered mt-6">
-    <button class="button is-link is-rounded" (click)="uploadCampaign()" [disabled]="!secondFileUploaded || !uploadForm.valid || !confUploaded">Guardar campaña</button>
+    <button class="button is-link is-rounded" (click)="uploadCampaign()" [disabled]="!secondFileUploaded || !uploadForm.valid || !allConfsUploaded">Guardar campaña</button>
   </div>
 </form>

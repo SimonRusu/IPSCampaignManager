@@ -58,8 +58,9 @@ class UploadCampaign(Resource):
             imagesRef = generateZipImages(images)
         
         files = request.files.getlist('files')
-        conf = request.files.get('conf')
-        insertIntoDatabase(name, date, description, imagesRef, files, conf)
+        confs = request.files.getlist('confs')
+
+        insertIntoDatabase(name, date, description, imagesRef, files, confs)
     
 class DeteteCampaignById(Resource):
     def delete(self, campaignId):

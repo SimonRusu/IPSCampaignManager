@@ -31,12 +31,13 @@ export class UploadCampaignComponent {
   
   firstSelectedFile: File | null = null;
   secondSelectedFile: File | null = null;
-  firstSelectedConf: File | null = null;
+  selectedConfFiles: File[] = [];
   selectedImages: File[] = [];
   firstFileUploaded = false;
   secondFileUploaded = false;
   imageUploaded = false;
   confUploaded = false;
+  allConfsUploaded = false;
   fileNames: string[] = [];
   imageNames: string[] = [];
   confNames: string[] = [];
@@ -160,27 +161,34 @@ export class UploadCampaignComponent {
         }
       }
       else
-        this.toastr.error('Solo se permite cargar dos ficheros de forma simultánea', 'Limite de ficheros excedido');
+        this.toastr.error('Solo se permiten cargar dos ficheros de forma simultánea', 'Limite de ficheros excedido');
         return;
     }
     else{
       this.isDraggingConf = false;
-        var checkFile = files[0];
-       
+      console.log(this.selectedConfFiles.length);
+      if (files.length > 3 || this.selectedConfFiles.length == 3) {
+        this.toastr.error('Solo se permiten cargar tres ficheros de forma simultánea', 'Limite de ficheros excedido');
+        console.log(this.allConfsUploaded);
+        console.log(this.confUploaded);
+        return
+      }
 
-        if (checkFile && !this.confAllowedExtensions.exec(checkFile.name)) {
-          this.toastr.error('El archivo no posee un formato válido (CONF)', 'Error de formato');
-          return
-        } 
-        else {
-            this.firstSelectedConf = checkFile;
+        for(let i = 0; i < files.length; i++){
+          var checkFile = files[i];
 
-          if (this.firstSelectedConf?.name) {
-
-
+          if (checkFile && !this.confAllowedExtensions.exec(checkFile.name)) {
+            this.toastr.error('El archivo no posee un formato válido (CONF)', 'Error de formato');
+            return
+          } 
+          else {
               this.confUploaded = true;
-              this.confNames[0] = this.firstSelectedConf?.name
-            
+              this.selectedConfFiles?.push(checkFile);
+              this.confNames?.push(checkFile.name);
+              if (this.selectedConfFiles.length == 3) {
+                this.allConfsUploaded = true;
+              }
+
           }
         }
     }
@@ -205,8 +213,10 @@ export class UploadCampaignComponent {
       formData.append('files', this.secondSelectedFile);
     }
 
-    if (this.firstSelectedConf){
-      formData.append('conf', this.firstSelectedConf);
+    if (this.selectedConfFiles){
+      for (let i = 0; i < this.selectedConfFiles.length; i++) {
+        formData.append('confs', this.selectedConfFiles[i]);
+      }
     }
     this.router.navigate(['/campaigns']);
     this.toastr.warning('Conectando con el servidor...', 'Operación en curso');

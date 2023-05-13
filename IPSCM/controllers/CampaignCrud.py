@@ -11,7 +11,7 @@ from sqlalchemy import desc
 from services.ImageService import deleteZipImages, sendZipImages
 
 
-def createCampaign(name, date, description, images, relatedCampaignId,confParams):
+def createCampaign(name, date, description, images, relatedCampaignId, campaignParams,alePointsJson, refPointsJson):
     db.create_all()
     auxDongleName = DongleReceptorAux().query.first().Name
     dongleId = DongleReceptor().query.filter_by(Name=auxDongleName).first().Id
@@ -26,8 +26,10 @@ def createCampaign(name, date, description, images, relatedCampaignId,confParams
     campaign.Description = description
     campaign.Date = formattedDate
     campaign.Images_ref = images
-    campaign.Duration = confParams[0]
-    campaign.Rotations = confParams[1]
+    campaign.Duration = campaignParams[0]
+    campaign.Rotations = campaignParams[1]
+    campaign.Ale_points = alePointsJson
+    campaign.Ref_points = refPointsJson
 
     db.session.add(campaign)
 
