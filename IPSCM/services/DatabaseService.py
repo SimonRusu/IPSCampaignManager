@@ -41,13 +41,18 @@ def insertIntoDatabase(name, date, description, imagesRef, files, confs):
 
 def getNextBeaconConfName(lastCampaignId, lastBeaconConfName):
     if lastBeaconConfName is not None:
-        beaconConf = lastBeaconConfName[:-1]
+        beaconConf = lastBeaconConfName.split('_')[:-1]
         try:
-            index = int(lastBeaconConfName[-1])
-            index +=1
+            index = int(lastBeaconConfName.split('_')[-1])
+            index += 1
+            if index >= 10:
+                beaconConf.append(str(index))
+            else:
+                beaconConf.append('0' + str(index))
         except:
             index = lastCampaignId
+            beaconConf.append('0' + str(index))
         
-        return beaconConf + str(index)
+        return '_'.join(beaconConf)
     else:
-        return "___Configuración___0"
+        return "___Configuración___00"

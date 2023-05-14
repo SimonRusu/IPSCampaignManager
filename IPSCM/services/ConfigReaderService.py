@@ -1,12 +1,13 @@
 import configparser
 import json
-config = configparser.ConfigParser()
+
 
 def readBLEConf(file):
     values = []
 
     content = file.read()
     content = content.decode('utf-8')
+    config = configparser.ConfigParser()
     config.read_string(content)
     duration = config.get('BLE', 'Duration')
     rotations = config.get('Orientator', 'Rotations')
@@ -19,6 +20,7 @@ def readBLEConf(file):
 def readAlePointsConf(file):
     content = file.read()
     content = content.decode('utf-8')
+    config = configparser.ConfigParser()
     config.read_string(content)
 
     points = {}
@@ -37,6 +39,7 @@ def readAlePointsConf(file):
 def readRefPointsConf(file):
     content = file.read()
     content = content.decode('utf-8')
+    config = configparser.ConfigParser()
     config.read_string(content)
 
     points = {}

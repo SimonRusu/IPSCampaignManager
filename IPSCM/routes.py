@@ -46,7 +46,6 @@ class UploadCampaign(Resource):
     def post(self):
         name = request.form.get('name')
         date = request.form.get('date')
-        conf = request.form.get('conf')
         imagesRef = None
 
         description = request.form.get('description')
