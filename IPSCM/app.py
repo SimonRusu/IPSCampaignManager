@@ -2,6 +2,7 @@ from config import app
 from flask_restful import Api
 from flask_cors import CORS
 from routes import *
+from services.PredataService import generatePredata
 
 
 with app.app_context():

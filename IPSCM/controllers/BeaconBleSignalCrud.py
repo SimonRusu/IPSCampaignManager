@@ -1,5 +1,4 @@
 from flask import jsonify
-from sqlalchemy import and_, or_
 from controllers.CaptureCrud import getCaptureIdsByCampaignId
 from models.BeaconBleSignal import BeaconBleSignal, BeaconBleSignalAux
 from models.Capture import Capture
@@ -33,15 +32,31 @@ def getBeaconBleSignalByCampaignId(campaignId:int):
     captureIds = getCaptureIdsByCampaignId(campaignId)
     return jsonify([signal.serialize() for signal in BeaconBleSignal.query.filter(BeaconBleSignal.Id_capture.in_(captureIds))])
 
+def getBeaconBleSignalIdentificatorByCampaignId(campaignId:int):
+    captureIds = getCaptureIdsByCampaignId(campaignId)
+    beaconBleSignals = BeaconBleSignal.query.filter(BeaconBleSignal.Id_capture.in_(captureIds)).all()
+    return list(set(signal.Identificator for signal in beaconBleSignals))
+
+def getBeaconBleSignalByIdChannelMacAndProtocol(id, channel, mac, protocol):
+    return BeaconBleSignal.query.filter(
+        BeaconBleSignal.Id_capture == id,
+        BeaconBleSignal.Channel == channel,
+        BeaconBleSignal.Mac.in_(mac),
+        BeaconBleSignal.Protocol == protocol,
+    ).all()
+
+def getBeaconBleSignalById(id):
+    return BeaconBleSignal.query.filter(
+        BeaconBleSignal.Id_capture == id
+    ).all()
+
+def getBeaconBleSignalsByCaptureIds(captureIds):
+    return BeaconBleSignal.query.filter(BeaconBleSignal.Id_capture.in_(captureIds)).all()
+
 
 def deleteBeaconBleSignalByCampaignId(campaignId:int):
     captureIds = getCaptureIdsByCampaignId(campaignId)
     BeaconBleSignal.query.filter(BeaconBleSignal.Id_capture.in_(captureIds)).delete()
     db.session.commit()
 
-
-def getBeaconBleSignalIdentificatorByCampaignId(campaignId:int):
-    captureIds = getCaptureIdsByCampaignId(campaignId)
-    beaconBleSignals = BeaconBleSignal.query.filter(BeaconBleSignal.Id_capture.in_(captureIds)).all()
-    return list(set(signal.Identificator for signal in beaconBleSignals))
 

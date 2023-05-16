@@ -8,6 +8,7 @@ from controllers.CaptureCrud import createCapture
 from controllers.CampaignCrud import createCampaign, getLastInsertedCampaignId
 from controllers.CampaignSequenceCrud import createCampaignSequence
 from services.ConfigReaderService import readBLEConf, readAlePointsConf, readRefPointsConf
+from services.PredataService import generatePredata
 
 def insertIntoDatabase(name, date, description, imagesRef, files, confs):
     relatedCampaignId = None
@@ -36,6 +37,9 @@ def insertIntoDatabase(name, date, description, imagesRef, files, confs):
         createBeaconConfiguration(lastCampaignId, beaconConfName)
         createBeaconBleSignal()
         createCapture()
+        
+        generatePredata(lastCampaignId)
+
         os.remove('db/auxDB.sqlite3')
 
 

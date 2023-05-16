@@ -3,6 +3,7 @@ from models.Capture import Capture,CaptureAux
 from models.Campaign import Campaign
 from config import db
 from sqlalchemy import desc
+from sqlalchemy import func
 
 def createCapture():
     db.create_all()
@@ -33,6 +34,11 @@ def getCaptureIdsByCampaignId(campaignId):
 
 def getCapturesByCampaignId(campaignId):
     return jsonify([capture.serialize() for capture in Capture.query.filter_by(Id_campaign=campaignId).all()])
+
+def getCapturesByIdAndRotation(id):
+    return Capture.query.filter(
+        Capture.Id.in_(id)
+    ).all()
 
 def deleteCaptureByCampaignId(campaignId):
     existingCapture = Capture().query.filter_by(Id_campaign=campaignId).delete()

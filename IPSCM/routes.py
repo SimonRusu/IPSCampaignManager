@@ -2,7 +2,7 @@ from flask import request
 from flask_restful import Resource
 from controllers.CampaignCrud import *
 from controllers.BeaconBleSignalCrud import getBeaconBleSignalByCampaignId
-from controllers.BeaconConfigurationCrud import getBeaconConfigurationByCampaignId
+from controllers.BeaconConfigurationCrud import getJsonBeaconConfigurationByCampaignId
 from controllers.CampaignSequenceCrud import getCampaignSequence
 from controllers.CaptureCrud import getCapturesByCampaignId
 from controllers.DongleReceptorCrud import getDongleReceptor
@@ -40,7 +40,7 @@ class GetBeaconBleSignalByCampaignId(Resource):
 
 class GetBeaconConfigurationByCampaignId(Resource):
     def get(self, campaignId):
-        return getBeaconConfigurationByCampaignId(campaignId)
+        return getJsonBeaconConfigurationByCampaignId(campaignId)
     
 class UploadCampaign(Resource):
     def post(self):

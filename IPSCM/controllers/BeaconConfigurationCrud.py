@@ -37,10 +37,16 @@ def createBeaconConfiguration(campaignId, beaconConfName):
     db.session.remove()
 
 
-def getBeaconConfigurationByCampaignId(campaignId):
+def getJsonBeaconConfigurationByCampaignId(campaignId):
     ids = getCampaignBeaconConfigurationIdsByCampaignId(campaignId)
     beacon_configurations = BeaconConfiguration.query.filter(BeaconConfiguration.Id.in_(ids)).all()
     return jsonify([beacon_configuration.serialize() for beacon_configuration in beacon_configurations])
+
+def getBeaconConfigurationByCampaignId(campaignId):
+    ids = getCampaignBeaconConfigurationIdsByCampaignId(campaignId)
+    beacon_configurations = BeaconConfiguration.query.filter(BeaconConfiguration.Id.in_(ids)).all()
+    return [beacon_configuration.Mac for beacon_configuration in beacon_configurations]
+
 
 def getIdByMacPowerFrequency(mac, power, frequency):
     return BeaconConfiguration.query.filter_by(Mac=mac, Power=power, Update_frequency=frequency).first().Id
