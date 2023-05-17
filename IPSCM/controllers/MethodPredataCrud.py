@@ -1,22 +1,15 @@
-from flask import jsonify
-from datetime import datetime
+from sqlalchemy import func, tuple_
 from config import db
-from controllers.BeaconBleSignalCrud import deleteBeaconBleSignalByCampaignId
-from models.DongleReceptor import DongleReceptor, DongleReceptorAux
-from models.Campaign import Campaign
-from models.CampaignSequence import CampaignSequence
-from controllers.CampaignSequenceCrud import deleteCampaignSequenceByCampaignId
-from controllers.CaptureCrud import deleteCaptureByCampaignId
-from sqlalchemy import desc
-from services.ImageService import deleteZipImages, sendZipImages
+
 from models.MethodPredata import MethodPredata
 
-def createMethodPredataBatch(batch_data):
+def createMethodPredataBatch(batchData):
     db.create_all()
 
     methodPredata_objects = [
         MethodPredata(
             Id_campaign=campaignId,
+            Date=date,
             Channel=channel,
             Mac=mac,
             Dongle_rotation=rotation,
@@ -26,54 +19,28 @@ def createMethodPredataBatch(batch_data):
             Position_y=positionY,
             Position_z=positionZ
         )
-        for campaignId, channel, mac, rotation, protocol, rssi, positionX, positionY, positionZ in batch_data
+        for campaignId, date, channel, mac, rotation, protocol, rssi, positionX, positionY, positionZ in batchData
     ]
 
     db.session.bulk_save_objects(methodPredata_objects)
     db.session.commit()
 
 
-def getCampaigns():
-    campaigns = Campaign.query.filter(Campaign.Id_related_campaign != None).all()
-    return jsonify([campaign.serialize() for campaign in campaigns])
+def getFilteredPredataSamples(campaignId, rssiSamples, dongle_rotation, mac, protocol, channel, positionX, positionY, positionZ):
 
-def getRelatedCampaignById(relatedCampaignId):
-    campaign = Campaign.query.filter_by(Id=relatedCampaignId).first()
-    return jsonify(campaign.serialize())
+    query = MethodPredata.query.order_by(MethodPredata.Date.asc())
 
-def getCampaignImagesById(campaignId):
-    campaign = Campaign.query.filter_by(Id=campaignId).first()
+    query = query.filter(MethodPredata.Id_campaign == campaignId)
+    query = query.filter(MethodPredata.Dongle_rotation == dongle_rotation)
+    query = query.filter(MethodPredata.Mac == mac)
+    query = query.filter(MethodPredata.Protocol == protocol)
+    query = query.filter(MethodPredata.Channel == channel)
+    query = query.filter(func.round(MethodPredata.Position_x, 10) == round(positionX, 10))
+    query = query.filter(func.round(MethodPredata.Position_y, 10) == round(positionY, 10))
+    query = query.filter(func.round(MethodPredata.Position_z, 10) == round(positionZ, 10))
 
-    if campaign.Images_ref is None:
-        return {'message': 'Campaign has no image'}, 404
+    query = query.limit(rssiSamples)
 
-    response = sendZipImages(campaign.Images_ref)
-    return response
+    predata_samples = query.all()
 
-def deleteCampaignById(campaignId):
-    campaign = Campaign().query.filter_by(Id=campaignId).first()
-    relatedCampaign = Campaign().query.filter_by(Id=campaign.Id_related_campaign).first()
-
-    if campaign:
-        deleteCampaignSequenceByCampaignId(campaignId)
-        deleteCampaignSequenceByCampaignId(relatedCampaign.Id)
-
-        deleteBeaconBleSignalByCampaignId(campaignId)
-        deleteBeaconBleSignalByCampaignId(relatedCampaign.Id)
-
-        deleteCaptureByCampaignId(campaignId)
-        deleteCaptureByCampaignId(relatedCampaign.Id)
-
-        if campaign.Images_ref is not None:
-            deleteZipImages(campaign.Images_ref)
-
-        db.session.delete(campaign)
-        db.session.delete(relatedCampaign)
-        db.session.commit()
-
-        return {'message': 'Campaign successfully deleted'}, 200
-    else:
-        return {'message', 'Campaign not found'}, 404
-    
-def getLastInsertedCampaignId():
-    return Campaign.query.order_by(Campaign.Id.desc()).first().Id
+    return predata_samples

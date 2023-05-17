@@ -1,3 +1,4 @@
+import json
 from flask import jsonify
 from datetime import datetime
 from config import db
@@ -81,3 +82,12 @@ def deleteCampaignById(campaignId):
     
 def getLastInsertedCampaignId():
     return Campaign.query.order_by(Campaign.Id.desc()).first().Id
+
+def getPointsByCampaignId(campaignId):
+    campaign = Campaign.query.filter_by(Id=campaignId).first()
+
+    if campaign:
+        return {
+            'Ale_points': json.loads(campaign.Ale_points),
+            'Ref_points': json.loads(campaign.Ref_points)
+        }

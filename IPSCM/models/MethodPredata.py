@@ -9,6 +9,7 @@ class MethodPredata(db.Model):
     def Id_campaign(cls):
          return db.Column(db.Integer, db.ForeignKey('Campaign.Id'), nullable=False)
     
+    Date = db.Column(db.DateTime, nullable=False)
     Channel = db.Column(db.VARCHAR(50), nullable=False)
     Mac = db.Column(db.VARCHAR(50), nullable=False)
     Dongle_rotation = db.Column(db.REAL, nullable=False)
@@ -22,6 +23,7 @@ def serialize(self):
         return{
             'Id': self.Id,
             'Id_campaign': self.Id_campaign,
+            'Date': self.Date,
             'Channel': self.Channel,
             'Mac': self.Mac,
             'Dongle_rotation': self.Dongle_rotation,
