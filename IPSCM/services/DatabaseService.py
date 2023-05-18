@@ -34,10 +34,10 @@ def insertIntoDatabase(name, date, description, imagesRef, files, confs):
         lastCampaignId = getLastInsertedCampaignId()
         beaconConfName = getNextBeaconConfName(lastCampaignId, lastBeaconConfName)
 
-        createBeaconConfiguration(lastCampaignId, beaconConfName)
         createBeaconBleSignal()
         createCapture()
         
+        createBeaconConfiguration(lastCampaignId, beaconConfName)
         generatePredata(lastCampaignId)
 
         os.remove('db/auxDB.sqlite3')

@@ -1,5 +1,5 @@
 from flask import jsonify
-from controllers.BeaconBleSignalCrud import getBeaconBleSignalIdentificatorByCampaignId
+from controllers.BeaconBleSignalCrud import getMacsByCampaignId
 from controllers.CampaignConfigurationsCrud import createCampaignConfigurations, getCampaignBeaconConfigurationIdsByCampaignId
 from models.BeaconConfiguration import BeaconConfiguration, BeaconConfigurationAux
 from config import db
@@ -10,15 +10,18 @@ def createBeaconConfiguration(campaignId, beaconConfName):
 
     unique_macs = db.session.query(BeaconConfigurationAux.Mac).distinct().all()
     uniqueMacsList = [x[0] for x in unique_macs]
-    newBeaconConfigurations = BeaconConfigurationAux.query.filter(BeaconConfigurationAux.Mac.in_(uniqueMacsList)).group_by(BeaconConfigurationAux.Mac).all()
     actualBeaconConfigurations = db.session.query(BeaconConfiguration).all()
+    newBeaconConfigurations = BeaconConfigurationAux.query.filter(BeaconConfigurationAux.Mac.in_(uniqueMacsList)).group_by(BeaconConfigurationAux.Mac).all()
+    usedBeacons = getMacsByCampaignId(campaignId)
+
 
     for i in newBeaconConfigurations:
         is_unique = True
         for j in actualBeaconConfigurations:
             if  i.Mac == j.Mac and i.Power == j.Power and i.Update_frequency == j.Update_frequency:
-                beaconConfId = getIdByMacPowerFrequency(i.Mac, i.Power, i.Update_frequency)
-                createCampaignConfigurations(campaignId, beaconConfId, beaconConfName)
+                if i.Mac in usedBeacons:
+                    beaconConfId = getIdByMacPowerFrequency(i.Mac, i.Power, i.Update_frequency)
+                    createCampaignConfigurations(campaignId, beaconConfId, beaconConfName)
                 is_unique = False
                 break
         if is_unique:
@@ -30,8 +33,9 @@ def createBeaconConfiguration(campaignId, beaconConfName):
                 beaconConfiguration.Identificator = i.Identificator
                 db.session.add(beaconConfiguration)
 
-                beaconConfId = getLastInsertedBeaconConfigurationId()
-                createCampaignConfigurations(campaignId, beaconConfId, beaconConfName)
+                if i.Mac in usedBeacons:
+                    beaconConfId = getLastInsertedBeaconConfigurationId()
+                    createCampaignConfigurations(campaignId, beaconConfId, beaconConfName)
 
     db.session.commit()
     db.session.remove()

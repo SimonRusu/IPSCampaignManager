@@ -53,6 +53,11 @@ def getBeaconBleSignalById(id):
 def getBeaconBleSignalsByCaptureIds(captureIds):
     return BeaconBleSignal.query.filter(BeaconBleSignal.Id_capture.in_(captureIds)).all()
 
+def getMacsByCampaignId(campaignId):
+    captureIds = getCaptureIdsByCampaignId(campaignId)
+    beaconBleSignals = BeaconBleSignal.query.filter(BeaconBleSignal.Id_capture.in_(captureIds)).all()
+    macs = list(set(signal.Mac for signal in beaconBleSignals))
+    return macs
 
 def deleteBeaconBleSignalByCampaignId(campaignId:int):
     captureIds = getCaptureIdsByCampaignId(campaignId)

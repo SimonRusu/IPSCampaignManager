@@ -33,14 +33,27 @@ def getFilteredPredataSamples(campaignId, rssiSamples, dongle_rotation, mac, pro
     query = query.filter(MethodPredata.Id_campaign == campaignId)
     query = query.filter(MethodPredata.Dongle_rotation == dongle_rotation)
     query = query.filter(MethodPredata.Mac == mac)
-    query = query.filter(MethodPredata.Protocol == protocol)
+    #query = query.filter(MethodPredata.Protocol == protocol)  BBDD NO TIENE SUFICIENTES REGISTROS DE CADA PROTOCOLO
     query = query.filter(MethodPredata.Channel == channel)
-    query = query.filter(func.round(MethodPredata.Position_x, 10) == round(positionX, 10))
-    query = query.filter(func.round(MethodPredata.Position_y, 10) == round(positionY, 10))
-    query = query.filter(func.round(MethodPredata.Position_z, 10) == round(positionZ, 10))
-
+    query = query.filter(func.round(MethodPredata.Position_x, 5) == round(positionX, 5))
+    query = query.filter(func.round(MethodPredata.Position_y, 5) == round(positionY, 5))
+    query = query.filter(func.round(MethodPredata.Position_z, 5) == round(positionZ, 5))
     query = query.limit(rssiSamples)
-
     predata_samples = query.all()
 
     return predata_samples
+
+
+def getUniqueCoordinatesByCampaignId(campaignId, limit):
+    unique_coordinates = db.session.query(
+        MethodPredata.Position_x,
+        MethodPredata.Position_y,
+        MethodPredata.Position_z
+    ).filter(MethodPredata.Id_campaign == campaignId).distinct().limit(limit).all()
+
+    unique_coordinates = [
+        {'x': x, 'y': y, 'z': z}
+        for x, y, z in unique_coordinates
+    ]
+
+    return unique_coordinates
