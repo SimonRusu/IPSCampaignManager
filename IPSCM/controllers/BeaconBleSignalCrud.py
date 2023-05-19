@@ -59,6 +59,22 @@ def getMacsByCampaignId(campaignId):
     macs = list(set(signal.Mac for signal in beaconBleSignals))
     return macs
 
+
+def existsBeaconWithProtocol(campaignId, mac, protocol):
+    captureIds = getCaptureIdsByCampaignId(campaignId)
+    beaconBleSignal = BeaconBleSignal.query.filter(
+        BeaconBleSignal.Id_capture.in_(captureIds),
+        BeaconBleSignal.Mac == mac,
+        BeaconBleSignal.Protocol == protocol
+    ).first()
+    
+    if beaconBleSignal is not None:
+        return True
+    else:
+        return False
+
+
+
 def deleteBeaconBleSignalByCampaignId(campaignId:int):
     captureIds = getCaptureIdsByCampaignId(campaignId)
     BeaconBleSignal.query.filter(BeaconBleSignal.Id_capture.in_(captureIds)).delete()

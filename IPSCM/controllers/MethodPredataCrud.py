@@ -33,7 +33,7 @@ def getFilteredPredataSamples(campaignId, rssiSamples, dongle_rotation, mac, pro
     query = query.filter(MethodPredata.Id_campaign == campaignId)
     query = query.filter(MethodPredata.Dongle_rotation == dongle_rotation)
     query = query.filter(MethodPredata.Mac == mac)
-    #query = query.filter(MethodPredata.Protocol == protocol)
+    query = query.filter(MethodPredata.Protocol == protocol)
     query = query.filter(MethodPredata.Channel == channel)
     query = query.filter(func.round(MethodPredata.Position_x, 5) == round(positionX, 5))
     query = query.filter(func.round(MethodPredata.Position_y, 5) == round(positionY, 5))

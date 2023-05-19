@@ -1,4 +1,4 @@
-from controllers.BeaconBleSignalCrud import getBeaconBleSignalById, getMacsByCampaignId
+from controllers.BeaconBleSignalCrud import getBeaconBleSignalById, getMacsByCampaignId, existsBeaconWithProtocol
 from controllers.BeaconConfigurationCrud import getBeaconConfigurationByCampaignId
 from controllers.CampaignCrud import getPointsByCampaignId
 from controllers.CaptureCrud import getCaptureIdsByCampaignId, getCapturesByIdAndRotation
@@ -24,10 +24,11 @@ def generatePredata(campaignId):
 def parsePredata():
     campaignId = 2
     protocol = 'Eddystone'
-    channel = 37
+    channel = 39
     rssi_samples = 10
-    aleBeaconMacs = getBeaconConfigurationByCampaignId(campaignId-1)
-    refBeaconMacs = getBeaconConfigurationByCampaignId(campaignId)
+
+    aleBeaconMacs, refBeaconMacs = processBeaconMacs(campaignId, protocol)
+
     configPoints = getPointsByCampaignId(campaignId)
 
     ale_points_conf = configPoints['Ale_points']
@@ -104,3 +105,22 @@ def getRefPointsMatrix(points, points_conf, beaconMacs, campaignId, protocol, ch
         refPointsMatrix[i,cols - 1] = z
 
     return refPointsMatrix
+
+
+def processBeaconMacs(campaignId, protocol):
+    aleBeaconMacs = getBeaconConfigurationByCampaignId(campaignId-1)
+    refBeaconMacs = getBeaconConfigurationByCampaignId(campaignId)
+
+    aleBeaconsProcessed = []
+    refBeaconsProcessed = []
+
+
+    for mac in aleBeaconMacs:
+        if existsBeaconWithProtocol(campaignId-1, mac, protocol) == True:
+            aleBeaconsProcessed.append(mac)
+
+    for mac in refBeaconMacs:
+        if existsBeaconWithProtocol(campaignId, mac, protocol) == True:
+            refBeaconsProcessed.append(mac)
+
+    return aleBeaconsProcessed, refBeaconsProcessed
