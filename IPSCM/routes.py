@@ -6,14 +6,13 @@ from controllers.BeaconConfigurationCrud import getJsonBeaconConfigurationByCamp
 from controllers.CampaignSequenceCrud import getCampaignSequence
 from controllers.CaptureCrud import getCapturesByCampaignId
 from controllers.DongleReceptorCrud import getDongleReceptor
-from services.DataProcessService import parsePredata
+from services.DataProcessService import dataProcessing
 from services.DatabaseService import insertIntoDatabase
 from services.ImageService import generateZipImages
 
 
 class GetCampaigns(Resource):
     def get(self):
-        parsePredata()
         return getCampaigns()
 
 class GetCampaignImagesById(Resource):
@@ -43,6 +42,11 @@ class GetBeaconBleSignalByCampaignId(Resource):
 class GetBeaconConfigurationByCampaignId(Resource):
     def get(self, campaignId):
         return getJsonBeaconConfigurationByCampaignId(campaignId)
+    
+class DataProcessing(Resource):
+    def post(self):
+        params = request.files.getlist('params')
+        dataProcessing(params)
     
 class UploadCampaign(Resource):
     def post(self):

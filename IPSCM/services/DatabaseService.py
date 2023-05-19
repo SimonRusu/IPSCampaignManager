@@ -8,7 +8,7 @@ from controllers.CaptureCrud import createCapture
 from controllers.CampaignCrud import createCampaign, getLastInsertedCampaignId
 from controllers.CampaignSequenceCrud import createCampaignSequence
 from services.ConfigReaderService import readBLEConf, readAlePointsConf, readRefPointsConf
-from services.DataProcessService import generatePredata, parsePredata
+from services.DataProcessService import generatePredata
 
 def insertIntoDatabase(name, date, description, imagesRef, files, confs):
     relatedCampaignId = None
