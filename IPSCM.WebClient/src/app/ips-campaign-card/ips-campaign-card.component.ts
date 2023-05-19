@@ -1,14 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { ApiService } from '../services/api.service';
 import JSZip from 'jszip';
-import { ThemePalette } from '@angular/material/core';
 
-export interface Task {
-  name: string;
-  completed: boolean;
-  color: ThemePalette;
-  subtasks?: Task[];
-}
 
 @Component({
   selector: 'app-ips-campaign-card',
@@ -20,21 +13,22 @@ export interface Task {
 export class IpsCampaignCardComponent {
   @Input() campaign!: any;
   campaignImages: string[] = [];
-  allComplete: boolean = false;
+  operaciones: string[] = ['op1', 'op2', 'op3'];
+  seleccionada: string = this.operaciones[0];
 
-  task: Task = {
-    name: 'Aplicar todos los métodos IPS',
-    completed: false,
-    color: 'warn',
-    subtasks: [
-      {name: 'Fingerprinting (WKNN)', completed: false, color: 'primary'},
-      {name: 'Redes neuronales', completed: false, color: 'primary'},
-      {name: 'Método adicional', completed: false, color: 'primary'},
-    ],
-  };
+
 
   constructor(
     private apiService: ApiService){}
+
+
+    formatLabel(value: number): string {
+      if (value >= 1000) {
+        return Math.round(value / 1000) + 'k';
+      }
+  
+      return `${value}`;
+    }
   
     ngOnInit(){
       this.apiService.getCampaignImagesById(this.campaign.Id).subscribe((response: Blob) => {
@@ -49,25 +43,6 @@ export class IpsCampaignCardComponent {
         })
       })
     }
-
-  updateAllComplete() {
-    this.allComplete = this.task.subtasks != null && this.task.subtasks.every(t => t.completed);
-  }
-
-  someComplete(): boolean {
-    if (this.task.subtasks == null) {
-      return false;
-    }
-    return this.task.subtasks.filter(t => t.completed).length > 0 && !this.allComplete;
-  }
-
-  setAll(completed: boolean) {
-    this.allComplete = completed;
-    if (this.task.subtasks == null) {
-      return;
-    }
-    this.task.subtasks.forEach(t => (t.completed = completed));
-  }
 
 
 }

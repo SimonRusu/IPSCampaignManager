@@ -3,10 +3,7 @@
 </div>
 
 <div *ngIf="campaigns.length > 0; else noCampaigns">
-    <div class="has-text-centered pt-3">
-        <button class="button is-link is-rounded">Guardar cambios</button>
-    </div>
-
+    
     <div class="column pagination is-centered" role="navigation" aria-label="pagination">
         <pagination-controls (pageChange)="p = $event" previousLabel="Anterior" nextLabel="Siguiente"></pagination-controls>
     </div>

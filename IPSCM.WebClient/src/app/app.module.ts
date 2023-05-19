@@ -26,10 +26,14 @@ import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { CarouselModule  } from 'ngx-owl-carousel-o';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { FormsModule } from '@angular/forms';
 import { NgxPaginationModule } from 'ngx-pagination';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSliderModule } from '@angular/material/slider';
+
 
 
 @NgModule({
@@ -62,9 +66,13 @@ import { NgxPaginationModule } from 'ngx-pagination';
     MatButtonToggleModule,
     MatIconModule,
     MatProgressSpinnerModule,
+    MatSliderModule,
     MatPaginatorModule,
     MatTableModule,
+    MatSelectModule,
+    MatFormFieldModule,
     MatCheckboxModule,
+    
     FormsModule,
     NgxPaginationModule
   ],

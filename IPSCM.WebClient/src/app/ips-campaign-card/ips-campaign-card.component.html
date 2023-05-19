@@ -1,5 +1,5 @@
-<div class="card column mb-5">
-    <div class="content has-background-white-bis">
+<div class="card column mb-5 has-background-white-bis">
+    <div class="content">
         <div class="columns wide-card is-clipped">
             <div class="column image card-image is-2">
                 <img [src]="campaignImages.length > 0 ? campaignImages[0] : 'assets/img/campaignImage.png'" alt="Campaign Image">
@@ -17,29 +17,56 @@
                 </div>
             </div>
             <div class="column is-offset-1 mt-5">
-                <section class="example-section">
-                    <span class="example-list-section">
-                      <mat-checkbox class="example-margin"
-                                    [checked]="allComplete"
-                                    [color]="task.color"
-                                    [indeterminate]="someComplete()"
-                                    (change)="setAll($event.checked)">
-                        {{task.name}}
-                      </mat-checkbox>
+                <section>
+                    <span class="is-fullwidth">
+                      <mat-form-field>
+                        <mat-label>Método</mat-label>
+                        <mat-select placeholder="Sin selección">
+                          <mat-option *ngFor="let food of operaciones" [value]="food">
+                            {{food}}
+                          </mat-option>
+                        </mat-select>
+                      </mat-form-field>
+                      <mat-form-field class="ml-3">
+                        <mat-label>Protocolo</mat-label>
+                        <mat-select placeholder="Sin selección">
+                          <mat-option *ngFor="let food of operaciones" [value]="food">
+                            {{food}}
+                          </mat-option>
+                        </mat-select>
+                      </mat-form-field>
+                      <mat-form-field class="ml-3">
+                        <mat-label>Canal</mat-label>
+                        <mat-select placeholder="Sin selección">
+                          <mat-option *ngFor="let food of operaciones" [value]="food">
+                            {{food}}
+                          </mat-option>
+                        </mat-select>
+                      </mat-form-field>
+                      <mat-form-field class="ml-3">
+                        <mat-label>Numero de muestras</mat-label>
+                        <mat-select placeholder="Sin selección">
+                          <mat-option *ngFor="let food of operaciones" [value]="food">
+                            {{food}}
+                          </mat-option>
+                        </mat-select>
+                      </mat-form-field>
                     </span>
-                    <span class="example-list-section">
-                      <ul>
-                        <a *ngFor="let subtask of task.subtasks">
-                          <mat-checkbox [(ngModel)]="subtask.completed"
-                                        [color]="subtask.color"
-                                        (ngModelChange)="updateAllComplete()">
-                            {{subtask.name}}
-                          </mat-checkbox>
-                        </a>
-                      </ul>
-                    </span>
-                  </section>
+                    <br>
+                    <div class="field">
+                      <div style="width: 90%" class="has-text-centered">
+                        <label style="width: 100%" class="label has-text-grey">Rango de K vecinos</label>
+                        <mat-slider style="width: 100%"  min="0" max="100" step="1" showTickMarks discrete [displayWith]="formatLabel">
+                          <input matSliderStartThumb>
+                          <input matSliderEndThumb>
+                        </mat-slider>
+                      </div>
+                    </div>  
+                </section>  
             </div>
         </div>
+    </div>
+    <div class="has-text-centered mt-4" style="margin-left: 700px">
+      <button class="button is-link is-rounded">Aplicar método</button>
     </div>
 </div>
