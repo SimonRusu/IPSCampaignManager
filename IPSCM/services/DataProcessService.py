@@ -26,8 +26,6 @@ def parsePredata():
     protocol = 'Eddystone'
     channel = 37
     rssi_samples = 10
-    macsUniq=getMacsByCampaignId(1)
-    print(macsUniq)
     aleBeaconMacs = getBeaconConfigurationByCampaignId(campaignId-1)
     refBeaconMacs = getBeaconConfigurationByCampaignId(campaignId)
     configPoints = getPointsByCampaignId(campaignId)
@@ -38,82 +36,71 @@ def parsePredata():
     ale_points = getUniqueCoordinatesByCampaignId(campaignId-1, len(ale_points_conf))
     ref_points = getUniqueCoordinatesByCampaignId(campaignId, len(ref_points_conf))
 
-    aleRSSIList = getAlePointsRSSIList(ale_points, ale_points_conf, aleBeaconMacs, campaignId-1, protocol, channel, rssi_samples)
-   # refRSSIList = getRefPointsRSSIList(ref_points, ref_points_conf, refBeaconMacs, campaignId, protocol, channel, rssi_samples)
+    aleRSSIMatrix= getAlePointsMatrix(ale_points, ale_points_conf, aleBeaconMacs, campaignId-1, protocol, channel, rssi_samples)
+    refRSSIMatrix = getRefPointsMatrix(ref_points, ref_points_conf, refBeaconMacs, campaignId, protocol, channel, rssi_samples)
+
+    print(aleRSSIMatrix)
+    print(refRSSIMatrix)
         
 
-def getAlePointsRSSIList(points, points_conf, beaconMacs, campaignId, protocol, channel, rssi_samples):
-    
-    cols = len(beaconMacs)
+def getAlePointsMatrix(points, points_conf, beaconMacs, campaignId, protocol, channel, rssi_samples):
+    coordinates = 3
+    cols = len(beaconMacs) + coordinates
     rows = len(points)
 
     alePointsMatrix = np.full((rows, cols), -np.inf)
     
-    for point_name, point_values in points_conf.items():
+    
+    for i, (point, point_values) in enumerate(zip(points, points_conf.values())):
+        x = float(point_values['X'])
+        y = float(point_values['Y'])
+        z = float(point_values['Z'])
         rotation = float(point_values['Rotation'])
-        print(f"{point_name} has Rotation={rotation}")
+        
+        for j, mac in enumerate(beaconMacs):
+            matchSamples = getFilteredPredataSamples(campaignId, rssi_samples, rotation, mac, protocol, channel, point['x'], point['y'], point['z'])
 
-        for i, point in enumerate(points):
-            for j, mac in enumerate(beaconMacs):
-                print(mac)
-                print(j)
-                matchSamples = getFilteredPredataSamples(campaignId, rssi_samples, rotation, mac, protocol, channel, point['x'], point['y'], point['z'])
-                print(campaignId, rssi_samples, rotation, mac, protocol, channel, point['x'], point['y'], point['z'])
-                print(matchSamples)
+            if matchSamples:
+                max_sample = max(matchSamples, key=lambda sample: sample.RSSI)
+                alePointsMatrix[i,j] = max_sample.RSSI
+
+        alePointsMatrix[i,cols - 3] = x
+        alePointsMatrix[i,cols - 2] = y
+        alePointsMatrix[i,cols - 1] = z
+
+    return alePointsMatrix
+
+
+def getRefPointsMatrix(points, points_conf, beaconMacs, campaignId, protocol, channel, rssi_samples):
+
+    coordinates = 3
+    cols = len(beaconMacs) + coordinates
+    rows = len(points)
+
+    refPointsMatrix = np.full((rows, cols), -np.inf)
+
+    for i, (point, point_values) in enumerate(zip(points, points_conf.values())):
+        x = float(point_values['X'])
+        y = float(point_values['Y'])
+        z = float(point_values['Z'])
+        rotations = point_values['Rotations']
+
+        for j, mac in enumerate(beaconMacs):
+            max_samples = []
+
+            for k, rotation in enumerate(rotations):
+                matchSamples = getFilteredPredataSamples(campaignId, 0, float(rotation), mac, protocol, channel, point['x'], point['y'], point['z'])
+
                 if matchSamples:
                     max_sample = max(matchSamples, key=lambda sample: sample.RSSI)
-                    if max_sample.RSSI > alePointsMatrix[i,j]:
-                        alePointsMatrix[i,j] = max_sample.RSSI
-                    #elif i > 0:
-                    #    alePointsMatrix[i,j] = max(alePointsMatrix[i-1,j], alePointsMatrix[i,j])
+                    max_samples.append(max_sample.RSSI)
+                    
 
-    print(alePointsMatrix)
+            avg_max_sample = sum(max_samples) / len(max_samples)
+            refPointsMatrix[i,j] = avg_max_sample
 
+        refPointsMatrix[i,cols - 3] = x
+        refPointsMatrix[i,cols - 2] = y
+        refPointsMatrix[i,cols - 1] = z
 
-def getRefPointsRSSIList(points, points_conf, beaconMacs, campaignId, protocol, channel, rssi_samples):
-    print(points)
-    print(len(points))
-    for point_name, point_values in points_conf.items():
-        rotations = point_values['Rotations']
-        print(f"{point_name}  Rotations:")
-        for rotation in rotations:
-            for mac in beaconMacs:
-                for point in points:
-                    matchSamples = getFilteredPredataSamples(campaignId, rssi_samples, float(rotation), mac, protocol, channel, point['x'], point['y'], point['z'])
-                    #print("entro_ale")
-
-                    for i in matchSamples:
-
-                        print("Id:", i.Id)
-                        print("Id_campaign:", i.Id_campaign)
-                        print("Date:", i.Date)
-                        print("Channel:", i.Channel)
-                        print("Mac:", i.Mac)
-                        print("Dongle_rotation:", i.Dongle_rotation)
-                        print("Protocol:", i.Protocol)
-                        print("RSSI:", i.RSSI)
-                        print("Position_x:", i.Position_x)
-                        print("Position_y:", i.Position_y)
-                        print("Position_z:", i.Position_z)
-                        print("-----------------------")
-
-
-def recorrerPuntos():
-    for point_name, point_values in points.items():
-        x = float(point_values['X'])
-        y = float(point_values['Y'])
-        z = float(point_values['Z'])
-        rotation = float(point_values['Rotation'])
-        print(f"{point_name} has X={x}, Y={y}, Z={z}, Rotation={rotation}")
-
-    for point_name, point_values in points.items():
-        x = float(point_values['X'])
-        y = float(point_values['Y'])
-        z = float(point_values['Z'])
-        rotations = point_values['Rotations']
-        print(f"{point_name} has X={x}, Y={y}, Z={z}, Rotations:")
-        
-        for rotation in rotations:
-            return
-
-    
+    return refPointsMatrix
