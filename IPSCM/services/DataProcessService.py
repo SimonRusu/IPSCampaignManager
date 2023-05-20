@@ -6,7 +6,6 @@ from controllers.MethodPredataCrud import createMethodPredataBatch, getFilteredP
 from services.MethodsService import applyMethod
 import numpy as np
 
-
 def generatePredata(campaignId):
     captureIds = getCaptureIdsByCampaignId(campaignId)
     filteredCapture = getCapturesByIdAndRotation(captureIds)
@@ -21,58 +20,38 @@ def generatePredata(campaignId):
     
     createMethodPredataBatch(batch_data)
 
-def dataProcessing(params):
-    campaignId = 2
-    method = 1
-    protocol = 'Eddystone'
-    channel = 39
-    rssiSamples = 10
-    ksRange = (1, 10)
-
-    aleBeaconMacs, refBeaconMacs = processBeaconMacs(campaignId, protocol)
+def dataProcessing(data):
+    campaignId = data['campaign']
+    methods = data['methods']
+    protocols = data['protocols']
+    channels = data['channels']
+    rssiSamples = data['sample']
+    ksRange = (data['kRangeStart'], data['kRangeEnd'])
 
     configPoints = getPointsByCampaignId(campaignId)
 
     ref_points_conf = configPoints['Ref_points']
     ale_points_conf = configPoints['Ale_points']
-    
+
     ref_points = getUniqueCoordinatesByCampaignId(campaignId, len(ref_points_conf))
     ale_points = getUniqueCoordinatesByCampaignId(campaignId-1, len(ale_points_conf))
- 
-    refRSSIMatrix = getRefPointsMatrix(ref_points, ref_points_conf, refBeaconMacs, campaignId, protocol, channel, rssiSamples)
-    aleRSSIMatrix= getAlePointsMatrix(ale_points, ale_points_conf, aleBeaconMacs, campaignId-1, protocol, channel, rssiSamples)
 
-    applyMethod(refRSSIMatrix, aleRSSIMatrix, method, ksRange)
+    for method in methods:
+        for protocol in protocols:
+            aleBeaconMacs, refBeaconMacs = processBeaconMacs(campaignId, protocol)
+            for channel in channels:
+                print(method, protocol, channel)
+
+                refRSSIMatrix = getRefPointsMatrix(ref_points, ref_points_conf, refBeaconMacs, campaignId, protocol, channel, rssiSamples)
+                aleRSSIMatrix= getAlePointsMatrix(ale_points, ale_points_conf, aleBeaconMacs, campaignId-1, protocol, channel, rssiSamples)
+                
+                print(refRSSIMatrix)
+                print(aleRSSIMatrix)
+
+                #applyMethod(refRSSIMatrix, aleRSSIMatrix, method, ksRange)
         
 
-def getAlePointsMatrix(points, points_conf, beaconMacs, campaignId, protocol, channel, rssi_samples):
-    coordinates = 3
-    cols = len(beaconMacs) + coordinates
-    rows = len(points)
-
-    alePointsMatrix = np.full((rows, cols), -np.inf)
-    
-    for i, (point, point_values) in enumerate(zip(points, points_conf.values())):
-        x = float(point_values['X'])
-        y = float(point_values['Y'])
-        z = float(point_values['Z'])
-        rotation = float(point_values['Rotation'])
-        
-        for j, mac in enumerate(beaconMacs):
-            matchSamples = getFilteredPredataSamples(campaignId, rssi_samples, rotation, mac, protocol, channel, point['x'], point['y'], point['z'])
-
-            if matchSamples:
-                max_sample = max(matchSamples, key=lambda sample: sample.RSSI)
-                alePointsMatrix[i,j] = max_sample.RSSI
-
-        alePointsMatrix[i,cols - 3] = x
-        alePointsMatrix[i,cols - 2] = y
-        alePointsMatrix[i,cols - 1] = z
-
-    return alePointsMatrix
-
-
-def getRefPointsMatrix(points, points_conf, beaconMacs, campaignId, protocol, channel, rssi_samples):
+def getRefPointsMatrix(points, points_conf, beaconMacs, campaignId, protocol, channel, rssiSamples):
     coordinates = 3
     cols = len(beaconMacs) + coordinates
     rows = len(points)
@@ -89,7 +68,7 @@ def getRefPointsMatrix(points, points_conf, beaconMacs, campaignId, protocol, ch
             max_samples = []
 
             for k, rotation in enumerate(rotations):
-                matchSamples = getFilteredPredataSamples(campaignId, 0, float(rotation), mac, protocol, channel, point['x'], point['y'], point['z'])
+                matchSamples = getFilteredPredataSamples(campaignId, rssiSamples, float(rotation), mac, protocol, channel, point['x'], point['y'], point['z'])
 
                 if matchSamples:
                     max_sample = max(matchSamples, key=lambda sample: sample.RSSI)
@@ -105,6 +84,34 @@ def getRefPointsMatrix(points, points_conf, beaconMacs, campaignId, protocol, ch
 
     return refPointsMatrix
 
+
+def getAlePointsMatrix(points, points_conf, beaconMacs, campaignId, protocol, channel, rssiSamples):
+
+    coordinates = 3
+    cols = len(beaconMacs) + coordinates
+    rows = len(points)
+
+    alePointsMatrix = np.full((rows, cols), -np.inf)
+    
+    for i, (point, point_values) in enumerate(zip(points, points_conf.values())):
+        x = float(point_values['X'])
+        y = float(point_values['Y'])
+        z = float(point_values['Z'])
+        rotation = float(point_values['Rotation'])
+
+        
+        for j, mac in enumerate(beaconMacs):
+            matchSamples = getFilteredPredataSamples(campaignId, rssiSamples, rotation, mac, protocol, channel, point['x'], point['y'], point['z'])
+
+            if matchSamples:
+                max_sample = max(matchSamples, key=lambda sample: sample.RSSI)
+                alePointsMatrix[i,j] = max_sample.RSSI
+
+        alePointsMatrix[i,cols - 3] = x
+        alePointsMatrix[i,cols - 2] = y
+        alePointsMatrix[i,cols - 1] = z
+
+    return alePointsMatrix
 
 def processBeaconMacs(campaignId, protocol):
     aleBeaconMacs = getBeaconConfigurationByCampaignId(campaignId-1)

@@ -1,6 +1,10 @@
 import { Component, Input } from '@angular/core';
 import { ApiService } from '../services/api.service';
 import JSZip from 'jszip';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { catchError, of, tap } from 'rxjs';
+import { ToastrService } from 'ngx-toastr';
+import { Router } from '@angular/router';
 
 
 @Component({
@@ -13,22 +17,18 @@ import JSZip from 'jszip';
 export class IpsCampaignCardComponent {
   @Input() campaign!: any;
   campaignImages: string[] = [];
-  operaciones: string[] = ['op1', 'op2', 'op3'];
-  seleccionada: string = this.operaciones[0];
+  methods: string[] = ["WKNN", "SVR", "NuSVR", "LinearSVR"];
+  protocols: string[] = ["Eddystone", "iBeacon"];
+  channels: string[] = ["37", "38", "39"];
+  samples = Array.from({length: 20}, (_, index) => index + 1);
 
+
+  seleccionada: string = this.methods[0];
+  form!: FormGroup;
 
 
   constructor(
-    private apiService: ApiService){}
-
-
-    formatLabel(value: number): string {
-      if (value >= 1000) {
-        return Math.round(value / 1000) + 'k';
-      }
-  
-      return `${value}`;
-    }
+    private apiService: ApiService, private formBuilder: FormBuilder, private toastr: ToastrService, private router: Router ){}
   
     ngOnInit(){
       this.apiService.getCampaignImagesById(this.campaign.Id).subscribe((response: Blob) => {
@@ -42,7 +42,71 @@ export class IpsCampaignCardComponent {
           })
         })
       })
+      
+      this.form = this.formBuilder.group({
+        methods: ['', Validators.required],
+        protocols: ['', Validators.required],
+        channels: ['', Validators.required],
+        sample: ['', Validators.required],
+        kRangeStart: [1],
+        kRangeEnd: [20],
+      });
     }
+
+    formatLabel(value: number): string {
+      if (value >= 1000) {
+        return Math.round(value / 1000) + 'k';
+      }
+  
+      return `${value}`;
+    }
+
+    applyMethod(){
+      const formData = new FormData();
+      const campaignId = this.campaign.Id;
+      const selectedMethods = this.form.get('methods')?.value;
+      const selectedProtocols = this.form.get('protocols')?.value;
+      const selectedChannels = this.form.get('channels')?.value;
+      const selectedSample = this.form.get('sample')?.value;
+      const kRangeStart = this.form.get('kRangeStart')?.value;
+      const kRangeEnd = this.form.get('kRangeEnd')?.value;
+
+      const dataPackage = {
+        campaign: campaignId,
+        methods: selectedMethods,
+        protocols: selectedProtocols,
+        channels: selectedChannels,
+        sample: selectedSample,
+        kRangeStart: kRangeStart,
+        kRangeEnd: kRangeEnd,
+      };
+      
+      formData.append('params', JSON.stringify(dataPackage));
+
+      this.apiService.applyMethod(formData).pipe(
+        tap(response => {
+          setTimeout(() => {
+            this.toastr.clear();
+            this.toastr.success('¡El método se ha aplicado correctamente!', 'Operación completada', { timeOut: 2000 });
+            this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+              this.router.navigate(['/ips-methods'])
+            });
+          }, 0);
+        }),
+        catchError(error => {
+          setTimeout(() => {
+            this.toastr.clear();
+            this.toastr.error('Ocurrió un error durante la aplicación del método', 'Operación no completada', { timeOut: 2000 });
+          }, 0);
+          return of(null);
+        })
+      ).subscribe();
+  
+    }
+
+
+    
+    
 
 
 }

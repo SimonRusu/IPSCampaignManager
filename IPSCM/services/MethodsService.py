@@ -1,11 +1,13 @@
 from sklearn.neighbors import KNeighborsRegressor
 import pandas as pd
 
-
 def applyMethod(data_train, data_test, method, ks_range):
 
     methods = {
-        1: applyWknnMethod(data_train, data_test, ks_range)
+        'WKNN': aplicado1(),
+        'SVR': aplicado2(),
+        'NuSVR': aplicado3(),
+        'LinearSVR': aplicado4()
     }
 
     methods.get(method)()
@@ -61,5 +63,17 @@ def applyWknnMethod(data_train, data_test, ks_range):
 
     df_results = pd.DataFrame({'K': ks, 'Points': points})
     df_results.to_csv("Coordenadas_predichas.csv", index=False)
+
+def aplicado1():
+    print("1")
+
+def aplicado2():
+    print("2")
+
+def aplicado3():
+    print("3")
+
+def aplicado4():
+    print("4")
 
  

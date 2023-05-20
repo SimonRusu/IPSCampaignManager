@@ -45,8 +45,9 @@ class GetBeaconConfigurationByCampaignId(Resource):
     
 class DataProcessing(Resource):
     def post(self):
-        params = request.files.getlist('params')
-        dataProcessing(params)
+        params = request.form.get('params')
+        data =  json.loads(params)
+        dataProcessing(data)
     
 class UploadCampaign(Resource):
     def post(self):

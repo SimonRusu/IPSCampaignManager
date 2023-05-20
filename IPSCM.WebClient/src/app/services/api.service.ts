@@ -43,6 +43,10 @@ export class ApiService {
     return this.http.get(this.baseUrl + `configsByCampaign/${id}`);
   }
 
+  applyMethod(formData: FormData): Observable<any> {
+    return this.http.post(this.baseUrl + 'applyMethod', formData);
+  }
+
   uploadCampaign(formData: FormData): Observable<any> {
     return this.http.post(this.baseUrl + 'upload_campaign', formData);
   }

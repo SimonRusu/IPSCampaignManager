@@ -17,56 +17,58 @@
                 </div>
             </div>
             <div class="column is-offset-1 mt-5">
-                <section>
-                    <span class="is-fullwidth">
-                      <mat-form-field>
-                        <mat-label>Método</mat-label>
-                        <mat-select placeholder="Sin selección">
-                          <mat-option *ngFor="let food of operaciones" [value]="food">
-                            {{food}}
-                          </mat-option>
-                        </mat-select>
-                      </mat-form-field>
-                      <mat-form-field class="ml-3">
-                        <mat-label>Protocolo</mat-label>
-                        <mat-select placeholder="Sin selección">
-                          <mat-option *ngFor="let food of operaciones" [value]="food">
-                            {{food}}
-                          </mat-option>
-                        </mat-select>
-                      </mat-form-field>
-                      <mat-form-field class="ml-3">
-                        <mat-label>Canal</mat-label>
-                        <mat-select placeholder="Sin selección">
-                          <mat-option *ngFor="let food of operaciones" [value]="food">
-                            {{food}}
-                          </mat-option>
-                        </mat-select>
-                      </mat-form-field>
-                      <mat-form-field class="ml-3">
-                        <mat-label>Numero de muestras</mat-label>
-                        <mat-select placeholder="Sin selección">
-                          <mat-option *ngFor="let food of operaciones" [value]="food">
-                            {{food}}
-                          </mat-option>
-                        </mat-select>
-                      </mat-form-field>
-                    </span>
-                    <br>
+              <section>
+                <span class="is-fullwidth">
+                  <form [formGroup]="form">
+                    <mat-form-field>
+                      <mat-label>Método</mat-label>
+                      <mat-select placeholder="Sin selección" multiple formControlName="methods">
+                        <mat-option *ngFor="let method of methods" [value]="method">
+                          {{ method }}
+                        </mat-option>
+                      </mat-select>
+                    </mat-form-field>
+                    <mat-form-field class="ml-3">
+                      <mat-label>Protocolo</mat-label>
+                      <mat-select placeholder="Sin selección" multiple formControlName="protocols">
+                        <mat-option *ngFor="let protocol of protocols" [value]="protocol">
+                          {{ protocol }}
+                        </mat-option>
+                      </mat-select>
+                    </mat-form-field>
+                    <mat-form-field class="ml-3">
+                      <mat-label>Canal</mat-label>
+                      <mat-select placeholder="Sin selección" multiple formControlName="channels">
+                        <mat-option *ngFor="let channel of channels" [value]="+channel">
+                          {{ channel }}
+                        </mat-option>
+                      </mat-select>
+                    </mat-form-field>
+                    <mat-form-field class="ml-3">
+                      <mat-label>Numero de muestras</mat-label>
+                      <mat-select placeholder="Sin selección" formControlName="sample">
+                        <mat-option [value]="0">Sin límite</mat-option>
+                        <mat-option *ngFor="let sample of samples" [value]="sample">
+                          {{ sample }}
+                        </mat-option>
+                      </mat-select>
+                    </mat-form-field>
                     <div class="field">
-                      <div style="width: 90%" class="has-text-centered">
-                        <label style="width: 100%" class="label has-text-grey">Rango de K vecinos</label>
-                        <mat-slider style="width: 100%"  min="0" max="100" step="1" showTickMarks discrete [displayWith]="formatLabel">
-                          <input matSliderStartThumb>
-                          <input matSliderEndThumb>
+                      <div class="custom-container">
+                        <label class="custom-label has-text-weight-bold has-text-grey">Rango de K vecinos</label>
+                        <mat-slider class="custom-slider" min="1" max="20" step="1" showTickMarks discrete [displayWith]="formatLabel">
+                          <input matSliderStartThumb formControlName="kRangeStart">
+                          <input matSliderEndThumb formControlName="kRangeEnd">
                         </mat-slider>
                       </div>
-                    </div>  
-                </section>  
+                    </div>
+                  </form>
+                </span>
+              </section>
             </div>
         </div>
     </div>
-    <div class="has-text-centered mt-4" style="margin-left: 700px">
-      <button class="button is-link is-rounded">Aplicar método</button>
+    <div class="has-text-centered" style="margin-left: 700px">
+      <button [disabled]="form.invalid" (click)="applyMethod()" class="button is-link is-rounded">Aplicar método</button>
     </div>
 </div>
