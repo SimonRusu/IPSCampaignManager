@@ -24,6 +24,7 @@ def createMethodPredataBatch(batchData):
 
     db.session.bulk_save_objects(methodPredata_objects)
     db.session.commit()
+    db.session.remove()
 
 
 def getFilteredPredataSamples(campaignId, rssiSamples, dongle_rotation, mac, protocol, channel, positionX, positionY, positionZ):

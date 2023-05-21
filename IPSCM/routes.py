@@ -47,7 +47,7 @@ class DataProcessing(Resource):
     def post(self):
         params = request.form.get('params')
         data =  json.loads(params)
-        dataProcessing(data)
+        return dataProcessing(data)
     
 class UploadCampaign(Resource):
     def post(self):
@@ -66,7 +66,7 @@ class UploadCampaign(Resource):
         files = request.files.getlist('files')
         confs = request.files.getlist('confs')
 
-        insertIntoDatabase(name, date, description, imagesRef, files, confs)
+        return insertIntoDatabase(name, date, description, imagesRef, files, confs)
     
 class DeteteCampaignById(Resource):
     def delete(self, campaignId):

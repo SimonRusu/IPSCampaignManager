@@ -1,10 +1,13 @@
+import json
+import numpy as np
 from controllers.BeaconBleSignalCrud import getBeaconBleSignalById, existsBeaconWithProtocol
 from controllers.BeaconConfigurationCrud import getBeaconConfigurationByCampaignId
 from controllers.CampaignCrud import getPointsByCampaignId
 from controllers.CaptureCrud import getCaptureIdsByCampaignId, getCapturesByIdAndRotation
 from controllers.MethodPredataCrud import createMethodPredataBatch, getFilteredPredataSamples, getUniqueCoordinatesByCampaignId
+from controllers.MethodPredictionCrud import createMethodPrediction
 from services.MethodsService import applyMethod
-import numpy as np
+
 
 def generatePredata(campaignId):
     captureIds = getCaptureIdsByCampaignId(campaignId)
@@ -26,7 +29,8 @@ def dataProcessing(data):
     protocols = data['protocols']
     channels = data['channels']
     rssiSamples = data['sample']
-    ksRange = (data['kRangeStart'], data['kRangeEnd'])
+    ksRange = []
+    ksRange.append(data['kRangeStart'])
 
     configPoints = getPointsByCampaignId(campaignId)
 
@@ -36,19 +40,21 @@ def dataProcessing(data):
     ref_points = getUniqueCoordinatesByCampaignId(campaignId, len(ref_points_conf))
     ale_points = getUniqueCoordinatesByCampaignId(campaignId-1, len(ale_points_conf))
 
+    if(len(ref_points)) < data['kRangeEnd']:
+        ksRange.append(len(ref_points))
+    else:
+        ksRange.append(data['kRangeEnd'])
+
     for method in methods:
         for protocol in protocols:
             aleBeaconMacs, refBeaconMacs = processBeaconMacs(campaignId, protocol)
             for channel in channels:
-                print(method, protocol, channel)
 
                 refRSSIMatrix = getRefPointsMatrix(ref_points, ref_points_conf, refBeaconMacs, campaignId, protocol, channel, rssiSamples)
                 aleRSSIMatrix= getAlePointsMatrix(ale_points, ale_points_conf, aleBeaconMacs, campaignId-1, protocol, channel, rssiSamples)
-                
-                print(refRSSIMatrix)
-                print(aleRSSIMatrix)
 
-                #applyMethod(refRSSIMatrix, aleRSSIMatrix, method, ksRange)
+                predicted_points = applyMethod(refRSSIMatrix, aleRSSIMatrix, method, ksRange)
+                createMethodPrediction(campaignId, method, protocol, channel, rssiSamples, json.dumps(ksRange), json.dumps(predicted_points))
         
 
 def getRefPointsMatrix(points, points_conf, beaconMacs, campaignId, protocol, channel, rssiSamples):
