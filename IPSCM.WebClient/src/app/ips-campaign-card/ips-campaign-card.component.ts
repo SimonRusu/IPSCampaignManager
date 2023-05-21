@@ -21,6 +21,9 @@ export class IpsCampaignCardComponent {
   protocols: string[] = ["Eddystone", "iBeacon"];
   channels: string[] = ["37", "38", "39"];
   samples = Array.from({length: 20}, (_, index) => index + 1);
+  selectAllMethodsCheck: boolean = false;
+  selectAllProtocolsCheck: boolean = false;
+  selectAllChannelsCheck: boolean = false;
 
 
   seleccionada: string = this.methods[0];
@@ -49,7 +52,7 @@ export class IpsCampaignCardComponent {
         channels: ['', Validators.required],
         sample: ['', Validators.required],
         kRangeStart: [1],
-        kRangeEnd: [20],
+        kRangeEnd: [10],
       });
     }
 
@@ -61,17 +64,71 @@ export class IpsCampaignCardComponent {
       return `${value}`;
     }
 
-    applyMethod(){
-      const formData = new FormData();
-      const campaignId = this.campaign.Id;
-      const selectedMethods = this.form.get('methods')?.value;
-      const selectedProtocols = this.form.get('protocols')?.value;
-      const selectedChannels = this.form.get('channels')?.value;
-      const selectedSample = this.form.get('sample')?.value;
-      const kRangeStart = this.form.get('kRangeStart')?.value;
-      const kRangeEnd = this.form.get('kRangeEnd')?.value;
+    selectAllMethods(){
+      const methodsControl = this.form.get('methods');
+      const methodsToggle = this.form.get('methods')?.value;
 
-      const dataPackage = {
+      const allMethods = this.methods.slice();
+      
+      if(methodsControl){
+        if (methodsToggle.length == 1) {
+          methodsControl.setValue(allMethods);
+          this.selectAllMethodsCheck = true;
+        } else {
+          methodsControl.setValue([]);
+          this.selectAllMethodsCheck = false;
+        }
+      }
+    }
+
+    selectAllProtocols(){
+      const protocolsControl = this.form.get('protocols');
+      const protocolsToggle = this.form.get('protocols')?.value;
+
+      const allProtocols = this.protocols.slice();
+      
+      if(protocolsControl){
+        if (protocolsToggle.length == 1) {
+          protocolsControl.setValue(allProtocols);
+          this.selectAllProtocolsCheck = true;
+        } else {
+          protocolsControl.setValue([]);
+          this.selectAllProtocolsCheck = false;
+        }
+      }
+    }
+
+    selectAllChannels(){
+      const channelsControl = this.form.get('channels');
+      const channelsToggle = this.form.get('channels')?.value;
+
+      const allChannels = this.channels.slice();
+      
+      if(channelsControl){
+        if (channelsToggle.length == 1) {
+          console.log(channelsToggle)
+          channelsControl.setValue(allChannels);
+          this.selectAllChannelsCheck = true;
+        } else {
+          channelsControl.setValue([]);
+          this.selectAllChannelsCheck = false;
+        }
+      }
+    }
+
+    applyMethod(){
+      let formData = new FormData();
+      let campaignId = this.campaign.Id;
+      let selectedMethods = this.form.get('methods')?.value;
+      let selectedProtocols = this.form.get('protocols')?.value;
+      let selectedChannels = this.form.get('channels')?.value;
+      let selectedSample = this.form.get('sample')?.value;
+      let kRangeStart = this.form.get('kRangeStart')?.value;
+      let kRangeEnd = this.form.get('kRangeEnd')?.value;
+
+      selectedChannels= selectedChannels.map((channel: string) => parseInt(channel));
+
+      let dataPackage = {
         campaign: campaignId,
         methods: selectedMethods,
         protocols: selectedProtocols,

@@ -7,6 +7,7 @@ from controllers.CaptureCrud import getCaptureIdsByCampaignId, getCapturesByIdAn
 from controllers.MethodPredataCrud import createMethodPredataBatch, getFilteredPredataSamples, getUniqueCoordinatesByCampaignId
 from controllers.MethodPredictionCrud import createMethodPrediction
 from services.MethodsService import applyMethod
+from tqdm import tqdm
 
 
 def generatePredata(campaignId):
@@ -45,7 +46,7 @@ def dataProcessing(data):
     else:
         ksRange.append(data['kRangeEnd'])
 
-    for method in methods:
+    for method in tqdm(methods, desc='Processing methods'):
         for protocol in protocols:
             aleBeaconMacs, refBeaconMacs = processBeaconMacs(campaignId, protocol)
             for channel in channels:

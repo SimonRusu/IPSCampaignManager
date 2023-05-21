@@ -23,6 +23,7 @@
                     <mat-form-field>
                       <mat-label>Método</mat-label>
                       <mat-select placeholder="Sin selección" multiple formControlName="methods">
+                        <mat-option class="mat-option" value="allMethods" (click)="selectAllMethods()">Seleccionar todos</mat-option>
                         <mat-option *ngFor="let method of methods" [value]="method">
                           {{ method }}
                         </mat-option>
@@ -31,6 +32,7 @@
                     <mat-form-field class="ml-3">
                       <mat-label>Protocolo</mat-label>
                       <mat-select placeholder="Sin selección" multiple formControlName="protocols">
+                        <mat-option class="mat-option" value="allProtocols" (click)="selectAllProtocols()">Seleccionar todos</mat-option>
                         <mat-option *ngFor="let protocol of protocols" [value]="protocol">
                           {{ protocol }}
                         </mat-option>
@@ -39,7 +41,8 @@
                     <mat-form-field class="ml-3">
                       <mat-label>Canal</mat-label>
                       <mat-select placeholder="Sin selección" multiple formControlName="channels">
-                        <mat-option *ngFor="let channel of channels" [value]="+channel">
+                        <mat-option class="mat-option" value="allChannels" (click)="selectAllChannels()">Seleccionar todos</mat-option>
+                        <mat-option *ngFor="let channel of channels" [value]="channel">
                           {{ channel }}
                         </mat-option>
                       </mat-select>
