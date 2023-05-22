@@ -26,3 +26,9 @@ def getCampaignBeaconConfigurationIdsByCampaignId(campaignId):
     configurations = CampaignConfigurations.query.filter_by(Id_campaign=campaignId).all()
     ids = [configuration.Id_beacon_configuration for configuration in configurations]
     return ids
+
+def deleteConfigurationsByCampaignId(campaignId):
+    existingConfiguration = CampaignConfigurations().query.filter_by(Id_campaign=campaignId).delete()
+
+    if existingConfiguration:
+        db.session.commit()

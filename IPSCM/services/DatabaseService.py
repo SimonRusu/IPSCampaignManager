@@ -15,6 +15,7 @@ def insertIntoDatabase(name, date, description, imagesRef, files, confs):
     images = None
 
     filename = secure_filename("auxDB.sqlite3")
+
     campaignParams = readBLEConf(confs[0])
     alePointsJson = readAlePointsConf(confs[1])
     refPointsJson = readRefPointsConf(confs[2])

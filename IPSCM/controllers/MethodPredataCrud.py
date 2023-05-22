@@ -61,3 +61,10 @@ def getUniqueCoordinatesByCampaignId(campaignId, limit):
     ]
 
     return unique_coordinates
+
+
+def deleteMethodPredataByCampaignId(campaignId):
+    existingPredata = MethodPredata().query.filter_by(Id_campaign=campaignId).delete()
+
+    if existingPredata:
+        db.session.commit()

@@ -5,7 +5,7 @@ from controllers.BeaconConfigurationCrud import getBeaconConfigurationByCampaign
 from controllers.CampaignCrud import getPointsByCampaignId
 from controllers.CaptureCrud import getCaptureIdsByCampaignId, getCapturesByIdAndRotation
 from controllers.MethodPredataCrud import createMethodPredataBatch, getFilteredPredataSamples, getUniqueCoordinatesByCampaignId
-from controllers.MethodPredictionCrud import createMethodPrediction
+from controllers.MethodPredictionCrud import checkExistingMethodPredictionByParams, createMethodPrediction
 from services.MethodsService import applyMethod
 from tqdm import tqdm
 
@@ -50,12 +50,13 @@ def dataProcessing(data):
         for protocol in protocols:
             aleBeaconMacs, refBeaconMacs = processBeaconMacs(campaignId, protocol)
             for channel in channels:
+                if not checkExistingMethodPredictionByParams(campaignId, method, protocol, channel, rssiSamples, json.dumps(ksRange)):
+                    
+                    refRSSIMatrix = getRefPointsMatrix(ref_points, ref_points_conf, refBeaconMacs, campaignId, protocol, channel, rssiSamples)
+                    aleRSSIMatrix= getAlePointsMatrix(ale_points, ale_points_conf, aleBeaconMacs, campaignId-1, protocol, channel, rssiSamples)
 
-                refRSSIMatrix = getRefPointsMatrix(ref_points, ref_points_conf, refBeaconMacs, campaignId, protocol, channel, rssiSamples)
-                aleRSSIMatrix= getAlePointsMatrix(ale_points, ale_points_conf, aleBeaconMacs, campaignId-1, protocol, channel, rssiSamples)
-
-                predicted_points = applyMethod(refRSSIMatrix, aleRSSIMatrix, method, ksRange)
-                createMethodPrediction(campaignId, method, protocol, channel, rssiSamples, json.dumps(ksRange), json.dumps(predicted_points))
+                    predicted_points = applyMethod(refRSSIMatrix, aleRSSIMatrix, method, ksRange)
+                    createMethodPrediction(campaignId, method, protocol, channel, rssiSamples, json.dumps(ksRange), json.dumps(predicted_points))
         
 
 def getRefPointsMatrix(points, points_conf, beaconMacs, campaignId, protocol, channel, rssiSamples):

@@ -3,6 +3,9 @@ from flask import jsonify
 from datetime import datetime
 from config import db
 from controllers.BeaconBleSignalCrud import deleteBeaconBleSignalByCampaignId
+from controllers.CampaignConfigurationsCrud import deleteConfigurationsByCampaignId
+from controllers.MethodPredataCrud import deleteMethodPredataByCampaignId
+from controllers.MethodPredictionCrud import deleteMethodPredictionByCampaignId
 from models.DongleReceptor import DongleReceptor, DongleReceptorAux
 from models.Campaign import Campaign
 from models.CampaignSequence import CampaignSequence
@@ -68,6 +71,15 @@ def deleteCampaignById(campaignId):
 
         deleteCaptureByCampaignId(campaignId)
         deleteCaptureByCampaignId(relatedCampaign.Id)
+
+        deleteConfigurationsByCampaignId(campaignId)
+        deleteConfigurationsByCampaignId(relatedCampaign.Id)
+
+        deleteMethodPredataByCampaignId(campaignId)
+        deleteMethodPredataByCampaignId(relatedCampaign.Id)
+
+        deleteMethodPredictionByCampaignId(campaignId)
+        deleteMethodPredictionByCampaignId(relatedCampaign.Id)
 
         if campaign.Images_ref is not None:
             deleteZipImages(campaign.Images_ref)

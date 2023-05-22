@@ -1,3 +1,4 @@
+from sqlalchemy import Text
 from config import db
 from sqlalchemy.ext.declarative import declared_attr
 
@@ -14,7 +15,7 @@ class MethodPrediction(db.Model):
     Channel = db.Column(db.VARCHAR(50), nullable=False)
     RSSI_samples = db.Column(db.Integer, nullable=False)
     Ks_range  = db.Column(db.String(10), nullable=False)
-    Predicted_points = db.Column(db.String(100000), nullable=False)
+    Predicted_points = db.Column(Text, nullable=False)
 
 def serialize(self):
         return{
