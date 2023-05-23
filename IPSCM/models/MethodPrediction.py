@@ -17,14 +17,14 @@ class MethodPrediction(db.Model):
     Ks_range  = db.Column(db.String(10), nullable=False)
     Predicted_points = db.Column(Text, nullable=False)
 
-def serialize(self):
-        return{
-            'Id': self.Id,
-            'Id_campaign': self.Id_campaign,
-            'Method': self.Method,
-            'Protocol': self.Protocol,
-            'Channel': self.Channel,
-            'RSSI_samples': self.RSSI_samples,
-            'Ks_range': self.Ks_range,
-            'Predicted_points': self.Predicted_points
-        }
+    def serialize(self):
+            return{
+                'Id': self.Id,
+                'Id_campaign': self.Id_campaign,
+                'Method': self.Method,
+                'Protocol': self.Protocol,
+                'Channel': self.Channel,
+                'RSSI_samples': self.RSSI_samples,
+                'Ks_range': self.Ks_range,
+                'Predicted_points': self.Predicted_points
+            }

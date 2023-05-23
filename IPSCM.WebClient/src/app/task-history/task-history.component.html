@@ -1,0 +1,17 @@
+<div class="columns is-centered is-multiline p-6">
+    <app-history-item-card *ngFor="let task of historyTasks | paginate: { itemsPerPage: 10, currentPage: p }" [task]="task"></app-history-item-card>
+</div>
+
+
+<div *ngIf = "historyTasks.length > 0; else noCampaigns" class="column pagination is-centered" role="navigation" aria-label="pagination">
+    <pagination-controls (pageChange)="p = $event" previousLabel="Anterior" nextLabel="Siguiente"></pagination-controls>
+</div>
+
+<ng-template #noCampaigns>
+    <div class="container is-flex is-align-items-center is-justify-content-center">
+      <div class="notification has-text-grey-light has-text-centered box is-rounded">
+        <p class="is-size-4">El histórico está vacío</p>
+      </div>
+    </div>
+  </ng-template>
+  

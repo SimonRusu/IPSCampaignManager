@@ -11,6 +11,7 @@ with app.app_context():
 
     #get resources
     api.add_resource(GetCampaigns, '/api/campaigns')
+    api.add_resource(GetTaskHistory, '/api/taskHistory')
     api.add_resource(GetRelatedCampaignById, '/api/relatedCampaign/<int:relatedCampaignId>')
     api.add_resource(GetCampaignImagesById, '/api/campaignImages/<int:campaignId>')
     api.add_resource(GetDongleReceptor, '/api/dongleReceptor/<int:dongleId>')

@@ -12,7 +12,11 @@ export class ApiService {
   constructor(private http: HttpClient) {}
 
   getCampaigns(){
-    return this.http.get(this.baseUrl+ "campaigns");
+    return this.http.get(this.baseUrl + "campaigns");
+  }
+
+  getTaskHistory(){
+    return this.http.get(this.baseUrl + "taskHistory");
   }
 
   getRelatedCampaignById(id: any){

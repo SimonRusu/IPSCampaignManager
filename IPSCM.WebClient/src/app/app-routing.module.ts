@@ -4,11 +4,14 @@ import { CampaignsComponent } from './campaigns/campaigns.component';
 import { UploadCampaignComponent } from './upload-campaign/upload-campaign.component';
 import { CampaignDetailsComponent } from './campaign-details/campaign-details.component';
 import { IpsMethodsComponent } from './ips-methods/ips-methods.component';
+import { TaskHistoryComponent } from './task-history/task-history.component';
+
 const routes: Routes = [
   { path: 'campaigns', component: CampaignsComponent},
   { path: 'upload-campaign', component: UploadCampaignComponent },
   { path: 'campaign-details', component: CampaignDetailsComponent },
-  { path: 'ips-methods', component: IpsMethodsComponent }
+  { path: 'ips-methods', component: IpsMethodsComponent },
+  { path: 'task-history', component: TaskHistoryComponent }
 ];
 
 @NgModule({

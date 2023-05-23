@@ -6,14 +6,19 @@ from controllers.BeaconConfigurationCrud import getJsonBeaconConfigurationByCamp
 from controllers.CampaignSequenceCrud import getCampaignSequence
 from controllers.CaptureCrud import getCapturesByCampaignId
 from controllers.DongleReceptorCrud import getDongleReceptor
+from controllers.TaskHistoryCrud import getTaskHistory
 from services.DataProcessService import dataProcessing
-from services.DatabaseService import insertIntoDatabase
+from services.UploadService import uploadCampaign
 from services.ImageService import generateZipImages
 
 
 class GetCampaigns(Resource):
     def get(self):
         return getCampaigns()
+    
+class GetTaskHistory(Resource):
+    def get(self):
+        return getTaskHistory()
 
 class GetCampaignImagesById(Resource):
     def get(self, campaignId):
@@ -66,7 +71,7 @@ class UploadCampaign(Resource):
         files = request.files.getlist('files')
         confs = request.files.getlist('confs')
 
-        return insertIntoDatabase(name, date, description, imagesRef, files, confs)
+        return uploadCampaign(name, date, description, imagesRef, files, confs)
     
 class DeteteCampaignById(Resource):
     def delete(self, campaignId):

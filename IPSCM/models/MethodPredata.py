@@ -19,17 +19,17 @@ class MethodPredata(db.Model):
     Position_y = db.Column(db.REAL, nullable=False)
     Position_z = db.Column(db.REAL, nullable=False)
 
-def serialize(self):
-        return{
-            'Id': self.Id,
-            'Id_campaign': self.Id_campaign,
-            'Date': self.Date,
-            'Channel': self.Channel,
-            'Mac': self.Mac,
-            'Dongle_rotation': self.Dongle_rotation,
-            'Protocol': self.Protocol,
-            'RSSI': self.RSSI,
-            'Position_x': self.Position_x,
-            'Position_y': self.Position_y,
-            'Position_z': self.Position_z
-        }
+    def serialize(self):
+            return{
+                'Id': self.Id,
+                'Id_campaign': self.Id_campaign,
+                'Date': self.Date,
+                'Channel': self.Channel,
+                'Mac': self.Mac,
+                'Dongle_rotation': self.Dongle_rotation,
+                'Protocol': self.Protocol,
+                'RSSI': self.RSSI,
+                'Position_x': self.Position_x,
+                'Position_y': self.Position_y,
+                'Position_z': self.Position_z
+            }

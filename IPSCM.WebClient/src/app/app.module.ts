@@ -33,6 +33,8 @@ import { FormsModule } from '@angular/forms';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSliderModule } from '@angular/material/slider';
+import { TaskHistoryComponent } from './task-history/task-history.component';
+import { HistoryItemCardComponent } from './history-item-card/history-item-card.component';
 
 
 
@@ -47,7 +49,9 @@ import { MatSliderModule } from '@angular/material/slider';
     CampaignDetailsComponent,
     ConfirmationDialogComponent,
     IpsMethodsComponent,
-    IpsCampaignCardComponent
+    IpsCampaignCardComponent,
+    TaskHistoryComponent,
+    HistoryItemCardComponent
   ],
   imports: [
     CarouselModule,

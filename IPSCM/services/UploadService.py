@@ -10,7 +10,8 @@ from controllers.CampaignSequenceCrud import createCampaignSequence
 from services.ConfigReaderService import readBLEConf, readAlePointsConf, readRefPointsConf
 from services.DataProcessService import generatePredata
 
-def insertIntoDatabase(name, date, description, imagesRef, files, confs):
+def uploadCampaign(name, date, description, imagesRef, files, confs):
+    
     relatedCampaignId = None
     images = None
 
