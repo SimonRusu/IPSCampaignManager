@@ -1,9 +1,7 @@
-<div class="columns is-centered is-multiline p-6">
+<div *ngIf = "campaigns.length > 0; else noCampaigns" class="column pagination is-centered" role="navigation" aria-label="pagination">
+  <div class="columns is-centered is-multiline p-6">
     <app-campaign-card *ngFor="let campaign of campaigns | paginate: { itemsPerPage: 10, currentPage: p }" [campaign]="campaign"></app-campaign-card>
 </div>
-
-
-<div *ngIf = "campaigns.length > 0; else noCampaigns" class="column pagination is-centered" role="navigation" aria-label="pagination">
     <pagination-controls (pageChange)="p = $event" previousLabel="Anterior" nextLabel="Siguiente"></pagination-controls>
 </div>
 

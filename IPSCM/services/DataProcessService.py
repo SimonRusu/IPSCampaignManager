@@ -27,6 +27,7 @@ def generatePredata(campaignId):
 
 def dataProcessing(data):
     campaignId = data['campaign']
+    campaignName = data['campaignName']
     methods = data['methods']
     protocols = data['protocols']
     channels = data['channels']
@@ -59,7 +60,7 @@ def dataProcessing(data):
                     taskId = taskToJson(method, protocol, channel, rssiSamples, ksRangeJson)
 
                     datetime_start = datetime.now()
-                    createTaskHistory(campaignId, "Obteniendo matriz de puntos de referencia...", taskId, datetime_start)
+                    createTaskHistory(campaignId, campaignName, "Obteniendo matriz de puntos de referencia...", taskId, datetime_start)
                     
                     refRSSIMatrix = getRefPointsMatrix(ref_points, ref_points_conf, refBeaconMacs, campaignId, protocol, channel, rssiSamples)
 

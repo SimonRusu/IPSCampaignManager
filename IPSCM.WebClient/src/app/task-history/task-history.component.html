@@ -1,17 +1,23 @@
-<div class="columns is-centered is-multiline p-6">
-    <app-history-item-card *ngFor="let task of historyTasks | paginate: { itemsPerPage: 10, currentPage: p }" [task]="task"></app-history-item-card>
+<div *ngIf = "historyTasks.length > 0; else noTasks" class="column pagination is-centered" role="navigation" aria-label="pagination">
+  <table mat-table [dataSource]="historyItemDataSource" class="table is-fullwidth">
+
+    <ng-container matColumnDef="{{column}}" *ngFor="let column of historyItemColumns">
+    <th mat-header-cell *matHeaderCellDef>{{getColumnName(column)}}</th>
+    <td mat-cell *matCellDef="let element">{{element[column]}}</td>
+    </ng-container>
+  
+    <tr mat-header-row *matHeaderRowDef="historyItemColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: historyItemColumns;"></tr>
+  </table>
+
+  <mat-paginator #historyItemPaginator [pageSizeOptions]="pageSizes" [pageSize]="defaultPageSize" showFirstLastButtons ></mat-paginator>
 </div>
 
-
-<div *ngIf = "historyTasks.length > 0; else noCampaigns" class="column pagination is-centered" role="navigation" aria-label="pagination">
-    <pagination-controls (pageChange)="p = $event" previousLabel="Anterior" nextLabel="Siguiente"></pagination-controls>
-</div>
-
-<ng-template #noCampaigns>
+<ng-template #noTasks>
     <div class="container is-flex is-align-items-center is-justify-content-center">
       <div class="notification has-text-grey-light has-text-centered box is-rounded">
-        <p class="is-size-4">El histórico está vacío</p>
+        <p class="is-size-4">Aún no se han aplicado métodos IPS a ninguna campaña</p>
       </div>
     </div>
-  </ng-template>
+</ng-template>
   

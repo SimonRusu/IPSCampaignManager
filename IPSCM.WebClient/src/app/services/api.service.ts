@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { Observable, catchError, of, throwError } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -24,7 +24,14 @@ export class ApiService {
   }
 
   getCampaignImagesById(id: any): Observable<any> {
-    return this.http.get(this.baseUrl + `campaignImages/${id}`, { responseType: 'blob' })
+    return this.http.get(this.baseUrl + `campaignImages/${id}`, { responseType: 'blob' }).pipe(
+      catchError((error: HttpErrorResponse) => {
+        if (error.status === 404) {
+          return of(null);
+        }
+        return throwError(() => error);
+      })
+    );
   }
 
   getDongleName(id: any){

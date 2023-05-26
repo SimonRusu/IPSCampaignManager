@@ -4,14 +4,17 @@ from config import db
 from models.TaskHistory import TaskHistory
 
 
-def createTaskHistory(campaignId, status, task_description, datetime_start):
-    formattedDate = datetime.strptime(datetime_start, '%Y-%m-%d').date()
+
+def createTaskHistory(campaignId, campaignName, status, task_description, datetime_start):
 
     taskHistory = TaskHistory()
     taskHistory.Id_campaign = campaignId
+    taskHistory.Name = campaignName
     taskHistory.Status = status
     taskHistory.Task_description = task_description
-    taskHistory.Datetime_start = formattedDate 
+
+    formatted_date = datetime.datetime.strftime(datetime_start, '%d/%m/%Y %H:%M:%S')
+    taskHistory.Datetime_start = formatted_date 
 
     db.session.add(taskHistory)
     db.session.commit()
@@ -31,8 +34,8 @@ def updateTaskHistory(campaignId, task_description, status, datetime_end=None):
         setattr(existing_entry, 'Status', status)
 
         if datetime_end is not None:
-            formattedDate = datetime.strptime(datetime_end, '%Y-%m-%d').date()
-            setattr(existing_entry, 'Datetime_end', formattedDate)
+            formatted_date = datetime.datetime.strftime(datetime_end, '%d/%m/%Y %H:%M:%S')
+            setattr(existing_entry, 'Datetime_end', formatted_date)
 
         db.session.flush()
         db.session.commit()

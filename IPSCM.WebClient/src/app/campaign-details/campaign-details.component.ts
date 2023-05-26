@@ -85,24 +85,31 @@ export class CampaignDetailsComponent {
     })
 
     apiService.getCampaignImagesById(this.campaign.Id).subscribe((response: Blob) => {
-      const zipImages = new JSZip();
-      zipImages.loadAsync(response).then(images =>{
-        let count = 0;
-        Object.keys(images.files).forEach(filename => {
-          images.files[filename].async('base64').then(imageData => {
-            const imageUrl = 'data:image/jpeg;base64,' + imageData;
-            if (count < 3 && Object.keys(images.files).length == 1) {
-              for (let i = 0; i < 2; i++) {
+      if(response != null){
+        const zipImages = new JSZip();
+        zipImages.loadAsync(response).then(images =>{
+          let count = 0;
+          Object.keys(images.files).forEach(filename => {
+            images.files[filename].async('base64').then(imageData => {
+              const imageUrl = 'data:image/jpeg;base64,' + imageData;
+              if (count < 3 && Object.keys(images.files).length == 1) {
+                for (let i = 0; i < 2; i++) {
+                  this.campaignImages.push(imageUrl);
+                  count++;
+                }
+              } else {
                 this.campaignImages.push(imageUrl);
                 count++;
               }
-            } else {
-              this.campaignImages.push(imageUrl);
-              count++;
-            }
+            })
           })
         })
-      })
+      }
+      else{
+        const defaultImageUrl = 'assets/img/defaultCampaignImage.png'; // Actualiza esta ruta a la ruta de tu imagen predeterminada.
+        this.campaignImages.push(defaultImageUrl);
+        this.campaignImages.push(defaultImageUrl);
+      }
     })
     
   

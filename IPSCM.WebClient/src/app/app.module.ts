@@ -34,7 +34,6 @@ import { NgxPaginationModule } from 'ngx-pagination';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSliderModule } from '@angular/material/slider';
 import { TaskHistoryComponent } from './task-history/task-history.component';
-import { HistoryItemCardComponent } from './history-item-card/history-item-card.component';
 
 
 
@@ -50,8 +49,7 @@ import { HistoryItemCardComponent } from './history-item-card/history-item-card.
     ConfirmationDialogComponent,
     IpsMethodsComponent,
     IpsCampaignCardComponent,
-    TaskHistoryComponent,
-    HistoryItemCardComponent
+    TaskHistoryComponent
   ],
   imports: [
     CarouselModule,

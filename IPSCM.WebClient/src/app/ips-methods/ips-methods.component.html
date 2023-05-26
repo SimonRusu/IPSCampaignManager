@@ -1,12 +1,12 @@
-<div class=" is-centered is-multiline pl-6 pt-6">
-    <app-ips-campaign-card *ngFor="let campaign of campaigns | paginate: { itemsPerPage: 3, currentPage: p }" [campaign]="campaign"></app-ips-campaign-card>
-</div>
-
 <div *ngIf="campaigns.length > 0; else noCampaigns">
+
+  <div class=" is-centered is-multiline pl-6 pt-6">
+    <app-ips-campaign-card *ngFor="let campaign of campaigns | paginate: { itemsPerPage: 3, currentPage: p }" [campaign]="campaign"></app-ips-campaign-card>
+  </div>
     
-    <div class="column pagination is-centered" role="navigation" aria-label="pagination">
-        <pagination-controls (pageChange)="p = $event" previousLabel="Anterior" nextLabel="Siguiente"></pagination-controls>
-    </div>
+  <div class="column pagination is-centered" role="navigation" aria-label="pagination">
+      <pagination-controls (pageChange)="p = $event" previousLabel="Anterior" nextLabel="Siguiente"></pagination-controls>
+  </div>
 </div>
 
 <ng-template #noCampaigns>

@@ -6,6 +6,7 @@ from controllers.BeaconBleSignalCrud import deleteBeaconBleSignalByCampaignId
 from controllers.CampaignConfigurationsCrud import deleteConfigurationsByCampaignId
 from controllers.MethodPredataCrud import deleteMethodPredataByCampaignId
 from controllers.MethodPredictionCrud import deleteMethodPredictionByCampaignId
+from controllers.TaskHistoryCrud import deleteTaskHistoryByCampaignId
 from models.DongleReceptor import DongleReceptor, DongleReceptorAux
 from models.Campaign import Campaign
 from models.CampaignSequence import CampaignSequence
@@ -79,7 +80,8 @@ def deleteCampaignById(campaignId):
         deleteMethodPredataByCampaignId(relatedCampaign.Id)
 
         deleteMethodPredictionByCampaignId(campaignId)
-        deleteMethodPredictionByCampaignId(relatedCampaign.Id)
+
+        deleteTaskHistoryByCampaignId(campaignId)
 
         if campaign.Images_ref is not None:
             deleteZipImages(campaign.Images_ref)

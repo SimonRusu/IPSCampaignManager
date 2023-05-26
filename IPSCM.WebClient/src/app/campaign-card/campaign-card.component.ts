@@ -29,15 +29,17 @@ export class CampaignCardComponent {
 
   ngOnInit(){
     this.apiService.getCampaignImagesById(this.campaign.Id).subscribe((response: Blob) => {
-      const zipImages = new JSZip();
-      zipImages.loadAsync(response).then(images =>{
-        Object.keys(images.files).forEach(filename => {
-          images.files[filename].async('base64').then(imageData => {
-            const imageUrl = 'data:image/jpeg;base64,' + imageData;
-            this.campaignImages.push(imageUrl);
+      if(response != null){
+        const zipImages = new JSZip();
+        zipImages.loadAsync(response).then(images =>{
+          Object.keys(images.files).forEach(filename => {
+            images.files[filename].async('base64').then(imageData => {
+              const imageUrl = 'data:image/jpeg;base64,' + imageData;
+              this.campaignImages.push(imageUrl);
+            })
           })
         })
-      })
+      }
     })
   }
   

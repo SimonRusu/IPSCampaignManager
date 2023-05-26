@@ -36,6 +36,7 @@ export class IpsCampaignCardComponent {
   
     ngOnInit(){
       this.apiService.getCampaignImagesById(this.campaign.Id).subscribe((response: Blob) => {
+        if(response != null){
         const zipImages = new JSZip();
         zipImages.loadAsync(response).then(images =>{
           Object.keys(images.files).forEach(filename => {
@@ -45,6 +46,7 @@ export class IpsCampaignCardComponent {
             })
           })
         })
+      }
       })
       
       this.form = this.formBuilder.group({
@@ -120,6 +122,7 @@ export class IpsCampaignCardComponent {
     applyMethod(){
       let formData = new FormData();
       let campaignId = this.campaign.Id;
+      let campaignName = this.campaign.Name;
       let selectedMethods = this.form.get('methods')?.value;
       let selectedProtocols = this.form.get('protocols')?.value;
       let selectedChannels = this.form.get('channels')?.value;
@@ -131,6 +134,7 @@ export class IpsCampaignCardComponent {
 
       let dataPackage = {
         campaign: campaignId,
+        campaignName: campaignName,
         methods: selectedMethods,
         protocols: selectedProtocols,
         channels: selectedChannels,
@@ -142,16 +146,10 @@ export class IpsCampaignCardComponent {
       formData.append('params', JSON.stringify(dataPackage));
       this.disableApplyButton = true;
       
+      this.toastr.clear();
+      this.toastr.warning('Conectando con el servidor...', 'Operación en curso', { timeOut: 2000 });
+
       this.apiService.applyMethod(formData).pipe(
-        tap(response => {
-          setTimeout(() => {
-            this.toastr.clear();
-            this.toastr.success('¡El método se ha aplicado correctamente!', 'Operación completada', { timeOut: 2000 });
-            this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
-              this.router.navigate(['/ips-methods'])
-            });
-          }, 0);
-        }),
         catchError(error => {
           setTimeout(() => {
             this.toastr.clear();

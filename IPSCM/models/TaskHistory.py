@@ -10,14 +10,16 @@ class TaskHistory(db.Model):
     def Id_campaign(cls):
          return db.Column(db.Integer, db.ForeignKey('Campaign.Id'), nullable=False)
     
+    Name = db.Column(db.VARCHAR(50), nullable=False)
     Status = db.Column(db.VARCHAR(50), nullable=False)
     Task_description = db.Column(Text, nullable=False)
-    Datetime_start = db.Column(db.db.DateTime, nullable=False)
-    Datetime_end = db.Column(db.db.DateTime)
+    Datetime_start = db.Column(db.VARCHAR(50), nullable=False)
+    Datetime_end = db.Column(db.VARCHAR(50))
     
     def serialize(self):
             return{
                 'Id': self.Id,
+                'Name': self.Name,
                 'Id_campaign': self.Id_campaign,
                 'Status': self.Status,
                 'Task_description': self.Task_description,
