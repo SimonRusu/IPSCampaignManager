@@ -27,7 +27,7 @@ export class TaskHistoryComponent {
 
   constructor(private apiService: ApiService, private cdr: ChangeDetectorRef) { }
   ngOnInit(){
-    this.apiService.getTaskHistory().subscribe(data => {
+    this.apiService.pollTaskHistory().subscribe(data => {
       const objectsArray: any[] = [...Object.values(data)];
       this.historyItemDataSource.data = objectsArray;
       this.historyTasks = objectsArray;

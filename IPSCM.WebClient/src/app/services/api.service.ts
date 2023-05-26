@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Observable, catchError, of, throwError } from 'rxjs';
+import { EMPTY, Observable, Subject, catchError, of, switchMap, takeUntil, throwError, timer } from 'rxjs';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -8,8 +9,9 @@ import { Observable, catchError, of, throwError } from 'rxjs';
 export class ApiService {
 
   private baseUrl = 'http://localhost:5000/api/';
+  private destroy$ = new Subject();
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private router: Router) {}
 
   getCampaigns(){
     return this.http.get(this.baseUrl + "campaigns");
@@ -17,6 +19,20 @@ export class ApiService {
 
   getTaskHistory(){
     return this.http.get(this.baseUrl + "taskHistory");
+  }
+  
+  pollTaskHistory(): Observable<any> {
+    return timer(0, 1000).pipe(
+      takeUntil(this.destroy$),
+      switchMap(() => {
+        if (this.router.url === '/task-history') {
+          return this.getTaskHistory();
+        } else {
+          this.destroy$.next(null);
+          return EMPTY;
+        }
+      })
+    );
   }
 
   getRelatedCampaignById(id: any){
