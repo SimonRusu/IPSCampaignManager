@@ -16,6 +16,7 @@ class MethodPrediction(db.Model):
     RSSI_samples = db.Column(db.Integer, nullable=False)
     Ks_range  = db.Column(db.String(10), nullable=False)
     Predicted_points = db.Column(Text, nullable=False)
+    Mean_error = db.Column(Text, nullable=False)
 
     def serialize(self):
             return{

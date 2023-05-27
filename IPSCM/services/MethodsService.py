@@ -1,3 +1,4 @@
+import numpy as np
 from sklearn.svm import SVR, LinearSVR, NuSVR
 from sklearn.neighbors import KNeighborsRegressor
 from sklearn.multioutput import MultiOutputRegressor
@@ -118,3 +119,15 @@ def applyLinearSVRmethod(data_train, data_test):
                 results[model_name] = y_pred_list
 
     return results
+
+def calculate_error(aleMatrix, results):
+    y_test = aleMatrix[:, -3:]
+    errors = {}
+
+    for k, y_pred in results.items():
+        y_pred = [np.array(pred) for pred in y_pred][1] 
+        error = np.sqrt(np.sum((y_test - y_pred) ** 2, axis=1))
+        mean_error = np.mean(error)
+        errors[k]=mean_error
+        
+    return errors

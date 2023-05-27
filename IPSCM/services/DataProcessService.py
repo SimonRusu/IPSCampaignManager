@@ -8,7 +8,7 @@ from controllers.CampaignCrud import getPointsByCampaignId
 from controllers.CaptureCrud import getCaptureIdsByCampaignId, getCapturesByIdAndRotation
 from controllers.MethodPredataCrud import createMethodPredataBatch, getFilteredPredataSamples, getUniqueCoordinatesByCampaignId
 from controllers.MethodPredictionCrud import checkExistingMethodPredictionByParams, createMethodPrediction
-from services.MethodsService import applyMethod
+from services.MethodsService import applyMethod, calculate_error
 from controllers.TaskHistoryCrud import createTaskHistory, updateTaskHistory
 
 def generatePredata(campaignId):
@@ -70,8 +70,10 @@ def dataProcessing(data):
 
                     updateTaskHistory(campaignId, taskId, "Aplicando método de posicionamiento...")
 
-                    predicted_points = json.dumps(applyMethod(refRSSIMatrix, aleRSSIMatrix, method, ksRange))
-                    createMethodPrediction(campaignId, method, protocol, channel, rssiSamples, ksRangeJson, predicted_points)
+                    predicted_points = applyMethod(refRSSIMatrix, aleRSSIMatrix, method, ksRange)
+                    mean_error = calculate_error(aleRSSIMatrix, predicted_points)
+
+                    createMethodPrediction(campaignId, method, protocol, channel, rssiSamples, ksRangeJson, json.dumps(predicted_points), json.dumps(mean_error))
 
                     datetime_end = datetime.now()
                     updateTaskHistory(campaignId, taskId, "Completado", datetime_end)

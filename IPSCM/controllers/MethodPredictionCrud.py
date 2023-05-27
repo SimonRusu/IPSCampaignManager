@@ -1,7 +1,7 @@
 from config import db
 from models.MethodPrediction import MethodPrediction
 
-def createMethodPrediction(campaignId, method, protocol, channel, rssi_samples, ks_range, predicted_points):
+def createMethodPrediction(campaignId, method, protocol, channel, rssi_samples, ks_range, predicted_points, mean_error):
 
     methodPrediction = MethodPrediction()
     methodPrediction.Id_campaign = campaignId
@@ -11,6 +11,7 @@ def createMethodPrediction(campaignId, method, protocol, channel, rssi_samples, 
     methodPrediction.RSSI_samples = rssi_samples
     methodPrediction.Ks_range = ks_range
     methodPrediction.Predicted_points = predicted_points
+    methodPrediction.Mean_error = mean_error
 
     db.session.add(methodPrediction)
     

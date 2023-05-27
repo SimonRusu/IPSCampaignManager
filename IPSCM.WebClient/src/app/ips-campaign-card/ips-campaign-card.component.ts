@@ -24,7 +24,6 @@ export class IpsCampaignCardComponent {
   selectAllMethodsCheck: boolean = false;
   selectAllProtocolsCheck: boolean = false;
   selectAllChannelsCheck: boolean = false;
-  disableApplyButton: boolean = false;
 
 
   seleccionada: string = this.methods[0];
@@ -144,7 +143,6 @@ export class IpsCampaignCardComponent {
       };
       
       formData.append('params', JSON.stringify(dataPackage));
-      this.disableApplyButton = true;
       
       this.toastr.clear();
       this.toastr.warning('Conectando con el servidor...', 'Operación en curso', { timeOut: 2000 });
