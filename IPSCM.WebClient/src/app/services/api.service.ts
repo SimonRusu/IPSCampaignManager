@@ -20,6 +20,10 @@ export class ApiService {
   getTaskHistory(){
     return this.http.get(this.baseUrl + "taskHistory");
   }
+
+  getMethodPredictionsById(id: any){
+    return this.http.get(this.baseUrl + `predictionsByCampaign/${id}`);
+  }
   
   pollTaskHistory(): Observable<any> {
     return timer(0, 5000).pipe(

@@ -17,6 +17,8 @@ import JSZip from 'jszip';
 export class CampaignCardComponent {
   @Input() campaign!: any;
   campaignImages: string[] = [];
+  campaignMethodPrediction: any = [];
+  disableGraphics:boolean = true;
   
 
   constructor(
@@ -41,10 +43,21 @@ export class CampaignCardComponent {
         })
       }
     })
+
+    this.apiService.getMethodPredictionsById(this.campaign.Id).subscribe(res=> {
+      if(res != 0){
+        this.campaignMethodPrediction = res
+        this.disableGraphics = false;
+      }
+    })
   }
   
   stringifyCampaign() {
     return JSON.stringify(this.campaign);
+  }
+
+  stringifyCampaignMethodPrediction() {
+    return JSON.stringify(this.campaignMethodPrediction);
   }
 
 

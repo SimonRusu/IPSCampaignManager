@@ -6,6 +6,7 @@ from controllers.BeaconConfigurationCrud import getJsonBeaconConfigurationByCamp
 from controllers.CampaignSequenceCrud import getCampaignSequence
 from controllers.CaptureCrud import getCapturesByCampaignId
 from controllers.DongleReceptorCrud import getDongleReceptor
+from controllers.MethodPredictionCrud import getPredictionsByCampaignId
 from controllers.TaskHistoryCrud import getTaskHistory
 from services.DataProcessService import dataProcessing
 from services.UploadService import uploadCampaign
@@ -47,6 +48,10 @@ class GetBeaconBleSignalByCampaignId(Resource):
 class GetBeaconConfigurationByCampaignId(Resource):
     def get(self, campaignId):
         return getJsonBeaconConfigurationByCampaignId(campaignId)
+    
+class GetPredictionsByCampaignId(Resource):
+    def get(self, campaignId):
+        return getPredictionsByCampaignId(campaignId)   
     
 class DataProcessing(Resource):
     def post(self):

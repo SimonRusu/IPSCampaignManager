@@ -33,6 +33,13 @@ def checkExistingMethodPredictionByParams(campaignId, method, protocol, channel,
         return True
     else:
         return False
+    
+
+def getPredictionsByCampaignId(campaignId:int):
+    result = MethodPrediction.query.filter_by(Id_campaign=campaignId).all()
+    predictions = [prediction.serialize() for prediction in result]
+
+    return predictions
 
 
 def deleteMethodPredictionByCampaignId(campaignId):

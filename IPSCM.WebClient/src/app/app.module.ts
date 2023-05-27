@@ -14,7 +14,6 @@ import { CampaignDetailsComponent } from './campaign-details/campaign-details.co
 import { ConfirmationDialogComponent } from './confirmation-dialog/confirmation-dialog.component';
 import { IpsMethodsComponent } from './ips-methods/ips-methods.component';
 import { IpsCampaignCardComponent } from './ips-campaign-card/ips-campaign-card.component';
-
 import { ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { ToastrModule } from 'ngx-toastr';
@@ -34,6 +33,8 @@ import { NgxPaginationModule } from 'ngx-pagination';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSliderModule } from '@angular/material/slider';
 import { TaskHistoryComponent } from './task-history/task-history.component';
+import { NgChartsModule } from 'ng2-charts';
+import { GraphicsComponent } from './graphics/graphics.component';
 
 
 
@@ -49,7 +50,8 @@ import { TaskHistoryComponent } from './task-history/task-history.component';
     ConfirmationDialogComponent,
     IpsMethodsComponent,
     IpsCampaignCardComponent,
-    TaskHistoryComponent
+    TaskHistoryComponent,
+    GraphicsComponent
   ],
   imports: [
     CarouselModule,
@@ -74,7 +76,7 @@ import { TaskHistoryComponent } from './task-history/task-history.component';
     MatSelectModule,
     MatFormFieldModule,
     MatCheckboxModule,
-    
+    NgChartsModule,
     FormsModule,
     NgxPaginationModule
   ],

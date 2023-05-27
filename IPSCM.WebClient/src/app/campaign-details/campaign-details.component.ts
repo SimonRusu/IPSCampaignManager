@@ -106,7 +106,7 @@ export class CampaignDetailsComponent {
         })
       }
       else{
-        const defaultImageUrl = 'assets/img/defaultCampaignImage.png'; // Actualiza esta ruta a la ruta de tu imagen predeterminada.
+        const defaultImageUrl = 'assets/img/defaultCampaignImage.png';
         this.campaignImages.push(defaultImageUrl);
         this.campaignImages.push(defaultImageUrl);
       }
