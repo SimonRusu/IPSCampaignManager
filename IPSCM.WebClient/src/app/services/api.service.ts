@@ -22,7 +22,7 @@ export class ApiService {
   }
   
   pollTaskHistory(): Observable<any> {
-    return timer(0, 1000).pipe(
+    return timer(0, 5000).pipe(
       takeUntil(this.destroy$),
       switchMap(() => {
         if (this.router.url === '/task-history') {

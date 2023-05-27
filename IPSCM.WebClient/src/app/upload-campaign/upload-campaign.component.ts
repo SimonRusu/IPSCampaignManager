@@ -166,7 +166,6 @@ export class UploadCampaignComponent {
     }
     else{
       this.isDraggingConf = false;
-      console.log(this.selectedConfFiles.length);
       if (files.length > 3 || this.selectedConfFiles.length == 3) {
         this.toastr.error('Solo se permiten cargar tres ficheros de forma simultánea', 'Limite de ficheros excedido');
         console.log(this.allConfsUploaded);

@@ -88,7 +88,9 @@ def deleteCampaignById(campaignId):
 
         db.session.delete(campaign)
         db.session.delete(relatedCampaign)
+
         db.session.commit()
+        db.session.execute('VACUUM')
 
         return {'message': 'Campaign successfully deleted'}, 200
     else:
