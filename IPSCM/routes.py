@@ -12,6 +12,9 @@ from services.DataProcessService import dataProcessing
 from services.UploadService import uploadCampaign
 from services.ImageService import generateZipImages
 
+class ServerStatus(Resource):
+    def get(self):
+        return {"status": "Server is running"}
 
 class GetCampaigns(Resource):
     def get(self):

@@ -1,19 +1,26 @@
-# start by pulling the python image
+# Empezamos descargando la imagen de Python
 FROM python:3.11-alpine
 
-# copy the requirements file into the image
-
+# Establecemos el directorio de trabajo
 WORKDIR /app
-COPY . /app
 
-# switch working directory
+# Instalamos las dependencias de compilación y OpenBLAS
+RUN apk add --no-cache build-base libffi-dev openssl-dev gfortran openblas-dev
 
-#ENV FLASK_APP=app.py
-#ENV FLASK_RUN_HOST=0.0.0.0
-RUN apk add --no-cache gcc musl-dev linux-headers
-# install the dependencies and packages in the requirements file
-RUN pip install -U pip && pip install -r requirements.txt
+# Copiamos el archivo de requerimientos dentro de la imagen
+COPY requirements.txt .
 
+# Actualizamos pip
+RUN pip install --upgrade pip
 
+# Instalamos las dependencias especificadas en requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copiamos el resto del código de la aplicación
+COPY . .
+
+# Exponemos el puerto deseado
 EXPOSE 5000
+
+# Establecemos el comando para ejecutar la aplicación
 CMD ["python", "app.py"]

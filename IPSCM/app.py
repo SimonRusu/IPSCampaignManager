@@ -10,6 +10,7 @@ with app.app_context():
     CORS(app, resources={r"/api/*": {"origins": "*"}})
 
     #get resources
+    api.add_resource(ServerStatus, '/')
     api.add_resource(GetCampaigns, '/api/campaigns')
     api.add_resource(GetTaskHistory, '/api/taskHistory')
     api.add_resource(GetRelatedCampaignById, '/api/relatedCampaign/<int:relatedCampaignId>')
