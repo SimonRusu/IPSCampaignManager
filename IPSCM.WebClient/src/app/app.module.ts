@@ -35,7 +35,7 @@ import { MatSliderModule } from '@angular/material/slider';
 import { TaskHistoryComponent } from './task-history/task-history.component';
 import { NgChartsModule } from 'ng2-charts';
 import { GraphicsComponent } from './graphics/graphics.component';
-
+import { MatTabsModule } from '@angular/material/tabs';
 
 
 @NgModule({
@@ -78,7 +78,8 @@ import { GraphicsComponent } from './graphics/graphics.component';
     MatCheckboxModule,
     NgChartsModule,
     FormsModule,
-    NgxPaginationModule
+    NgxPaginationModule,
+    MatTabsModule
   ],
   providers: [
     {provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: {hasBackdrop: true}}
