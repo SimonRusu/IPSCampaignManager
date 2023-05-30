@@ -6,7 +6,6 @@ import { catchError, of, tap } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
 
-
 @Component({
   selector: 'app-ips-campaign-card',
   templateUrl: './ips-campaign-card.component.html',
@@ -25,13 +24,24 @@ export class IpsCampaignCardComponent {
   selectAllProtocolsCheck: boolean = false;
   selectAllChannelsCheck: boolean = false;
 
+  metricParams: string[] = ["manhattan", "chebyshev", "minkowski"]
+  algorithParams: string[] = ["brute", "ball_tree", "kd_tree", "auto"]
+  kernelParams: string[] = ["linear", "poly", "rbf", "sigmoid", "laplacian", "exponential", "linear_constant"]
+  gammaParams: string[] = ["auto", "scale", "range"]
+  WKNNparams: boolean = false;
+  SVRparams: boolean = false;
+  NuSVRparams: boolean = false;
+  LinearSVRparams: boolean = false;
+  SVRgammaRange: boolean = false;
+  NuSVRgammaRange: boolean = false;
+
 
   seleccionada: string = this.methods[0];
   form!: FormGroup;
 
 
   constructor(
-    private apiService: ApiService, private formBuilder: FormBuilder, private toastr: ToastrService, private router: Router ){}
+    private apiService: ApiService, private formBuilder: FormBuilder, private toastr: ToastrService, private router: Router){}
   
     ngOnInit(){
       this.apiService.getCampaignImagesById(this.campaign.Id).subscribe((response: Blob) => {
@@ -53,8 +63,24 @@ export class IpsCampaignCardComponent {
         protocols: ['', Validators.required],
         channels: ['', Validators.required],
         sample: ['', Validators.required],
+        metric: ['', Validators.required],
+        algorithm: ['', Validators.required],
+        kernel: ['', Validators.required],
+        cStep: ['', Validators.required],
+        iStep: ['', Validators.required],
+        gStep: ['', Validators.required],
+        nuStep: ['', Validators.required],
+        gamma: ['', Validators.required],
         kRangeStart: [1],
         kRangeEnd: [10],
+        cRangeStart: [0.1],
+        cRangeEnd: [20],
+        gRangeStart: [0.01],
+        gRangeEnd: [1],
+        nuRangeStart: [0.01],
+        nuRangeEnd: [1],
+        iRangeStart: [1],
+        iRangeEnd: [10000]
       });
     }
 
@@ -64,23 +90,6 @@ export class IpsCampaignCardComponent {
       }
   
       return `${value}`;
-    }
-
-    selectAllMethods(){
-      const methodsControl = this.form.get('methods');
-      const methodsToggle = this.form.get('methods')?.value;
-
-      const allMethods = this.methods.slice();
-      
-      if(methodsControl){
-        if (methodsToggle.length == 1) {
-          methodsControl.setValue(allMethods);
-          this.selectAllMethodsCheck = true;
-        } else {
-          methodsControl.setValue([]);
-          this.selectAllMethodsCheck = false;
-        }
-      }
     }
 
     selectAllProtocols(){
@@ -116,6 +125,98 @@ export class IpsCampaignCardComponent {
           this.selectAllChannelsCheck = false;
         }
       }
+    }
+
+    onMethodSelected(method: string){
+        this.validateAndClearFields();
+
+        this.WKNNparams = false;
+        this.SVRparams = false;
+        this.NuSVRparams = false;
+        this.LinearSVRparams = false;
+        this.SVRgammaRange = false;
+        this.NuSVRgammaRange = false;
+    
+        switch(method){
+          case "WKNN":
+            this.WKNNparams = true;
+            this.form.get('cStep')?.setValidators(null);
+            this.form.get('nuStep')?.setValidators(null);
+            this.form.get('iStep')?.setValidators(null);
+            this.form.get('gStep')?.setValidators(null);
+            this.form.get('gamma')?.setValidators(null);
+            this.form.get('kernel')?.setValidators(null);
+            break;
+          case "SVR":
+            this.SVRparams = true;
+            this.form.get('algorithm')?.setValidators(null);
+            this.form.get('metric')?.setValidators(null);
+            this.form.get('iStep')?.setValidators(null);
+            this.form.get('nuStep')?.setValidators(null);
+            this.form.get('gStep')?.setValidators(null);
+            break;
+          case "NuSVR":
+            this.NuSVRparams = true;
+            this.form.get('algorithm')?.setValidators(null);
+            this.form.get('metric')?.setValidators(null);
+            this.form.get('iStep')?.setValidators(null);
+            this.form.get('gStep')?.setValidators(null);
+            break;
+          case "LinearSVR":
+            this.LinearSVRparams = true;
+            this.form.get('algorithm')?.setValidators(null);
+            this.form.get('metric')?.setValidators(null);
+            this.form.get('gStep')?.setValidators(null);
+            this.form.get('nuStep')?.setValidators(null);
+            break;
+        }
+        
+        Object.keys(this.form?.controls).forEach(key => {
+          this.form?.get(key)?.updateValueAndValidity();
+        });
+    }
+
+    onSVRGammaSelected(gamma: string){
+        this.SVRgammaRange = false;
+
+        if(gamma === "range"){
+          this.SVRgammaRange = true;
+          this.form.get('gStep')?.setValidators(Validators.required);
+        }
+        this.form?.get('gStep')?.updateValueAndValidity();
+    }
+
+    onNuSVRgammaSelected(gamma: string){
+        this.NuSVRgammaRange = false;
+
+        if(gamma === "range"){
+          this.NuSVRgammaRange = true;
+          this.form.get('gStep')?.setValidators(Validators.required);
+        }
+        this.form?.get('gStep')?.updateValueAndValidity();
+    }
+
+    validateAndClearFields(){
+      this.form.get('methods')?.setValidators(Validators.required);
+      this.form.get('protocols')?.setValidators(Validators.required);
+      this.form.get('channels')?.setValidators(Validators.required);
+      this.form.get('sample')?.setValidators(Validators.required);
+      this.form.get('metric')?.setValidators(Validators.required);
+      this.form.get('metric')?.reset();
+      this.form.get('algorithm')?.setValidators(Validators.required);
+      this.form.get('algorithm')?.reset();
+      this.form.get('cStep')?.setValidators(Validators.required);
+      this.form.get('cStep')?.reset();
+      this.form.get('nuStep')?.setValidators(Validators.required);
+      this.form.get('nuStep')?.reset();
+      this.form.get('iStep')?.setValidators(Validators.required);
+      this.form.get('iStep')?.reset();
+      this.form.get('gStep')?.setValidators(Validators.required);
+      this.form.get('gStep')?.reset();
+      this.form.get('gamma')?.setValidators(Validators.required);
+      this.form.get('gamma')?.reset();
+      this.form.get('kernel')?.setValidators(Validators.required);
+      this.form.get('kernel')?.reset();
     }
 
     applyMethod(){

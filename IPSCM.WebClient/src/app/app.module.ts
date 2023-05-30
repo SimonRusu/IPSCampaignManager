@@ -36,6 +36,7 @@ import { TaskHistoryComponent } from './task-history/task-history.component';
 import { NgChartsModule } from 'ng2-charts';
 import { GraphicsComponent } from './graphics/graphics.component';
 import { MatTabsModule } from '@angular/material/tabs';
+import { MatInputModule } from '@angular/material/input';
 
 
 @NgModule({
@@ -79,7 +80,8 @@ import { MatTabsModule } from '@angular/material/tabs';
     NgChartsModule,
     FormsModule,
     NgxPaginationModule,
-    MatTabsModule
+    MatTabsModule,
+    MatInputModule
   ],
   providers: [
     {provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: {hasBackdrop: true}}

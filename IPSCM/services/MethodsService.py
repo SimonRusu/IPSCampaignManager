@@ -17,16 +17,15 @@ def applyMethod(data_train, data_test, method, ks_range):
             return applyLinearSVRmethod(data_train, data_test)
 
 
-def applyWKNNmethod(data_train, data_test, ks_range):
+def applyWKNNmethod(data_train, data_test, ks_range, metric, algorithm):
     X_train = data_train[:, :-3]
     y_train = data_train[:, -3:]
 
     results = {} 
-    metric = 'euclidean'
 
     for i in range(ks_range[0], ks_range[1] + 1):
         regressor = KNeighborsRegressor(n_neighbors=i, weights=lambda distances: 1 / distances,
-                                        metric=metric, algorithm='brute')
+                                        metric=metric, algorithm=algorithm)
         regressor.fit(X_train, y_train)
 
         X_test = data_test[:, :-3]
@@ -36,7 +35,7 @@ def applyWKNNmethod(data_train, data_test, ks_range):
 
     return results
 
-def applySVRmethod(data_train, data_test):
+def applySVRmethod(data_train, data_test, kernel, cs, gammas):
     X_train = data_train[:, :-3]
     y_train = data_train[:, -3:]
 
@@ -65,7 +64,7 @@ def applySVRmethod(data_train, data_test):
     return results
 
 
-def applyNuSVRmethod(data_train, data_test):
+def applyNuSVRmethod(data_train, data_test, kernel, cs, gammas, nus):
     X_train = data_train[:, :-3]
     y_train = data_train[:, -3:]
 
@@ -94,7 +93,7 @@ def applyNuSVRmethod(data_train, data_test):
 
     return results
                    
-def applyLinearSVRmethod(data_train, data_test):
+def applyLinearSVRmethod(data_train, data_test, Cs, Is):
     X_train = data_train[:, :-3]
     y_train = data_train[:, -3:]
 
