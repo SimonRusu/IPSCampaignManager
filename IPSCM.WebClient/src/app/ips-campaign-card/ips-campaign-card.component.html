@@ -59,7 +59,8 @@
                     <div class="field" *ngIf="WKNNparams">
                       <mat-form-field class="formField">
                         <mat-label>Métrica</mat-label>
-                        <mat-select placeholder="Sin selección" formControlName="metric" [multiple]="false">
+                        <mat-select placeholder="Sin selección" multiple formControlName="metrics">
+                          <mat-option class="mat-option" value="allMetrics" (click)="selectAllMetrics()">Seleccionar todos</mat-option>
                           <mat-option *ngFor="let metric of metricParams" [value]="metric">
                             {{ metric }}
                           </mat-option>
@@ -67,7 +68,8 @@
                       </mat-form-field>
                       <mat-form-field class="ml-3 formField">
                         <mat-label>Algoritmo</mat-label>
-                        <mat-select placeholder="Sin selección" formControlName="algorithm" [multiple]="false" >
+                        <mat-select placeholder="Sin selección" multiple formControlName="algorithms" >
+                          <mat-option class="mat-option" value="allAlgorithms" (click)="selectAllAlgorithms()">Seleccionar todos</mat-option>
                           <mat-option *ngFor="let algorithm of algorithParams" [value]="algorithm">
                             {{ algorithm }}
                           </mat-option>
@@ -75,7 +77,7 @@
                       </mat-form-field>
                       <div class="custom-container">
                         <label class="custom-label has-text-weight-bold has-text-grey">Rango de K vecinos</label>
-                        <mat-slider class="custom-slider" min="1" max="10" step="1" showTickMarks discrete [displayWith]="formatLabel">
+                        <mat-slider class="custom-slider" min="1" max="20" step="1" showTickMarks discrete>
                           <input matSliderStartThumb formControlName="kRangeStart">
                           <input matSliderEndThumb formControlName="kRangeEnd">
                         </mat-slider>
@@ -84,7 +86,8 @@
                     <div class="field" *ngIf="SVRparams">
                       <mat-form-field class="formField">
                         <mat-label>Kernel</mat-label>
-                        <mat-select placeholder="Sin selección" formControlName="kernel" [multiple]="false">
+                        <mat-select placeholder="Sin selección" multiple formControlName="kernels">
+                          <mat-option class="mat-option" value="allKernels" (click)="selectAllKernels()">Seleccionar todos</mat-option>
                           <mat-option *ngFor="let kernel of kernelParams" [value]="kernel">
                             {{ kernel }}
                           </mat-option>
@@ -92,7 +95,7 @@
                       </mat-form-field>
                       <mat-form-field class="ml-3 formField">
                         <mat-label>C step</mat-label>
-                        <input matInput type="number" placeholder="Sin valor" formControlName="cStep" step="0.1" min="0" max="20">
+                        <input matInput type="number" placeholder="Sin valor" formControlName="cStep" step="0.1" min="0.1" max="20">
                       </mat-form-field>
                       <mat-form-field class="ml-3 formField">
                         <mat-label>Gamma</mat-label>
@@ -104,18 +107,18 @@
                       </mat-form-field>
                       <mat-form-field class="ml-3 formField" *ngIf="SVRgammaRange">
                         <mat-label>G step</mat-label>
-                        <input matInput type="number" placeholder="Sin valor" formControlName="gStep" step="0.01" min="0" max="1">
+                        <input matInput type="number" placeholder="Sin valor" formControlName="gStep" step="0.01" min="0.01" max="1">
                       </mat-form-field>
                       <div class="custom-container">
                         <label class="custom-label has-text-weight-bold has-text-grey">Rango de C</label>
-                        <mat-slider class="custom-slider" min="0" max="20" step="0.1" showTickMarks discrete [displayWith]="formatLabel">
+                        <mat-slider class="custom-slider" min="0.1" max="20" step="0.1" showTickMarks discrete>
                           <input matSliderStartThumb formControlName="cRangeStart">
                           <input matSliderEndThumb formControlName="cRangeEnd">
                         </mat-slider>
                       </div>
                       <div class="custom-container" *ngIf="SVRgammaRange">
                         <label class="custom-label has-text-weight-bold has-text-grey">Rango de Gamma</label>
-                        <mat-slider class="custom-slider" min="0" max="1" step="0.01" showTickMarks discrete [displayWith]="formatLabel">
+                        <mat-slider class="custom-slider" min="0.01" max="1" step="0.01" showTickMarks discrete>
                           <input matSliderStartThumb formControlName="gRangeStart">
                           <input matSliderEndThumb formControlName="gRangeEnd">
                         </mat-slider>
@@ -124,7 +127,8 @@
                     <div class="field" *ngIf="NuSVRparams">
                       <mat-form-field class="formField">
                         <mat-label>Kernel</mat-label>
-                        <mat-select placeholder="Sin selección" formControlName="kernel" [multiple]="false">
+                        <mat-select placeholder="Sin selección" multiple formControlName="kernels">
+                          <mat-option class="mat-option" value="allKernels" (click)="selectAllKernels()">Seleccionar todos</mat-option>
                           <mat-option *ngFor="let kernel of kernelParams" [value]="kernel">
                             {{ kernel }}
                           </mat-option>
@@ -132,11 +136,11 @@
                       </mat-form-field>
                       <mat-form-field class="ml-3 formField">
                         <mat-label>Nu step</mat-label>
-                        <input matInput type="number" placeholder="Sin valor" formControlName="nuStep" step="0.01" min="0" max="1">
+                        <input matInput type="number" placeholder="Sin valor" formControlName="nuStep" step="0.01" min="0.01" max="1">
                       </mat-form-field>
                       <mat-form-field class="ml-3 formField">
                         <mat-label>C step</mat-label>
-                        <input matInput type="number" placeholder="Sin valor" formControlName="cStep" step="0.1" min="0" max="20">
+                        <input matInput type="number" placeholder="Sin valor" formControlName="cStep" step="0.1" min="0.1" max="20">
                       </mat-form-field>
                       <mat-form-field class="ml-3 formField">
                         <mat-label>Gamma</mat-label>
@@ -148,25 +152,25 @@
                       </mat-form-field>
                       <mat-form-field class="formField" [ngClass]="{'ml-3': !NuSVRgammaRange }" *ngIf="NuSVRgammaRange">
                         <mat-label>G step</mat-label>
-                        <input matInput type="number" placeholder="Sin valor" formControlName="gStep" step="0.01" min="0" max="1">
+                        <input matInput type="number" placeholder="Sin valor" formControlName="gStep" step="0.01" min="0.01" max="1">
                       </mat-form-field>
                       <div class="custom-container">
                         <label class="custom-label has-text-weight-bold has-text-grey">Rango de Nu</label>
-                        <mat-slider class="custom-slider" min="0" max="1" step="0.01" showTickMarks discrete [displayWith]="formatLabel">
+                        <mat-slider class="custom-slider" min="0.01" max="1" step="0.01" showTickMarks discrete>
                           <input matSliderStartThumb formControlName="nuRangeStart">
                           <input matSliderEndThumb formControlName="nuRangeEnd">
                         </mat-slider>
                       </div>
                       <div class="custom-container">
                         <label class="custom-label has-text-weight-bold has-text-grey">Rango de C</label>
-                        <mat-slider class="custom-slider" min="0" max="20" step="0.1" showTickMarks discrete [displayWith]="formatLabel">
+                        <mat-slider class="custom-slider" min="0.1" max="20" step="0.1" showTickMarks discrete>
                           <input matSliderStartThumb formControlName="cRangeStart">
                           <input matSliderEndThumb formControlName="cRangeEnd">
                         </mat-slider>
                       </div>
                       <div class="custom-container" *ngIf="NuSVRgammaRange">
                         <label class="custom-label has-text-weight-bold has-text-grey">Rango de Gamma</label>
-                        <mat-slider class="custom-slider" min="0" max="1" step="0.01" showTickMarks discrete [displayWith]="formatLabel">
+                        <mat-slider class="custom-slider" min="0.01" max="1" step="0.01" showTickMarks discrete>
                           <input matSliderStartThumb formControlName="gRangeStart">
                           <input matSliderEndThumb formControlName="gRangeEnd">
                         </mat-slider>
@@ -175,22 +179,22 @@
                     <div class="field" *ngIf="LinearSVRparams">
                       <mat-form-field class="formField">
                         <mat-label>I step</mat-label>
-                        <input matInput type="number" placeholder="Sin valor" formControlName="iStep" step="100" min="0" max="10000">
+                        <input matInput type="number" placeholder="Sin valor" formControlName="iStep" step="100" min="100" max="10000">
                       </mat-form-field>
                       <mat-form-field class="ml-3 formField">
                         <mat-label>C step</mat-label>
-                        <input matInput type="number" placeholder="Sin valor" formControlName="cStep" step="0.1" min="0" max="20">
+                        <input matInput type="number" placeholder="Sin valor" formControlName="cStep" step="0.1" min="0.1" max="20">
                       </mat-form-field>
                       <div class="custom-container">
                         <label class="custom-label has-text-weight-bold has-text-grey">Rango de I</label>
-                        <mat-slider class="custom-slider" min="0" max="10000" step="100" showTickMarks discrete [displayWith]="formatLabel">
+                        <mat-slider class="custom-slider" min="0" max="10000" step="100" showTickMarks discrete>
                           <input matSliderStartThumb formControlName="iRangeStart">
                           <input matSliderEndThumb formControlName="iRangeEnd">
                         </mat-slider>
                       </div>
                       <div class="custom-container">
                         <label class="custom-label has-text-weight-bold has-text-grey">Rango de C</label>
-                        <mat-slider class="custom-slider" min="0" max="20" step="0.1" showTickMarks discrete [displayWith]="formatLabel">
+                        <mat-slider class="custom-slider" min="0.1" max="20" step="0.1" showTickMarks discrete>
                           <input matSliderStartThumb formControlName="cRangeStart">
                           <input matSliderEndThumb formControlName="cRangeEnd">
                         </mat-slider>
@@ -203,6 +207,6 @@
         </div>
     </div>
     <div class="has-text-centered buttonPosition">
-      <button [disabled]="form.invalid" (click)="applyMethod()" class="button is-link is-rounded">Aplicar métodos</button>
+      <button [disabled]="form.invalid" (click)="applyMethod()" class="button is-link is-rounded">Aplicar método</button>
     </div>
 </div>

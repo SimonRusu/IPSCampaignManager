@@ -1,13 +1,12 @@
-from datetime import datetime
 import json
 import numpy as np
-from tqdm import tqdm
+from datetime import datetime
 from controllers.BeaconBleSignalCrud import getBeaconBleSignalById, existsBeaconWithProtocol
 from controllers.BeaconConfigurationCrud import getBeaconConfigurationByCampaignId
 from controllers.CampaignCrud import getPointsByCampaignId
 from controllers.CaptureCrud import getCaptureIdsByCampaignId, getCapturesByIdAndRotation
 from controllers.MethodPredataCrud import createMethodPredataBatch, getFilteredPredataSamples, getUniqueCoordinatesByCampaignId
-from controllers.MethodPredictionCrud import checkExistingMethodPredictionByParams, createMethodPrediction
+from controllers.MethodPredictionCrud import checkExistingMethodPrediction, createMethodPrediction
 from services.MethodsService import applyMethod, calculate_error
 from controllers.TaskHistoryCrud import createTaskHistory, updateTaskHistory
 
@@ -28,10 +27,17 @@ def generatePredata(campaignId):
 def dataProcessing(data):
     campaignId = data['campaign']
     campaignName = data['campaignName']
-    methods = data['methods']
+    method = data['method']
     protocols = data['protocols']
     channels = data['channels']
     rssiSamples = data['sample']
+    metrics = data['metrics']
+    algorithms = data['algorithms']
+    kernels = data['kernels']
+    cs = data['cValues']
+    gammas = data['gValues']
+    nus = data['nuValues']
+    Is = data['iValues']
     ksRange = []
     ksRange.append(data['kRangeStart'])
 
@@ -47,36 +53,39 @@ def dataProcessing(data):
         ksRange.append(len(ref_points))
     else:
         ksRange.append(data['kRangeEnd'])
+    
+    ksRangeJson = json.dumps(ksRange)
 
-    for method in tqdm(methods, desc='Processing methods'):
-        for protocol in protocols:
-            aleBeaconMacs, refBeaconMacs = processBeaconMacs(campaignId, protocol)
-            for channel in channels:
+    for protocol in protocols:
+        aleBeaconMacs, refBeaconMacs = processBeaconMacs(campaignId, protocol)
+        for channel in channels:
+            for metric in metrics:
+                for algorithm in algorithms:
+                    for kernel in kernels:
 
-                ksRangeJson = json.dumps(ksRange)
+                        taskId = taskToJson(method, protocol, channel, rssiSamples, metric, algorithm, ksRangeJson, kernel, cs, gammas, nus, Is)
+                        
+                        if not checkExistingMethodPrediction(campaignId, taskId):
 
-                if not checkExistingMethodPredictionByParams(campaignId, method, protocol, channel, rssiSamples, ksRangeJson):
+                            datetime_start = datetime.now()
+                            createTaskHistory(campaignId, campaignName, "Obteniendo matriz de puntos de referencia...", taskId, datetime_start)
+                            
+                            refRSSIMatrix = getRefPointsMatrix(ref_points, ref_points_conf, refBeaconMacs, campaignId, protocol, channel, rssiSamples)
 
-                    taskId = taskToJson(method, protocol, channel, rssiSamples, ksRangeJson)
+                            updateTaskHistory(campaignId, taskId, "Obteniendo matriz de puntos aleatorios...")
 
-                    datetime_start = datetime.now()
-                    createTaskHistory(campaignId, campaignName, "Obteniendo matriz de puntos de referencia...", taskId, datetime_start)
-                    
-                    refRSSIMatrix = getRefPointsMatrix(ref_points, ref_points_conf, refBeaconMacs, campaignId, protocol, channel, rssiSamples)
+                            aleRSSIMatrix= getAlePointsMatrix(ale_points, ale_points_conf, aleBeaconMacs, campaignId-1, protocol, channel, rssiSamples)
 
-                    updateTaskHistory(campaignId, taskId, "Obteniendo matriz de puntos aleatorios...")
+                            updateTaskHistory(campaignId, taskId, "Aplicando método de posicionamiento...")
 
-                    aleRSSIMatrix= getAlePointsMatrix(ale_points, ale_points_conf, aleBeaconMacs, campaignId-1, protocol, channel, rssiSamples)
+                            predicted_points = applyMethod(refRSSIMatrix, aleRSSIMatrix, method, metric, algorithm, ksRange, kernel, cs, gammas, nus, Is)
 
-                    updateTaskHistory(campaignId, taskId, "Aplicando método de posicionamiento...")
+                            mean_error = calculate_error(aleRSSIMatrix, predicted_points)
 
-                    predicted_points = applyMethod(refRSSIMatrix, aleRSSIMatrix, method, ksRange)
-                    mean_error = calculate_error(aleRSSIMatrix, predicted_points)
+                            createMethodPrediction(campaignId, taskId, json.dumps(predicted_points), json.dumps(mean_error))
 
-                    createMethodPrediction(campaignId, method, protocol, channel, rssiSamples, ksRangeJson, json.dumps(predicted_points), json.dumps(mean_error))
-
-                    datetime_end = datetime.now()
-                    updateTaskHistory(campaignId, taskId, "Completado", datetime_end)
+                            datetime_end = datetime.now()
+                            updateTaskHistory(campaignId, taskId, "Completado", datetime_end)
 
         
 
@@ -160,13 +169,20 @@ def processBeaconMacs(campaignId, protocol):
     return aleBeaconsProcessed, refBeaconsProcessed
 
 
-def taskToJson(methods, protocols, channels, rssiSamples, ksRangeJson):
+def taskToJson(methods, protocols, channels, rssiSamples, algorithm, metric, ksRange, kernel, cs, gammas, nus, Is):
     taskDescription = json.dumps({
     'method': methods,
     'protocol': protocols,
     'channel': channels,
     'rssiSample': rssiSamples,
-    'ksRange': ksRangeJson
+    'algorithm': algorithm,
+    'metric': metric,
+    'ksRange': ksRange,
+    'kernel': kernel,
+    'cs': cs,
+    'gammas': gammas,
+    'nus': nus,
+    'Is': Is
     })
 
     return taskDescription

@@ -1,15 +1,11 @@
 from config import db
 from models.MethodPrediction import MethodPrediction
 
-def createMethodPrediction(campaignId, method, protocol, channel, rssi_samples, ks_range, predicted_points, mean_error):
+def createMethodPrediction(campaignId, method_description, predicted_points, mean_error):
 
     methodPrediction = MethodPrediction()
     methodPrediction.Id_campaign = campaignId
-    methodPrediction.Method = method
-    methodPrediction.Protocol = protocol
-    methodPrediction.Channel = channel 
-    methodPrediction.RSSI_samples = rssi_samples
-    methodPrediction.Ks_range = ks_range
+    methodPrediction.Method_description = method_description
     methodPrediction.Predicted_points = predicted_points
     methodPrediction.Mean_error = mean_error
 
@@ -18,22 +14,16 @@ def createMethodPrediction(campaignId, method, protocol, channel, rssi_samples, 
     db.session.commit()
     db.session.remove()
 
-
-def checkExistingMethodPredictionByParams(campaignId, method, protocol, channel, rssi_samples, ks_range):
+def checkExistingMethodPrediction(campaignId, description):
     existing_entry = MethodPrediction.query.filter_by(
     Id_campaign=campaignId,
-    Method=method,
-    Protocol=protocol,
-    Channel=channel,
-    RSSI_samples=rssi_samples,
-    Ks_range=ks_range
+    Method_description=description
     ).first()
 
     if existing_entry:
         return True
     else:
         return False
-    
 
 def getPredictionsByCampaignId(campaignId:int):
     result = MethodPrediction.query.filter_by(Id_campaign=campaignId).all()

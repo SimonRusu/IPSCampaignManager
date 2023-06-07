@@ -5,19 +5,19 @@ from sklearn.multioutput import MultiOutputRegressor
 from sklearn.preprocessing import StandardScaler
 
 
-def applyMethod(data_train, data_test, method, ks_range):
+def applyMethod(data_train, data_test, method, metrics, algorithms, ks_range, kernel, cs, gammas, nus, Is):
     match method:
         case "WKNN":
-            return applyWKNNmethod(data_train, data_test, ks_range)
+            return applyWKNNmethod(data_train, data_test, metrics, algorithms, ks_range)
         case "SVR":
-            return applySVRmethod(data_train, data_test)
+            return applySVRmethod(data_train, data_test, kernel, cs, gammas)
         case "NuSVR":
-            return applyNuSVRmethod(data_train, data_test)
+            return applyNuSVRmethod(data_train, data_test, kernel, cs, gammas, nus)
         case "LinearSVR":
-            return applyLinearSVRmethod(data_train, data_test)
+            return applyLinearSVRmethod(data_train, data_test, Is, cs)
 
 
-def applyWKNNmethod(data_train, data_test, ks_range, metric, algorithm):
+def applyWKNNmethod(data_train, data_test, metric, algorithm, ks_range):
     X_train = data_train[:, :-3]
     y_train = data_train[:, -3:]
 
@@ -45,21 +45,26 @@ def applySVRmethod(data_train, data_test, kernel, cs, gammas):
     X_train = scaler.fit_transform(X_train)
     X_test = scaler.transform(data_test[:, :-3])
 
-    kernels = ['linear', 'poly', 'rbf', 'sigmoid']
-    Cs = [0.01, 0.1, 0.5, 1, 2, 5]
-    gammas = ['auto', 'scale', 0.01, 0.05, 0.1, 0.5]
-
-    for kernel in kernels:
-        for C in Cs:
+    for c in cs:
+        if isinstance(gammas, list):
             for gamma in gammas:
-                model = SVR(kernel=kernel, C=C, gamma=gamma)
+                model = SVR(kernel=kernel, C=c, gamma=gamma)
                 wrapper = MultiOutputRegressor(model).fit(X_train, y_train)
 
                 y_pred = wrapper.predict(X_test)
                 y_pred_list = y_pred.tolist() 
 
-                model_name = f"{kernel}_C{C}_G{gamma}"
+                model_name = f"C{c}_G{gamma}"
                 results[model_name] = y_pred_list
+        else:
+            model = SVR(kernel=kernel, C=c, gamma=gammas)
+            wrapper = MultiOutputRegressor(model).fit(X_train, y_train)
+
+            y_pred = wrapper.predict(X_test)
+            y_pred_list = y_pred.tolist() 
+
+            model_name = f"C{c}_G{gammas}"
+            results[model_name] = y_pred_list
 
     return results
 
@@ -74,26 +79,29 @@ def applyNuSVRmethod(data_train, data_test, kernel, cs, gammas, nus):
     X_train = scaler.fit_transform(X_train)
     X_test = scaler.transform(data_test[:, :-3])
 
-    nus = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1]
-    kernels = ['linear', 'poly', 'rbf', 'sigmoid']
-    Cs = [0.01, 0.1, 0.5, 1, 2, 5]
-    gammas = ['auto', 'scale', 0.01, 0.05, 0.1, 0.5]
-
     for nu in nus:
-        for kernel in kernels:
-            for C in Cs:
+        for c in cs:
+            if isinstance(gammas, list):
                 for gamma in gammas:
-                    model = NuSVR(nu=nu, kernel=kernel, C=C, gamma=gamma)
+                    model = NuSVR(nu=nu, kernel=kernel, C=c, gamma=gamma)
                     wrapper = MultiOutputRegressor(model).fit(X_train, y_train)
 
                     y_pred = wrapper.predict(X_test)
                     y_pred_list = y_pred.tolist()
-                    model_name = f"nu{nu}_{kernel}_C{C}_G{gamma}"
+                    model_name = f"nu{nu}_C{c}_G{gamma}"
                     results[model_name] = y_pred_list
+            else:
+                model = NuSVR(nu=nu, kernel=kernel, C=c, gamma=gammas)
+                wrapper = MultiOutputRegressor(model).fit(X_train, y_train)
+
+                y_pred = wrapper.predict(X_test)
+                y_pred_list = y_pred.tolist()
+                model_name = f"nu{nu}_C{c}_G{gammas}"
+                results[model_name] = y_pred_list
 
     return results
                    
-def applyLinearSVRmethod(data_train, data_test, Cs, Is):
+def applyLinearSVRmethod(data_train, data_test, Is, cs):
     X_train = data_train[:, :-3]
     y_train = data_train[:, -3:]
 
@@ -103,18 +111,16 @@ def applyLinearSVRmethod(data_train, data_test, Cs, Is):
     X_train = scaler.fit_transform(X_train)
     X_test = scaler.transform(data_test[:, :-3])
 
-    Cs = [0.01, 0.1, 0.5, 1, 2, 5, 6, 7, 8, 9, 10, 15, 20]
-    Is = [250, 500, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000, 12500, 15000, 20000]
 
     for i in Is:
-        for C in Cs:
-                model = LinearSVR(C=C, max_iter=i, random_state=0)
+        for c in cs:
+                model = LinearSVR(C=c, max_iter=i, random_state=0)
                 wrapper = MultiOutputRegressor(model).fit(X_train, y_train)
 
                 y_pred = wrapper.predict(X_test)
                 y_pred_list = y_pred.tolist()
 
-                model_name = f"i{i}_C{C}"
+                model_name = f"i{i}_C{c}"
                 results[model_name] = y_pred_list
 
     return results
@@ -122,9 +128,8 @@ def applyLinearSVRmethod(data_train, data_test, Cs, Is):
 def calculate_error(aleMatrix, results):
     y_test = aleMatrix[:, -3:]
     errors = {}
-
-    for k, y_pred in results.items():
-        y_pred = [np.array(pred) for pred in y_pred][1] 
+    
+    for k, y_pred in results.items():   
         error = np.sqrt(np.sum((y_test - y_pred) ** 2, axis=1))
         mean_error = np.mean(error)
         errors[k]=mean_error

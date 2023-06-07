@@ -23,10 +23,12 @@ export class IpsCampaignCardComponent {
   selectAllMethodsCheck: boolean = false;
   selectAllProtocolsCheck: boolean = false;
   selectAllChannelsCheck: boolean = false;
+  selectAllMetricsCheck: boolean = false;
+  selectAllAlgorithmsCheck: boolean = false;
 
   metricParams: string[] = ["manhattan", "chebyshev", "minkowski"]
   algorithParams: string[] = ["brute", "ball_tree", "kd_tree", "auto"]
-  kernelParams: string[] = ["linear", "poly", "rbf", "sigmoid", "laplacian", "exponential", "linear_constant"]
+  kernelParams: string[] = ["linear", "poly", "sigmoid", "rbf"]
   gammaParams: string[] = ["auto", "scale", "range"]
   WKNNparams: boolean = false;
   SVRparams: boolean = false;
@@ -36,7 +38,7 @@ export class IpsCampaignCardComponent {
   NuSVRgammaRange: boolean = false;
 
 
-  seleccionada: string = this.methods[0];
+  selectedMethod: any;
   form!: FormGroup;
 
 
@@ -63,33 +65,25 @@ export class IpsCampaignCardComponent {
         protocols: ['', Validators.required],
         channels: ['', Validators.required],
         sample: ['', Validators.required],
-        metric: ['', Validators.required],
-        algorithm: ['', Validators.required],
-        kernel: ['', Validators.required],
+        metrics: ['', Validators.required],
+        algorithms: ['', Validators.required],
+        kernels: ['', Validators.required],
         cStep: ['', Validators.required],
         iStep: ['', Validators.required],
         gStep: ['', Validators.required],
         nuStep: ['', Validators.required],
         gamma: ['', Validators.required],
         kRangeStart: [1],
-        kRangeEnd: [10],
+        kRangeEnd: [20],
         cRangeStart: [0.1],
         cRangeEnd: [20],
         gRangeStart: [0.01],
         gRangeEnd: [1],
         nuRangeStart: [0.01],
         nuRangeEnd: [1],
-        iRangeStart: [1],
+        iRangeStart: [0],
         iRangeEnd: [10000]
       });
-    }
-
-    formatLabel(value: number): string {
-      if (value >= 1000) {
-        return Math.round(value / 1000) + 'k';
-      }
-  
-      return `${value}`;
     }
 
     selectAllProtocols(){
@@ -117,7 +111,6 @@ export class IpsCampaignCardComponent {
       
       if(channelsControl){
         if (channelsToggle.length == 1) {
-          console.log(channelsToggle)
           channelsControl.setValue(allChannels);
           this.selectAllChannelsCheck = true;
         } else {
@@ -127,7 +120,59 @@ export class IpsCampaignCardComponent {
       }
     }
 
+    selectAllMetrics(){
+      const metricsControl = this.form.get('metrics');
+      const metricsToggle = this.form.get('metrics')?.value;
+
+      const allMetrics = this.metricParams.slice();
+      
+      if(metricsControl){
+        if (metricsToggle.length == 1) {
+          metricsControl.setValue(allMetrics);
+          this.selectAllMetricsCheck = true;
+        } else {
+          metricsControl.setValue([]);
+          this.selectAllMetricsCheck = false;
+        }
+      }
+    }
+
+    selectAllAlgorithms(){
+      const algorithmsControl = this.form.get('algorithms');
+      const algorithmsToggle = this.form.get('algorithms')?.value;
+
+      const allAlgorithms = this.algorithParams.slice();
+      
+      if(algorithmsControl){
+        if (algorithmsToggle.length == 1) {
+          algorithmsControl.setValue(allAlgorithms);
+          this.selectAllAlgorithmsCheck = true;
+        } else {
+          algorithmsControl.setValue([]);
+          this.selectAllAlgorithmsCheck = false;
+        }
+      }
+    }
+
+    selectAllKernels(){
+      const kernelsControl = this.form.get('kernels');
+      const kernelsToggle = this.form.get('kernels')?.value;
+
+      const allKernels = this.kernelParams.slice();
+      
+      if(kernelsControl){
+        if (kernelsToggle.length == 1) {
+          kernelsControl.setValue(allKernels);
+          this.selectAllAlgorithmsCheck = true;
+        } else {
+          kernelsControl.setValue([]);
+          this.selectAllAlgorithmsCheck = false;
+        }
+      }
+    }
+
     onMethodSelected(method: string){
+        this.selectedMethod = method;
         this.validateAndClearFields();
 
         this.WKNNparams = false;
@@ -137,7 +182,7 @@ export class IpsCampaignCardComponent {
         this.SVRgammaRange = false;
         this.NuSVRgammaRange = false;
     
-        switch(method){
+        switch(this.selectedMethod){
           case "WKNN":
             this.WKNNparams = true;
             this.form.get('cStep')?.setValidators(null);
@@ -145,29 +190,31 @@ export class IpsCampaignCardComponent {
             this.form.get('iStep')?.setValidators(null);
             this.form.get('gStep')?.setValidators(null);
             this.form.get('gamma')?.setValidators(null);
-            this.form.get('kernel')?.setValidators(null);
+            this.form.get('kernels')?.setValidators(null);
             break;
           case "SVR":
             this.SVRparams = true;
-            this.form.get('algorithm')?.setValidators(null);
-            this.form.get('metric')?.setValidators(null);
+            this.form.get('algorithms')?.setValidators(null);
+            this.form.get('metrics')?.setValidators(null);
             this.form.get('iStep')?.setValidators(null);
             this.form.get('nuStep')?.setValidators(null);
             this.form.get('gStep')?.setValidators(null);
             break;
           case "NuSVR":
             this.NuSVRparams = true;
-            this.form.get('algorithm')?.setValidators(null);
-            this.form.get('metric')?.setValidators(null);
+            this.form.get('algorithms')?.setValidators(null);
+            this.form.get('metrics')?.setValidators(null);
             this.form.get('iStep')?.setValidators(null);
             this.form.get('gStep')?.setValidators(null);
             break;
           case "LinearSVR":
             this.LinearSVRparams = true;
-            this.form.get('algorithm')?.setValidators(null);
-            this.form.get('metric')?.setValidators(null);
+            this.form.get('algorithms')?.setValidators(null);
+            this.form.get('metrics')?.setValidators(null);
             this.form.get('gStep')?.setValidators(null);
+            this.form.get('gamma')?.setValidators(null);
             this.form.get('nuStep')?.setValidators(null);
+            this.form.get('kernels')?.setValidators(null);
             break;
         }
         
@@ -201,10 +248,10 @@ export class IpsCampaignCardComponent {
       this.form.get('protocols')?.setValidators(Validators.required);
       this.form.get('channels')?.setValidators(Validators.required);
       this.form.get('sample')?.setValidators(Validators.required);
-      this.form.get('metric')?.setValidators(Validators.required);
-      this.form.get('metric')?.reset();
-      this.form.get('algorithm')?.setValidators(Validators.required);
-      this.form.get('algorithm')?.reset();
+      this.form.get('metrics')?.setValidators(Validators.required);
+      this.form.get('metrics')?.reset();
+      this.form.get('algorithms')?.setValidators(Validators.required);
+      this.form.get('algorithms')?.reset();
       this.form.get('cStep')?.setValidators(Validators.required);
       this.form.get('cStep')?.reset();
       this.form.get('nuStep')?.setValidators(Validators.required);
@@ -215,34 +262,140 @@ export class IpsCampaignCardComponent {
       this.form.get('gStep')?.reset();
       this.form.get('gamma')?.setValidators(Validators.required);
       this.form.get('gamma')?.reset();
-      this.form.get('kernel')?.setValidators(Validators.required);
-      this.form.get('kernel')?.reset();
+      this.form.get('kernels')?.setValidators(Validators.required);
+      this.form.get('kernels')?.reset();
     }
 
     applyMethod(){
       let formData = new FormData();
       let campaignId = this.campaign.Id;
       let campaignName = this.campaign.Name;
-      let selectedMethods = this.form.get('methods')?.value;
       let selectedProtocols = this.form.get('protocols')?.value;
       let selectedChannels = this.form.get('channels')?.value;
       let selectedSample = this.form.get('sample')?.value;
-      let kRangeStart = this.form.get('kRangeStart')?.value;
-      let kRangeEnd = this.form.get('kRangeEnd')?.value;
-
+      let metric;
+      let algorithm;
+      let kRangeStart;
+      let kRangeEnd;
+      let kernels;
+      let cRangeStart;
+      let cRangeEnd;
+      let cStep;
+      let gamma;
+      let gRangeStart;
+      let gRangeEnd;
+      let gStep;
+      let nuRangeStart;
+      let nuRangeEnd;
+      let nuStep;
+      let iRangeStart;
+      let iRangeEnd;
+      let iStep;
+      let cValues;
+      let gValues;
+      let nuValues;
+      let iValues;
+      
       selectedChannels= selectedChannels.map((channel: string) => parseInt(channel));
 
       let dataPackage = {
         campaign: campaignId,
         campaignName: campaignName,
-        methods: selectedMethods,
+        method: this.selectedMethod,
         protocols: selectedProtocols,
         channels: selectedChannels,
         sample: selectedSample,
-        kRangeStart: kRangeStart,
-        kRangeEnd: kRangeEnd,
+        metrics: [0],
+        algorithms: [0],
+        kernels: [0],
+        kRangeStart: 0,
+        kRangeEnd: 0,
+        gValues: [null],
+        cValues: [null],
+        nuValues: [null],
+        iValues: [null]
       };
-      
+
+      switch(this.selectedMethod){
+
+        case "WKNN":
+            metric = this.form.get('metrics')?.value;
+            algorithm = this.form.get('algorithms')?.value;
+            kRangeStart = this.form.get('kRangeStart')?.value;
+            kRangeEnd = this.form.get('kRangeEnd')?.value;
+
+            dataPackage['metrics'] = metric;
+            dataPackage['algorithms'] = algorithm;
+            dataPackage['kRangeStart'] = kRangeStart;
+            dataPackage['kRangeEnd'] = kRangeEnd;
+            break;
+
+          case "SVR":
+            kernels = this.form.get('kernels')?.value;
+            cRangeStart = this.form.get('cRangeStart')?.value;
+            cRangeEnd = this.form.get('cRangeEnd')?.value;
+            cStep = this.form.get('cStep')?.value;
+            gamma = this.form.get('gamma')?.value;
+            gRangeStart = this.form.get('gRangeStart')?.value;
+            gRangeEnd = this.form.get('gRangeEnd')?.value;
+            gStep = this.form.get('gStep')?.value;
+
+            cValues = this.fillParamValues(cRangeStart, cRangeEnd, cStep);
+            
+            if (this.SVRgammaRange){
+              gValues = this.fillParamValues(gRangeStart, gRangeEnd, gStep);
+            }
+            else gValues = gamma;
+
+            dataPackage['kernels'] = kernels;
+            dataPackage['cValues'] = cValues;
+            dataPackage['gValues'] = gValues;
+            break;
+
+          case "NuSVR":
+            kernels = this.form.get('kernels')?.value;
+            cRangeStart = this.form.get('cRangeStart')?.value;
+            cRangeEnd = this.form.get('cRangeEnd')?.value;
+            cStep = this.form.get('cStep')?.value;
+            gamma = this.form.get('gamma')?.value;
+            gRangeStart = this.form.get('gRangeStart')?.value;
+            gRangeEnd = this.form.get('gRangeEnd')?.value;
+            gStep = this.form.get('gStep')?.value;
+            nuRangeStart = this.form.get('nuRangeStart')?.value;
+            nuRangeEnd = this.form.get('nuRangeEnd')?.value;
+            nuStep = this.form.get('nuStep')?.value;
+
+            cValues = this.fillParamValues(cRangeStart, cRangeEnd, cStep);
+            nuValues = this.fillParamValues(nuRangeStart, nuRangeEnd, nuStep);
+            
+            if (this.NuSVRgammaRange){
+              gValues = this.fillParamValues(gRangeStart, gRangeEnd, gStep);
+            }
+            else gValues = gamma;
+
+            dataPackage['kernels'] = kernels;
+            dataPackage['cValues'] = cValues;
+            dataPackage['gValues'] = gValues;
+            dataPackage['nuValues'] = nuValues;
+            break;
+
+          case "LinearSVR":
+            cRangeStart = this.form.get('cRangeStart')?.value;
+            cRangeEnd = this.form.get('cRangeEnd')?.value;
+            cStep = this.form.get('cStep')?.value;
+            iRangeStart = this.form.get('iRangeStart')?.value;
+            iRangeEnd = this.form.get('iRangeEnd')?.value;
+            iStep = this.form.get('iStep')?.value;
+
+            cValues = this.fillParamValues(cRangeStart, cRangeEnd, cStep);
+            iValues = this.fillParamValues(iRangeStart, iRangeEnd, iStep);
+
+            dataPackage['cValues'] = cValues;
+            dataPackage['iValues'] = iValues;
+            break;
+      }
+
+
       formData.append('params', JSON.stringify(dataPackage));
       
       this.toastr.clear();
@@ -260,9 +413,13 @@ export class IpsCampaignCardComponent {
   
     }
 
+    fillParamValues(start:any, end:any, step:any){
+      const result: any[] = [];
 
-    
-    
-
-
+      while (start <= end) {
+        result.push(Number(start.toFixed(2)));
+        start += step;
+      }
+      return result;
+    }
 }

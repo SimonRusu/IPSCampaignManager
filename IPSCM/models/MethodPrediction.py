@@ -10,11 +10,7 @@ class MethodPrediction(db.Model):
     def Id_campaign(cls):
          return db.Column(db.Integer, db.ForeignKey('Campaign.Id'), nullable=False)
     
-    Method = db.Column(db.VARCHAR(50), nullable=False)
-    Protocol = db.Column(db.VARCHAR(50), nullable=False)
-    Channel = db.Column(db.VARCHAR(50), nullable=False)
-    RSSI_samples = db.Column(db.Integer, nullable=False)
-    Ks_range  = db.Column(db.String(10), nullable=False)
+    Method_description = db.Column(Text, nullable=False)
     Predicted_points = db.Column(Text, nullable=False)
     Mean_error = db.Column(Text, nullable=False)
 
@@ -22,10 +18,7 @@ class MethodPrediction(db.Model):
             return{
                 'Id': self.Id,
                 'Id_campaign': self.Id_campaign,
-                'Method': self.Method,
-                'Protocol': self.Protocol,
-                'Channel': self.Channel,
-                'RSSI_samples': self.RSSI_samples,
-                'Ks_range': self.Ks_range,
-                'Predicted_points': self.Predicted_points
+                'Method_description': self.Method_description,
+                'Predicted_points': self.Predicted_points,
+                'Mean_error': self.Mean_error
             }
