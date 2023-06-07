@@ -20,7 +20,6 @@ export class IpsCampaignCardComponent {
   protocols: string[] = ["Eddystone", "iBeacon"];
   channels: string[] = ["37", "38", "39"];
   samples = Array.from({length: 20}, (_, index) => index + 1);
-  selectAllMethodsCheck: boolean = false;
   selectAllProtocolsCheck: boolean = false;
   selectAllChannelsCheck: boolean = false;
   selectAllMetricsCheck: boolean = false;

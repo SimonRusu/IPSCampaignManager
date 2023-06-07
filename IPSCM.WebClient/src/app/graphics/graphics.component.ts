@@ -1,6 +1,8 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Chart, ChartConfiguration, ChartData, ChartEvent, ChartType } from 'chart.js';
+import { ApiService } from '../services/api.service';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 
 @Component({
@@ -11,7 +13,58 @@ import { Chart, ChartConfiguration, ChartData, ChartEvent, ChartType } from 'cha
 export class GraphicsComponent {
 
   @ViewChild('chartCanvas', { static: true }) chartCanvas!: ElementRef<HTMLCanvasElement>;
-  campaignMethodPrediction: any;
+  campaignMethodPrediction: any = [];
+  campaignId: any;
+  methods: string[] = ["WKNN", "SVR", "NuSVR", "LinearSVR"];
+  selectAllMethodsCheck: boolean = false;
+  form!: FormGroup;
+
+  ngOnInit(){
+    this.form = this.formBuilder.group({
+      methods: ['', Validators.required]
+    });
+  }
+
+  
+  constructor(private route: ActivatedRoute, private apiService: ApiService, private formBuilder: FormBuilder){
+    this.route.queryParams.subscribe(params => {
+      if(params['data']){
+        this.campaignId = params['data'];
+        console.log(this.campaignId)
+      }
+    })
+
+    this.apiService.getMethodPredictionsById(this.campaignId).subscribe(res=> {
+      
+      if(res != 0){
+
+        this.campaignMethodPrediction = res
+      }
+    })
+  }
+
+  selectAllMethods(){
+    const methodsControl = this.form.get('methods');
+    const methodsToggle = this.form.get('methods')?.value;
+
+
+    const allMethods = this.methods.slice();
+    console.log(allMethods)
+    
+    if(methodsControl){
+      if (methodsToggle.length == 1) {
+        methodsControl.setValue(allMethods);
+        this.selectAllMethodsCheck = true;
+      } else {
+        methodsControl.setValue([]);
+        this.selectAllMethodsCheck = false;
+      }
+    }
+  }
+
+  onMethodSelected(method: string){
+    console.log(method)
+  }
   
   public lineChartData: ChartConfiguration['data'] = {
     datasets: [
@@ -92,12 +145,4 @@ export class GraphicsComponent {
   };
   public radarChartType: ChartType = 'radar';
 
-  constructor(private route: ActivatedRoute){
-    this.route.queryParams.subscribe(params => {
-      if(params['data']){
-        this.campaignMethodPrediction = JSON.parse(params['data']);
-        console.log(this.campaignMethodPrediction)
-      }
-    })
-  }
 }
