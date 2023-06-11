@@ -9,26 +9,26 @@
                 <mat-label>Método</mat-label>
                 <mat-select placeholder="Sin selección" multiple formControlName="methods">
                   <mat-option class="mat-option" value="allMethods" (click)="selectAllMethods()">Seleccionar todos</mat-option>
-                  <mat-option *ngFor="let method of methods" [value]="method" (click)="onMethodSelected(method)">
+                  <mat-option *ngFor="let method of methods" [value]="method" (click)="onFilterSelected()">
                     {{ method }}
                   </mat-option>
                 </mat-select>
               </mat-form-field>
               <mat-form-field class="formField mr-2">
                 <mat-label>Protocolo</mat-label>
-                <mat-select placeholder="Sin selección" multiple formControlName="methods">
-                  <mat-option class="mat-option" value="allMethods" (click)="selectAllMethods()">Seleccionar todos</mat-option>
-                  <mat-option *ngFor="let method of methods" [value]="method" (click)="onMethodSelected(method)">
-                    {{ method }}
+                <mat-select placeholder="Sin selección" multiple formControlName="protocols">
+                  <mat-option class="mat-option" value="allMethods" (click)="selectAllProtocols()">Seleccionar todos</mat-option>
+                  <mat-option *ngFor="let protocol of protocols" [value]="protocol" (click)="onFilterSelected()">
+                    {{ protocol }}
                   </mat-option>
                 </mat-select>
               </mat-form-field>
               <mat-form-field class="formField mr-2">
                 <mat-label>Canal</mat-label>
-                <mat-select placeholder="Sin selección" multiple formControlName="methods">
-                  <mat-option class="mat-option" value="allMethods" (click)="selectAllMethods()">Seleccionar todos</mat-option>
-                  <mat-option *ngFor="let method of methods" [value]="method" (click)="onMethodSelected(method)">
-                    {{ method }}
+                <mat-select placeholder="Sin selección" multiple formControlName="channels">
+                  <mat-option class="mat-option" value="allMethods" (click)="selectAllChannels()">Seleccionar todos</mat-option>
+                  <mat-option *ngFor="let channel of channels" [value]="channel" (click)="onFilterSelected()">
+                    {{ channel }}
                   </mat-option>
                 </mat-select>
               </mat-form-field>
