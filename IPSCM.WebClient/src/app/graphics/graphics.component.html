@@ -36,8 +36,8 @@
           </div>
           
         </div>
-        <div class="columns is-centered p-2">
-          <div class="column is-narrow">
+        <div class="columns is-centered custom-padding">
+          <div class="is-narrow custom-padding">
             <div class="box chart-container">
               <canvas baseChart class="chart is-fullwidth" [data]="lineChartData" [options]="lineChartOptions" [type]="lineChartType"></canvas>
             </div>
@@ -46,19 +46,19 @@
       </div>
     </ng-template>
   </mat-tab>
-        <mat-tab label="Gráfica de exactitud">
-                <ng-template matTabContent>
-                  <div class="has-text-centered overflow-hidden p-2 mt-6">
-                    <div class="columns is-centered p-2">
-                      <div class="column is-narrow">
-                        <div class="box chart-container">
-                          <div class="chart-container-inner">
-                            <canvas baseChart class="chart is-fullwidth" [data]="radarChartData" [options]="radarChartOptions" [type]="radarChartType"></canvas>
-                          </div>
-                        </div>
-                      </div>
+  <mat-tab label="Gráfica de exactitud">
+          <ng-template matTabContent>
+            <div class="has-text-centered overflow-hidden p-2 mt-6">
+              <div class="columns is-centered">
+                <div class="column is-narrow">
+                  <div class="box chart-container">
+                    <div class="chart-container-inner">
+                      <canvas baseChart class="chart is-fullwidth" [data]="radarChartData" [options]="radarChartOptions" [type]="radarChartType"></canvas>
                     </div>
                   </div>
-                </ng-template>
-              </mat-tab>
-      </mat-tab-group>
+                </div>
+              </div>
+            </div>
+          </ng-template>
+        </mat-tab>
+</mat-tab-group>

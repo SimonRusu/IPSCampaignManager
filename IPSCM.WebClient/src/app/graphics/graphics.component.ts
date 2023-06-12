@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Chart, ChartConfiguration, ChartData, ChartEvent, ChartType } from 'chart.js';
 import { ApiService } from '../services/api.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import annotationPlugin from 'chartjs-plugin-annotation';
 
 
 @Component({
@@ -32,6 +33,8 @@ export class GraphicsComponent {
       protocols: ['', Validators.required],
       channels: ['', Validators.required]
     });
+
+    Chart.register(annotationPlugin);
   }
 
   
@@ -195,6 +198,7 @@ export class GraphicsComponent {
               pointHoverBackgroundColor: '#fff',
               pointHoverBorderColor: color,
               fill: 'origin',
+              hidden: true
           }
           datasets.push(dataset);
           labels.push(...meanErrors);
@@ -214,6 +218,7 @@ export class GraphicsComponent {
   };
 
   public lineChartOptions: ChartConfiguration['options'] = {
+    maintainAspectRatio:false,
     scales: {
       x: {
           title: {
@@ -225,8 +230,7 @@ export class GraphicsComponent {
           max: 10,
           ticks: {
             stepSize: 2,
-            
-          }
+          },
       },
       y: {
           title: {
@@ -234,9 +238,21 @@ export class GraphicsComponent {
               text: 'Distribución acumulada (CDF)'
           },
           type:"linear",
+          min: 0,
           max: 1
+      },
+    },
+    plugins:{
+      legend:{
+        display:true,
+        position:"bottom",
+        labels:{
+          boxWidth:0.1,
+          boxHeight:0.1,
+        }
+        
       }
-    }
+    },
   };
 
   public lineChartType: ChartType = 'line';

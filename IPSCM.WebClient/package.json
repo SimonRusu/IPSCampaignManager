@@ -24,6 +24,7 @@
     "bootstrap": "^5.2.3",
     "bulma": "^0.9.4",
     "chart.js": "^4.3.0",
+    "chartjs-plugin-annotation": "^3.0.1",
     "flickity": "^3.0.0",
     "jquery": "^3.6.4",
     "jszip": "^3.10.1",

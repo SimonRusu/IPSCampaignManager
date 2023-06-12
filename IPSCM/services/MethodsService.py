@@ -135,8 +135,8 @@ def calculate_error(aleMatrix, results, description):
     keyName = ''
 
     for field, value in key.items():
-        if value != [None] and value != 0 and field != 'ksRange':
-            keyName += f'[{field[0]}={value}]'
+        if value != [None] and value != 0 and field != 'ksRange' and field != 'cs' and field != 'Is' and field != 'nus' and field != 'gammas':
+            keyName += f'[{value}]'
     
     for k, y_pred in results.items():   
         error = np.sqrt(np.sum((y_test - y_pred) ** 2, axis=1))
