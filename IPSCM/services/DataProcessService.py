@@ -80,7 +80,7 @@ def dataProcessing(data):
 
                             predicted_points = applyMethod(refRSSIMatrix, aleRSSIMatrix, method, metric, algorithm, ksRange, kernel, cs, gammas, nus, Is)
 
-                            mean_error = calculate_error(aleRSSIMatrix, predicted_points)
+                            mean_error = calculate_error(aleRSSIMatrix, predicted_points, taskId)
 
                             createMethodPrediction(campaignId, taskId, json.dumps(predicted_points), json.dumps(mean_error))
 

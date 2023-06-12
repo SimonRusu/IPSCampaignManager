@@ -46,7 +46,6 @@ export class GraphicsComponent {
       
       if(res != 0){
         this.campaignMethodPrediction = res
-        this.filteredData = res
       }
     })
   }
@@ -111,7 +110,7 @@ export class GraphicsComponent {
     this.filteredData = this.filterData(this.form.get('protocols')?.value, "protocol", this.filteredData);
     this.filteredData = this.filterData(this.form.get('channels')?.value, "channel", this.filteredData);
 
-    let sortedData = this.sortData()
+    let sortedData = this.parseData()
     this.fillPrecisionData(sortedData)
   }
 
@@ -122,20 +121,18 @@ export class GraphicsComponent {
     })
   }
   
-  sortData() {
+  parseData() {
     let parsedData = this.filteredData.map((item:any) => {
-        let predictedPoints = JSON.parse(item.Predicted_points);
         let meanErrors = JSON.parse(item.Mean_error);
       
-        let sortedData = Object.keys(predictedPoints).map(key => ({
+        let sortedData = Object.keys(meanErrors).map(key => ({
             key: key,
-            predictedPoint: predictedPoints[key],
             meanError: meanErrors[key]
-        }));
+        }
+        ));
       
-        sortedData.sort((a, b) => a.meanError - b.meanError);
-        let cdfValues = sortedData.map((value, i) => ((i + 1) / sortedData.length) * 100);
-      
+        const cdfValues = this.calculateCDF(sortedData);
+
         return {
             ...item,
             SortedData: sortedData,
@@ -146,40 +143,63 @@ export class GraphicsComponent {
     return parsedData;
   }
 
+  calculateCDF(sortedData: any) {
+    const cdfData = [];
+
+    for (let i = 0; i < sortedData.length; i++) {
+        let meanErrors = sortedData[i].meanError;
+        let cdf:any = [];
+        let totalCount = meanErrors.length;
+        let cumulativeCount = 0;
+
+        meanErrors.forEach((errorValue:any, index:any) => {
+            cumulativeCount += 1;
+            const probability = cumulativeCount / totalCount;
+            cdf.push({ x: errorValue, y: probability });
+        });
+
+        cdfData.push({
+            key: sortedData[i].key,
+            cdf: cdf
+        });
+    }
+
+    return cdfData;
+}
+  
+
   fillPrecisionData(filteredData:any){
     let labels = [];
     let datasets = [];
-
     for(let i = 0; i < filteredData.length; i++){
       let item = filteredData[i];
-      let sortedData = item.SortedData;
-      let meanErrors = [];
       let cdfValues = item.CdfValues;
 
-      for(let data of sortedData){
-        meanErrors.push(data.meanError);
+      for(let j = 0; j < cdfValues.length; j++){
+          let data = cdfValues[j];
+          console.log(data)
+          let meanErrors = data.cdf;
+          
+          let hue = Math.floor(((i * cdfValues.length + j) * 360) / (filteredData.length * cdfValues.length));
+          let color = `hsl(${hue}, 100%, 50%)`;
+          let backgroundColor = `hsla(${hue}, 100%, 50%, 0.2)`;
+
+          
+          let dataset = {
+              data: meanErrors,
+              label: data.key,
+              backgroundColor: backgroundColor,
+              borderColor: color,
+              pointBackgroundColor: color,
+              pointBorderColor: '#fff',
+              pointHoverBackgroundColor: '#fff',
+              pointHoverBorderColor: color,
+              fill: 'origin',
+          }
+          datasets.push(dataset);
+          labels.push(...meanErrors);
       }
-
-      let hue = Math.floor((i * 360) / filteredData.length);
-      let color = `hsl(${hue}, 100%, 50%)`;
-      let backgroundColor = `hsla(${hue}, 100%, 50%, 0.2)`;
-
-
-      let dataset = {
-        data: cdfValues,
-        label: `Series ${item.Id}`,
-        backgroundColor: backgroundColor,
-        borderColor: color,
-        pointBackgroundColor: color,
-        pointBorderColor: '#fff',
-        pointHoverBackgroundColor: '#fff',
-        pointHoverBorderColor: color,
-        fill: 'origin',
-      }
-
-      datasets.push(dataset);
-      labels = meanErrors;
-    }
+  }
 
     this.lineChartData = {
       datasets: datasets,
@@ -195,14 +215,13 @@ export class GraphicsComponent {
 
   public lineChartOptions: ChartConfiguration['options'] = {
     scales: {
-      xAxis: {
+      x: {
           title: {
               display: true,
               text: 'Error (m)'
           },
           beginAtZero: true,
           type:"linear",
-          min: 0,
           max: 10,
           ticks: {
             stepSize: 2,
@@ -215,8 +234,7 @@ export class GraphicsComponent {
               text: 'Distribución acumulada (CDF)'
           },
           type:"linear",
-          min: 0,
-          max: 100
+          max: 1
       }
     }
   };

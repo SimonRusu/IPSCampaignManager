@@ -50,7 +50,7 @@
                     <mat-form-field class="ml-3 formField">
                       <mat-label>Muestras</mat-label>
                       <mat-select placeholder="Sin selección" formControlName="sample">
-                        <mat-option [value]="0">Sin límite</mat-option>
+                        <mat-option [value]="-1">Sin límite</mat-option>
                         <mat-option *ngFor="let sample of samples" [value]="sample">
                           {{ sample }}
                         </mat-option>

@@ -1,3 +1,4 @@
+import json
 import numpy as np
 from sklearn.svm import SVR, LinearSVR, NuSVR
 from sklearn.neighbors import KNeighborsRegressor
@@ -125,13 +126,23 @@ def applyLinearSVRmethod(data_train, data_test, Is, cs):
 
     return results
 
-def calculate_error(aleMatrix, results):
+def calculate_error(aleMatrix, results, description):
+    key = json.loads(description)
+
     y_test = aleMatrix[:, -3:]
     errors = {}
+
+    keyName = ''
+
+    for field, value in key.items():
+        if value != [None] and value != 0 and field != 'ksRange':
+            keyName += f'[{field[0]}={value}]'
     
     for k, y_pred in results.items():   
         error = np.sqrt(np.sum((y_test - y_pred) ** 2, axis=1))
-        mean_error = np.mean(error)
-        errors[k]=mean_error
+        newKeyName = keyName + f'[k={str(k)}]'
+        errors[newKeyName] = error
+
+    errorsList = {k: sorted(v) for k, v in errors.items()}
         
-    return errors
+    return errorsList
