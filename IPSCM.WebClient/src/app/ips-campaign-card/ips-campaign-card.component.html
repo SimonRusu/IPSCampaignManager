@@ -70,7 +70,7 @@
                         <mat-label>Algoritmo</mat-label>
                         <mat-select placeholder="Sin selección" multiple formControlName="algorithms" >
                           <mat-option class="mat-option" value="allAlgorithms" (click)="selectAllAlgorithms()">Seleccionar todos</mat-option>
-                          <mat-option *ngFor="let algorithm of algorithParams" [value]="algorithm">
+                          <mat-option *ngFor="let algorithm of algorithmParams" [value]="algorithm">
                             {{ algorithm }}
                           </mat-option>
                         </mat-select>
@@ -144,7 +144,7 @@
                       </mat-form-field>
                       <mat-form-field class="ml-3 formField">
                         <mat-label>Gamma</mat-label>
-                        <mat-select placeholder="Sin selección" formControlName="gamma" [multiple]="false">
+                        <mat-select placeholder="Sin selección" formControlName="gamma">
                           <mat-option *ngFor="let gamma of gammaParams" [value]="gamma" (click)="onNuSVRgammaSelected(gamma)">
                             {{ gamma }}
                           </mat-option>

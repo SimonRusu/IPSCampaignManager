@@ -137,11 +137,13 @@ def calculate_error(aleMatrix, results, description):
     for field, value in key.items():
         if value != [None] and value != 0 and field != 'ksRange' and field != 'cs' and field != 'Is' and field != 'nus' and field != 'gammas':
             keyName += f'[{value}]'
-    
+
     for k, y_pred in results.items():   
         error = np.sqrt(np.sum((y_test - y_pred) ** 2, axis=1))
-        newKeyName = keyName + f'[k={str(k)}]'
+        mean_error_rounded = round(np.mean(error), 3)
+        newKeyName = keyName + f'[k={str(k)}][Mean={str(mean_error_rounded)}]'
         errors[newKeyName] = error
+
 
     errorsList = {k: sorted(v) for k, v in errors.items()}
         

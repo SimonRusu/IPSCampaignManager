@@ -63,7 +63,7 @@ def dataProcessing(data):
                 for algorithm in algorithms:
                     for kernel in kernels:
 
-                        taskId = taskToJson(method, protocol, channel, rssiSamples, metric, algorithm, ksRangeJson, kernel, cs, gammas, nus, Is)
+                        taskId = taskToJson(method, protocol, channel, rssiSamples, algorithm, metric, ksRangeJson, kernel, cs, gammas, nus, Is)
                         
                         if not checkExistingMethodPrediction(campaignId, taskId):
 

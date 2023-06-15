@@ -26,7 +26,7 @@ export class IpsCampaignCardComponent {
   selectAllAlgorithmsCheck: boolean = false;
 
   metricParams: string[] = ["manhattan", "chebyshev", "minkowski"]
-  algorithParams: string[] = ["brute", "ball_tree", "kd_tree", "auto"]
+  algorithmParams: string[] = ["brute", "ball_tree", "kd_tree", "auto"]
   kernelParams: string[] = ["linear", "poly", "sigmoid", "rbf"]
   gammaParams: string[] = ["auto", "scale", "range"]
   WKNNparams: boolean = false;
@@ -140,7 +140,7 @@ export class IpsCampaignCardComponent {
       const algorithmsControl = this.form.get('algorithms');
       const algorithmsToggle = this.form.get('algorithms')?.value;
 
-      const allAlgorithms = this.algorithParams.slice();
+      const allAlgorithms = this.algorithmParams.slice();
       
       if(algorithmsControl){
         if (algorithmsToggle.length == 1) {
