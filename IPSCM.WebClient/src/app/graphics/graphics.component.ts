@@ -1,10 +1,10 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Chart, ChartConfiguration, ChartData, ChartEvent, ChartType } from 'chart.js';
+import { Chart, ChartConfiguration, ChartType } from 'chart.js';
 import { ApiService } from '../services/api.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import annotationPlugin from 'chartjs-plugin-annotation';
-import { clone } from 'chart.js/dist/helpers/helpers.core';
+import { ToastrService } from 'ngx-toastr';
 
 
 @Component({
@@ -16,8 +16,11 @@ export class GraphicsComponent {
 
   @ViewChild('chartCanvas', { static: true }) chartCanvas!: ElementRef<HTMLCanvasElement>;
   campaignId: any;
+  campaignName?: string;
   campaignMethodPrediction: any = [];
   filteredData: any = [];
+  totalSeries: any = [];
+  selectedSeries: any = [];
   campaignFilteredPoints: any = [];
   campaoignFilteredErrors: any = [];
   methods: string[] = ["WKNN", "SVR", "NuSVR", "LinearSVR"];
@@ -67,10 +70,26 @@ export class GraphicsComponent {
   }
 
   
-  constructor(private route: ActivatedRoute, private apiService: ApiService, private formBuilder: FormBuilder){
+  constructor(private route: ActivatedRoute, private apiService: ApiService, private formBuilder: FormBuilder, private toastr: ToastrService){
     this.route.queryParams.subscribe(params => {
-      if(params['data']){
-        this.campaignId = params['data'];
+      if(params['id']){
+        this.campaignId = params['id'];
+      }
+      if(params['name']){
+        this.campaignName = params['name'];
+        if(this.lineChartOptions){
+          this.lineChartOptions.plugins = {
+            ...this.lineChartOptions.plugins,
+            title: {
+              display: true,
+              text: this.campaignName,
+              font:{
+                size:24
+              }
+            }
+          };
+        }
+      
       }
     })
 
@@ -252,18 +271,20 @@ export class GraphicsComponent {
       case "SVR":
         this.filteredData = this.filterData(this.form.get('kernels')?.value, "kernel", this.filteredData);
         this.filteredData = this.filterRange(this.filteredData, "SVR");
-        console.log(this.filteredData)
         break;
       
       case "NuSVR":
         this.filteredData = this.filterData(this.form.get('kernels')?.value, "kernel", this.filteredData);
         this.filteredData = this.filterRange(this.filteredData, "NuSVR");
         break;
+      
+      case "LinearSVR":
+        this.filteredData = this.filterRange(this.filteredData, "LinearSVR");
+        break;
     }
     
 
     let sortedData = this.parseData()
-    console.log(sortedData)
     this.fillPrecisionData(sortedData)
   }
 
@@ -305,67 +326,85 @@ export class GraphicsComponent {
             }
             break;
 
-            case 'SVR':
-              const matchesSVR = key.match(/k=_C([\d.]+)_G(\w+\.?\w*)/);
-              if (matchesSVR) {
-                  const cValue = parseFloat(matchesSVR[1]);
-                  let gValue:any = matchesSVR[2];  
-          
-                  const gValueIsNumber = !isNaN(parseFloat(gValue));
-          
-                  if (gValueIsNumber) {
-                      gValue = parseFloat(gValue);
-                  }
-          
-                  let gValueInRange;
-                  if(gamma === 'range' && gValueIsNumber){
-                      gValueInRange = gValue >= gRangeStart && gValue <= gRangeEnd;
-                  } else if(gamma === 'auto' && gValue === 'auto'){
-                      gValueInRange = true;
-                  }
-                  else if(gamma === 'scale' && gValue === 'scale'){
-                      gValueInRange = true;
-                  }
-          
-                  if (
-                      cValue >= cRangeStart && cValue <= cRangeEnd &&
-                      gValueInRange) {
-                          filteredMeanError[key] = value;
-                  }
-              }
-              break;
-  
-            case 'NuSVR':
-              const matchesNuSVR = key.match(/k=nu([\d.]+)_C([\d.]+)_G(\w+\.?\w*)/);
-              if (matchesNuSVR) {
-                const nuValue = parseFloat(matchesNuSVR[1]);
-                const cValue = parseFloat(matchesNuSVR[2]);
-                let gValue:any = matchesNuSVR[3];  
+          case 'SVR':
+            const matchesSVR = key.match(/k=C([\d.]+)_G(\w+\.?\w*)/);
 
+            if (matchesSVR) {
+
+                const cValue = parseFloat(matchesSVR[1]);
+                let gValue:any = matchesSVR[2];  
+        
                 const gValueIsNumber = !isNaN(parseFloat(gValue));
-
+        
                 if (gValueIsNumber) {
-                  gValue = parseFloat(gValue);
+                    gValue = parseFloat(gValue);
                 }
-          
+        
                 let gValueInRange;
                 if(gamma === 'range' && gValueIsNumber){
-                  gValueInRange = gValue >= gRangeStart && gValue <= gRangeEnd;
+                    gValueInRange = gValue >= gRangeStart && gValue <= gRangeEnd;
                 } else if(gamma === 'auto' && gValue === 'auto'){
-                  gValueInRange = true;
+                    gValueInRange = true;
                 }
                 else if(gamma === 'scale' && gValue === 'scale'){
-                  gValueInRange = true;
+                    gValueInRange = true;
                 }
-          
+        
                 if (
-                  nuValue >= nuRangeStart && nuValue <= nuRangeEnd &&
-                  cValue >= cRangeStart && cValue <= cRangeEnd &&
-                  gValueInRange) {
-                    filteredMeanError[key] = value;
+                    cValue >= cRangeStart && cValue <= cRangeEnd &&
+                    gValueInRange) {
+                        filteredMeanError[key] = value;
                 }
+            }
+            break;
+  
+          case 'NuSVR':
+            const matchesNuSVR = key.match(/k=nu([\d.]+)_C([\d.]+)_G(\w+\.?\w*)/);
+            if (matchesNuSVR) {
+              const nuValue = parseFloat(matchesNuSVR[1]);
+              const cValue = parseFloat(matchesNuSVR[2]);
+              let gValue:any = matchesNuSVR[3];  
+
+              const gValueIsNumber = !isNaN(parseFloat(gValue));
+
+              if (gValueIsNumber) {
+                gValue = parseFloat(gValue);
               }
-              break;
+        
+              let gValueInRange;
+              if(gamma === 'range' && gValueIsNumber){
+                gValueInRange = gValue >= gRangeStart && gValue <= gRangeEnd;
+              } else if(gamma === 'auto' && gValue === 'auto'){
+                gValueInRange = true;
+              }
+              else if(gamma === 'scale' && gValue === 'scale'){
+                gValueInRange = true;
+              }
+        
+              if (
+                nuValue >= nuRangeStart && nuValue <= nuRangeEnd &&
+                cValue >= cRangeStart && cValue <= cRangeEnd &&
+                gValueInRange) {
+                  filteredMeanError[key] = value;
+              }
+            }
+            break;
+
+            case 'LinearSVR':
+            const matchesLinearSVR = key.match(/k=i([\d.]+)_C(\w+\.?\w*)/);
+            console.log(meanError)
+            if (matchesLinearSVR) {
+
+                const iValue = parseFloat(matchesLinearSVR[1]);
+                const cValue = parseFloat(matchesLinearSVR[2]);
+        
+                if (
+                    cValue >= cRangeStart && cValue <= cRangeEnd &&
+                    iValue >= iRangeStart && iValue <= iRangeEnd) {
+                      filteredMeanError[key] = value;
+                }
+            }
+            break;
           }
       });
 
@@ -424,22 +463,18 @@ export class GraphicsComponent {
 
   fillPrecisionData(filteredData:any){
     let labels = [];
-    let datasets = [];
-    
+
     for(let i = 0; i < filteredData.length; i++){
       let item = filteredData[i];
       let cdfValues = item.CdfValues;
 
       for(let j = 0; j < cdfValues.length; j++){
           let data = cdfValues[j];
-          console.log(data)
           let meanErrors = data.cdf;
           
-          let hue = Math.floor(((i * cdfValues.length + j) * 360) / (filteredData.length * cdfValues.length));
-          let color = `hsl(${hue}, 100%, 50%)`;
-          let backgroundColor = `hsla(${hue}, 100%, 50%, 0.2)`;
+          let color = this.getRandomColor();
+          let backgroundColor = color + '0.2'; 
 
-          
           let dataset = {
               data: meanErrors,
               label: data.key,
@@ -452,21 +487,55 @@ export class GraphicsComponent {
               fill: false,
               hidden: true
           }
-          datasets.push(dataset);
+
+          for (let selected of this.selectedSeries){
+            if (!this.totalSeries.includes(selected) && this.totalSeries.length < 30) {
+                this.totalSeries.push(selected);
+            }
+          }
+
+          if(this.totalSeries.length < 30) {
+            this.totalSeries.push(dataset);
+          }
+          else {
+              this.toastr.warning('No se han cargado todas las series. Ajusta tus selecciones o filtros para ver más datos.', 'Límite de 30 series alcanzado', { timeOut: 5000 });
+              break;
+          }
+
+          const filteredSeries = this.totalSeries.reduce((acc:any, curr:any) => {
+            const existingItem = acc.find((item:any) => item.label === curr.label);
+          
+            if (!existingItem) {
+              acc.push(curr);
+            }
+          
+            return acc;
+          }, []);
+
+          this.totalSeries = filteredSeries
           labels.push(...meanErrors);
       }
   }
 
+  if(this.totalSeries.length == 0){
+    for (let selected of this.selectedSeries){
+      if (!this.totalSeries.includes(selected)) {
+        this.totalSeries.push(selected)
+      }
+    }
+  }
+
     this.lineChartData = {
-      datasets: datasets,
+      datasets: this.totalSeries,
       labels: labels
     };
 
   }
 
+
   fillAccuracyData(filteredData:any){
-    let labels = [];
     let datasets = [];
+    let labels = [];
 
     if (filteredData.length > 24) {
       filteredData = filteredData.slice(0, 24);
@@ -561,6 +630,27 @@ export class GraphicsComponent {
         labels:{
           boxWidth:0.1,
           boxHeight:0.1,
+        },
+        onClick: (event, legendItem, legend) => {
+
+            const index = legendItem.datasetIndex;
+
+            const chart = legend.chart;
+            const dataset = chart.data.datasets[index||0];
+
+            if (!this.selectedSeries.includes(dataset)) {
+              dataset.hidden = false;
+              this.selectedSeries.push(dataset);
+            }
+            else {
+              let foundIndex = this.selectedSeries.findIndex((data:any) => data === dataset);
+              if (foundIndex !== -1) {
+                  this.selectedSeries.splice(foundIndex, 1);
+              }
+              dataset.hidden = true;
+            }
+
+            chart.update(this.selectedSeries);
         }
         
       }
@@ -615,13 +705,19 @@ public pointsChartOptions: ChartConfiguration['options'] = {
   }
 };
 
-public pointsChartType: ChartType = 'line';
+  public pointsChartType: ChartType = 'line';
 
 
-insertData(){
-  console.log("entro")
-  this.onFilterSelected();
+   getRandomColor() {
+    let r = Math.floor(Math.random() * 256);          // Random between 0-255
+    let g = Math.floor(Math.random() * 256);          // Random between 0-255
+    let b = Math.floor(Math.random() * 256);          // Random between 0-255
+    return 'rgb(' + r + ',' + g + ',' + b + ')'; // Collect all to a string
 }
+  insertData(){
+    this.totalSeries = [];
+    this.onFilterSelected();
+  }
 }
 
 
