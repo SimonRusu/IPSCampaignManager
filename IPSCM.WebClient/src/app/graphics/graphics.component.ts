@@ -17,6 +17,7 @@ export class GraphicsComponent {
   @ViewChild('chartCanvas', { static: true }) chartCanvas!: ElementRef<HTMLCanvasElement>;
   campaignId: any;
   campaignName?: string;
+  alePoints?: string;
   campaignMethodPrediction: any = [];
   filteredData: any = [];
   totalSeries: any = [];
@@ -82,14 +83,30 @@ export class GraphicsComponent {
             ...this.lineChartOptions.plugins,
             title: {
               display: true,
-              text: this.campaignName,
+              text: this.campaignName + " - Gráfica de precisión",
               font:{
                 size:24
               }
             }
           };
         }
-      
+
+        if(this.pointsChartOptions){
+          this.pointsChartOptions.plugins = {
+            ...this.pointsChartOptions.plugins,
+            title: {
+              display: true,
+              text: this.campaignName + " - Gráfica de exactitud",
+              font:{
+                size:24
+              }
+            }
+          };
+        }
+
+        if(params['alePoints']){
+          this.alePoints = JSON.parse(params['alePoints']);
+        }
       }
     })
 
@@ -255,7 +272,7 @@ export class GraphicsComponent {
       }
   }
 
-  onFilterSelected(){
+  onFilterSelected(chartTipe:string){
     this.filteredData = [...this.campaignMethodPrediction];
 
     this.filteredData = this.filterData(this.form.get('methods')?.value, "method", this.filteredData);
@@ -265,27 +282,49 @@ export class GraphicsComponent {
     switch(this.selectedMethod){
       case "WKNN":
         this.filteredData = this.filterData(this.form.get('metrics')?.value, "metric", this.filteredData);
-        this.filteredData = this.filterRange(this.filteredData, "WKNN");
+        this.filteredData = this.filterData(this.form.get('algorithms')?.value, "algorithm", this.filteredData);
+        if(chartTipe == 'precision'){
+          this.filteredData = this.filterRange(this.filteredData, "WKNN", "Mean_error");
+        }else{
+          this.filteredData = this.filterRange(this.filteredData, "WKNN", "Predicted_points");
+        }
         break;
       
       case "SVR":
         this.filteredData = this.filterData(this.form.get('kernels')?.value, "kernel", this.filteredData);
-        this.filteredData = this.filterRange(this.filteredData, "SVR");
+        if(chartTipe == 'precision'){
+          this.filteredData = this.filterRange(this.filteredData, "SVR", "Mean_error");
+        }else{
+          this.filteredData = this.filterRange(this.filteredData, "SVR", "Predicted_points");
+        }
         break;
       
       case "NuSVR":
         this.filteredData = this.filterData(this.form.get('kernels')?.value, "kernel", this.filteredData);
-        this.filteredData = this.filterRange(this.filteredData, "NuSVR");
+        if(chartTipe == 'precision'){
+          this.filteredData = this.filterRange(this.filteredData, "NuSVR", "Mean_error");
+        }else{
+          this.filteredData = this.filterRange(this.filteredData, "NuSVR", "Predicted_points");
+        }
         break;
       
       case "LinearSVR":
-        this.filteredData = this.filterRange(this.filteredData, "LinearSVR");
+        if(chartTipe == 'precision'){
+          this.filteredData = this.filterRange(this.filteredData, "LinearSVR", "Mean_error");
+        }else{
+          this.filteredData = this.filterRange(this.filteredData, "LinearSVR", "Predicted_points");
+        }
         break;
     }
-    
 
-    let sortedData = this.parseData()
-    this.fillPrecisionData(sortedData)
+    if(chartTipe === 'precision'){
+      let parsedData = this.parsePrecisionData();
+      this.fillPrecisionData(parsedData);
+    } 
+    else {
+      let parsedData = this.parseAccuracyData();
+      this.fillAccuracyData(parsedData);
+    }
   }
 
   filterData(filters: any, property: string, data: any[]): any[]{
@@ -296,7 +335,8 @@ export class GraphicsComponent {
     })
   }
 
-  filterRange(data: any[], rangeType: string): any[] {
+  filterRange(data: any[], rangeType: string, atribute: string): any[] {
+    
     return data.map((object: any) => {
       const kRangeStart = this.form.get('kRangeStart')?.value;
       const kRangeEnd = this.form.get('kRangeEnd')?.value;
@@ -310,19 +350,18 @@ export class GraphicsComponent {
       const iRangeStart = this.form.get('iRangeStart')?.value;
       const iRangeEnd = this.form.get('iRangeEnd')?.value;
 
-
       const clonedObject = { ...object }
-      const meanError = JSON.parse(clonedObject.Mean_error);
-      const filteredMeanError: any = {};
+      const objParam = JSON.parse(clonedObject[atribute]);
+      const filteredParam: any = {};
 
-      Object.entries(meanError).forEach(([key, value]) => {
+      Object.entries(objParam).forEach(([key, value]) => {
         switch(rangeType){
           case 'WKNN':
 
             const matchesWKNN = parseInt(key.match(/k=(\d+)/)?.[1] || "", 10);
 
             if (matchesWKNN >= kRangeStart && matchesWKNN <= kRangeEnd) {
-              filteredMeanError[key] = value;
+              filteredParam[key] = value;
             }
             break;
 
@@ -353,7 +392,7 @@ export class GraphicsComponent {
                 if (
                     cValue >= cRangeStart && cValue <= cRangeEnd &&
                     gValueInRange) {
-                        filteredMeanError[key] = value;
+                      filteredParam[key] = value;
                 }
             }
             break;
@@ -385,14 +424,13 @@ export class GraphicsComponent {
                 nuValue >= nuRangeStart && nuValue <= nuRangeEnd &&
                 cValue >= cRangeStart && cValue <= cRangeEnd &&
                 gValueInRange) {
-                  filteredMeanError[key] = value;
+                  filteredParam[key] = value;
               }
             }
             break;
 
             case 'LinearSVR':
             const matchesLinearSVR = key.match(/k=i([\d.]+)_C(\w+\.?\w*)/);
-            console.log(meanError)
             if (matchesLinearSVR) {
 
                 const iValue = parseFloat(matchesLinearSVR[1]);
@@ -401,37 +439,62 @@ export class GraphicsComponent {
                 if (
                     cValue >= cRangeStart && cValue <= cRangeEnd &&
                     iValue >= iRangeStart && iValue <= iRangeEnd) {
-                      filteredMeanError[key] = value;
+                      filteredParam[key] = value;
                 }
             }
             break;
           }
       });
 
-        clonedObject.Mean_error = JSON.stringify(filteredMeanError);
+        clonedObject[atribute] = JSON.stringify(filteredParam);
         return clonedObject;
     });
   }
   
-  parseData() {
+  parsePrecisionData() {
     let parsedData = this.filteredData.map((item:any) => {
         let meanErrors = JSON.parse(item.Mean_error);
       
-        let sortedData = Object.keys(meanErrors).map(key => ({
+        let data = Object.keys(meanErrors).map(key => ({
             key: key,
             meanError: meanErrors[key]
         }
         ));
       
-        const cdfValues = this.calculateCDF(sortedData);
+        const cdfValues = this.calculateCDF(data);
 
         return {
             ...item,
-            SortedData: sortedData,
+            PrecisionData: data,
             CdfValues: cdfValues
         };
     });
 
+    return parsedData;
+  }
+
+  parseAccuracyData() {
+    let parsedData = this.filteredData.map((item: any) => {
+      let predictedPoints = JSON.parse(item.Predicted_points);
+  
+      let predPoints = Object.entries(predictedPoints).map(([key, points]: [string, any]) => ({
+        key: key,
+        values: points.map(([x, y]: [number, number]) => ({ x, y })),
+      }));
+
+      let aleatoryPoints = this.alePoints ? Object.values(this.alePoints).map((point: any) => ({
+        x: parseFloat(point.X),
+        y: parseFloat(point.Y),
+      })) : [];
+  
+  
+      return {
+        ...item,
+        PredictedData: predPoints,
+        AleatoryData: aleatoryPoints,
+      };
+    });
+  
     return parsedData;
   }
 
@@ -532,61 +595,70 @@ export class GraphicsComponent {
 
   }
 
-
   fillAccuracyData(filteredData:any){
+    let colors = ["#00BFFF", "#696969", "#228B22", "#FF69B4", "#DAA520", "#D2691E", "#4682B4"];
+
     let datasets = [];
     let labels = [];
 
-    if (filteredData.length > 24) {
-      filteredData = filteredData.slice(0, 24);
-  }
+
+    let aleatoryPoints = filteredData[0].AleatoryData;
+    let pointColors_ale = aleatoryPoints.map((_:any, index:any) => colors[index % colors.length]);
+
+    let dataset_ale = {
+      data: aleatoryPoints,
+      label: "Puntos reales",
+      backgroundColor: pointColors_ale,
+      borderColor: pointColors_ale,
+      pointBackgroundColor: pointColors_ale,
+      pointBorderColor: '#fff',
+      pointHoverBackgroundColor: '#fff',
+      pointHoverBorderColor: pointColors_ale,
+      fill: false,
+      hidden: false,
+      showLine: false,
+      pointStyle: 'triangle',
+      pointRadius: 10
+    }
+
+    datasets.push(dataset_ale);
 
     for(let i = 0; i < filteredData.length; i++){
       let item = filteredData[i];
-      let cdfValues = item.CdfValues;
+      let predictedValues = item.PredictedData;
 
-      for(let j = 0; j < cdfValues.length; j++){
-          let data = cdfValues[j];
-          console.log(data)
-          let meanErrors = data.cdf;
-          
-          let hue = Math.floor(((i * cdfValues.length + j) * 360) / (filteredData.length * cdfValues.length));
-          let color = `hsl(${hue}, 100%, 50%)`;
-          let backgroundColor = `hsla(${hue}, 100%, 50%, 0.2)`;
+      for(let j = 0; j < predictedValues.length; j++){
+          let data = predictedValues[j];
+          let predPoints = data.values;
 
-          
-          let dataset_ref = {
-              data: meanErrors,
+          let pointColors = predPoints.map((_:any, index:any) => colors[index % colors.length]);
+          let dataset_pred = {
+              data: predPoints,
               label: data.key,
-              backgroundColor: backgroundColor,
-              borderColor: color,
-              pointBackgroundColor: color,
+              backgroundColor: pointColors,
+              borderColor: pointColors,
+              pointBackgroundColor: pointColors,
               pointBorderColor: '#fff',
               pointHoverBackgroundColor: '#fff',
-              pointHoverBorderColor: color,
-              fill: 'origin',
-              hidden: true
+              pointHoverBorderColor: pointColors,
+              fill: false,
+              hidden: true,
+              showLine: false,
+              pointRadius: 10
           }
 
-          let dataset_pred = {
-            data: meanErrors,
-            label: data.key,
-            backgroundColor: backgroundColor,
-            borderColor: color,
-            pointBackgroundColor: color,
-            pointBorderColor: '#fff',
-            pointHoverBackgroundColor: '#fff',
-            pointHoverBorderColor: color,
-            fill: 'origin',
-            hidden: true
-        }
-
-          datasets.push(dataset_ref);
-          labels.push(...meanErrors);
+          if(datasets.length < 30) {
+            datasets.push(dataset_pred);
+            labels.push(...predPoints);
+          }
+          else {
+              this.toastr.warning('No se han cargado todas las series. Ajusta tus selecciones o filtros para ver más datos.', 'Límite de 30 series alcanzado', { timeOut: 5000 });
+              break;
+          }
       }
   }
 
-    this.lineChartData = {
+    this.pointsChartData = {
       datasets: datasets,
       labels: labels
     };
@@ -628,8 +700,8 @@ export class GraphicsComponent {
         display:true,
         position:"bottom",
         labels:{
-          boxWidth:0.1,
-          boxHeight:0.1,
+          boxWidth:10,
+          boxHeight:10,
         },
         onClick: (event, legendItem, legend) => {
 
@@ -660,64 +732,66 @@ export class GraphicsComponent {
   public lineChartType: ChartType = 'line';
 
 
-  
-//-----------------------------------------------------------------------------------------------------------------------
+  public pointsChartData: ChartConfiguration['data'] = {
+    datasets: [],
+    labels: []
+  };
 
-public pointsChartData: ChartConfiguration['data'] = {
-  datasets: [],
-  labels: []
-};
-
-public pointsChartOptions: ChartConfiguration['options'] = {
-  maintainAspectRatio:false,
-  scales: {
-    x: {
-        title: {
-            display: true,
-            text: 'Error (m)'
-        },
-        beginAtZero: true,
-        type:"linear",
-        max: 10,
-        ticks: {
-          stepSize: 2,
-        },
+  public pointsChartOptions: ChartConfiguration['options'] = {
+    maintainAspectRatio:false,
+    scales: {
+      x: {
+          title: {
+              display: true,
+              text: 'x (m)'
+          },
+          beginAtZero: true,
+          type:"linear",
+          max: 20,
+          ticks: {
+            stepSize: 2,
+          },
+      },
+      y: {
+          title: {
+              display: true,
+              text: 'y (m)'
+          },
+          type:"linear",
+          beginAtZero: true,
+          max: 20,
+          ticks: {
+            stepSize: 2,
+          },
+      },
     },
-    y: {
-        title: {
-            display: true,
-            text: 'Distribución acumulada (CDF)'
-        },
-        type:"linear",
-        min: 0,
-        max: 1
-    },
-  },
-  plugins:{
-    legend:{
-      display:true,
-      position:"bottom",
-      labels:{
-        boxWidth:0.1,
-        boxHeight:0.1,
-      }
-    },
-  }
-};
+    plugins:{
+      legend:{
+        display:true,
+        position:"bottom",
+        labels:{
+          boxWidth:10,
+          boxHeight:10,
+        }
+      },
+    }
+  };
 
   public pointsChartType: ChartType = 'line';
 
+  getRandomColor() {
+    let r = Math.floor(Math.random() * 256);
+    let g = Math.floor(Math.random() * 256);
+    let b = Math.floor(Math.random() * 256);
+    return 'rgb(' + r + ',' + g + ',' + b + ')';
+  }
 
-   getRandomColor() {
-    let r = Math.floor(Math.random() * 256);          // Random between 0-255
-    let g = Math.floor(Math.random() * 256);          // Random between 0-255
-    let b = Math.floor(Math.random() * 256);          // Random between 0-255
-    return 'rgb(' + r + ',' + g + ',' + b + ')'; // Collect all to a string
-}
-  insertData(){
+  insertPrecisionData(){
     this.totalSeries = [];
-    this.onFilterSelected();
+    this.onFilterSelected('precision');
+  }
+
+  insertAccuracyData(){
+    this.onFilterSelected('accuracy');
   }
 }
-
-

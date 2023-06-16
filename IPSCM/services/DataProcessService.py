@@ -78,9 +78,9 @@ def dataProcessing(data):
 
                             updateTaskHistory(campaignId, taskId, "Aplicando método de posicionamiento...")
 
-                            predicted_points = applyMethod(refRSSIMatrix, aleRSSIMatrix, method, metric, algorithm, ksRange, kernel, cs, gammas, nus, Is)
+                            predicted_points = applyMethod(refRSSIMatrix, aleRSSIMatrix, method, metric, algorithm, ksRange, kernel, cs, gammas, nus, Is, taskId)
 
-                            mean_error = calculate_error(aleRSSIMatrix, predicted_points, taskId)
+                            mean_error = calculate_error(aleRSSIMatrix, predicted_points)
 
                             createMethodPrediction(campaignId, taskId, json.dumps(predicted_points), json.dumps(mean_error))
 

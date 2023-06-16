@@ -6,19 +6,21 @@ from sklearn.multioutput import MultiOutputRegressor
 from sklearn.preprocessing import StandardScaler
 
 
-def applyMethod(data_train, data_test, method, metrics, algorithms, ks_range, kernel, cs, gammas, nus, Is):
+def applyMethod(data_train, data_test, method, metrics, algorithms, ks_range, kernel, cs, gammas, nus, Is, description):
     match method:
         case "WKNN":
-            return applyWKNNmethod(data_train, data_test, metrics, algorithms, ks_range)
+            return applyWKNNmethod(data_train, data_test, metrics, algorithms, ks_range, description)
         case "SVR":
-            return applySVRmethod(data_train, data_test, kernel, cs, gammas)
+            return applySVRmethod(data_train, data_test, kernel, cs, gammas, description)
         case "NuSVR":
-            return applyNuSVRmethod(data_train, data_test, kernel, cs, gammas, nus)
+            return applyNuSVRmethod(data_train, data_test, kernel, cs, gammas, nus, description)
         case "LinearSVR":
-            return applyLinearSVRmethod(data_train, data_test, Is, cs)
+            return applyLinearSVRmethod(data_train, data_test, Is, cs, description)
 
 
-def applyWKNNmethod(data_train, data_test, metric, algorithm, ks_range):
+def applyWKNNmethod(data_train, data_test, metric, algorithm, ks_range, description):
+    keyName = getKeyDescription(description)
+
     X_train = data_train[:, :-3]
     y_train = data_train[:, -3:]
 
@@ -31,12 +33,14 @@ def applyWKNNmethod(data_train, data_test, metric, algorithm, ks_range):
 
         X_test = data_test[:, :-3]
         y_pred = regressor.predict(X_test).tolist()
-
-        results[str(i)] = y_pred
+        newKeyName = keyName + f'[k={str(i)}]'
+        results[newKeyName] = y_pred
 
     return results
 
-def applySVRmethod(data_train, data_test, kernel, cs, gammas):
+def applySVRmethod(data_train, data_test, kernel, cs, gammas, description):
+    keyName = getKeyDescription(description)
+
     X_train = data_train[:, :-3]
     y_train = data_train[:, -3:]
 
@@ -55,8 +59,8 @@ def applySVRmethod(data_train, data_test, kernel, cs, gammas):
                 y_pred = wrapper.predict(X_test)
                 y_pred_list = y_pred.tolist() 
 
-                model_name = f"C{c}_G{gamma}"
-                results[model_name] = y_pred_list
+                newKeyName = keyName + f'[k={f"C{c}_G{gamma}"}]'
+                results[newKeyName] = y_pred_list
         else:
             model = SVR(kernel=kernel, C=c, gamma=gammas)
             wrapper = MultiOutputRegressor(model).fit(X_train, y_train)
@@ -64,13 +68,15 @@ def applySVRmethod(data_train, data_test, kernel, cs, gammas):
             y_pred = wrapper.predict(X_test)
             y_pred_list = y_pred.tolist() 
 
-            model_name = f"C{c}_G{gammas}"
-            results[model_name] = y_pred_list
+            newKeyName = keyName + f'[k={f"C{c}_G{gamma}"}]'
+            results[newKeyName] = y_pred_list
 
     return results
 
 
-def applyNuSVRmethod(data_train, data_test, kernel, cs, gammas, nus):
+def applyNuSVRmethod(data_train, data_test, kernel, cs, gammas, nus, description):
+    keyName = getKeyDescription(description)
+
     X_train = data_train[:, :-3]
     y_train = data_train[:, -3:]
 
@@ -89,20 +95,23 @@ def applyNuSVRmethod(data_train, data_test, kernel, cs, gammas, nus):
 
                     y_pred = wrapper.predict(X_test)
                     y_pred_list = y_pred.tolist()
-                    model_name = f"nu{nu}_C{c}_G{gamma}"
-                    results[model_name] = y_pred_list
+
+                    newKeyName = keyName + f'[k={f"nu{nu}_C{c}_G{gamma}"}]'
+                    results[newKeyName] = y_pred_list
             else:
                 model = NuSVR(nu=nu, kernel=kernel, C=c, gamma=gammas)
                 wrapper = MultiOutputRegressor(model).fit(X_train, y_train)
 
                 y_pred = wrapper.predict(X_test)
                 y_pred_list = y_pred.tolist()
-                model_name = f"nu{nu}_C{c}_G{gammas}"
-                results[model_name] = y_pred_list
+                newKeyName = keyName + f'[k={f"nu{nu}_C{c}_G{gamma}"}]'
+                results[newKeyName] = y_pred_list
 
     return results
                    
-def applyLinearSVRmethod(data_train, data_test, Is, cs):
+def applyLinearSVRmethod(data_train, data_test, Is, cs, description):
+    keyName = getKeyDescription(description)
+
     X_train = data_train[:, :-3]
     y_train = data_train[:, -3:]
 
@@ -121,30 +130,33 @@ def applyLinearSVRmethod(data_train, data_test, Is, cs):
                 y_pred = wrapper.predict(X_test)
                 y_pred_list = y_pred.tolist()
 
-                model_name = f"i{i}_C{c}"
-                results[model_name] = y_pred_list
+                newKeyName = keyName + f'[k={f"i{i}_C{c}"}]'
+                results[newKeyName] = y_pred_list
 
     return results
 
-def calculate_error(aleMatrix, results, description):
-    key = json.loads(description)
+def calculate_error(aleMatrix, results):
 
     y_test = aleMatrix[:, -3:]
     errors = {}
 
+    for k, y_pred in results.items():   
+        error = np.sqrt(np.sum((y_test - y_pred) ** 2, axis=1))
+        mean_error_rounded = round(np.mean(error), 3)
+        newKeyName = f'{str(k)}[Mean={str(mean_error_rounded)}]'
+        errors[newKeyName] = error
+
+    errorsList = {k: sorted(v) for k, v in errors.items()}
+        
+    return errorsList
+
+
+def getKeyDescription(description):
+    key = json.loads(description)
     keyName = ''
 
     for field, value in key.items():
         if value != [None] and value != 0 and field != 'ksRange' and field != 'cs' and field != 'Is' and field != 'nus' and field != 'gammas':
             keyName += f'[{value}]'
-
-    for k, y_pred in results.items():   
-        error = np.sqrt(np.sum((y_test - y_pred) ** 2, axis=1))
-        mean_error_rounded = round(np.mean(error), 3)
-        newKeyName = keyName + f'[k={str(k)}][Mean={str(mean_error_rounded)}]'
-        errors[newKeyName] = error
-
-
-    errorsList = {k: sorted(v) for k, v in errors.items()}
-        
-    return errorsList
+    
+    return keyName

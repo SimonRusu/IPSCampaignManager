@@ -25,7 +25,7 @@
       </div>
     <footer class="card-footer">
         <a routerLink="/campaign-details" [queryParams]="{ data: stringifyCampaign() }"class="card-footer-item">Ver detalles</a>
-        <a routerLink="/graphics" [queryParams]="{ id: campaign.Id, name: campaign.Name }" class="card-footer-item">Generar gráficas</a>
+        <a routerLink="/graphics" [queryParams]="{ id: campaign.Id, name: campaign.Name, alePoints: campaign.Ale_points }" class="card-footer-item">Generar gráficas</a>
         <a (click)="deleteConfirmDialog()" class="card-footer-item has-text-danger">Borrar campaña</a>
     </footer>
 </div>
