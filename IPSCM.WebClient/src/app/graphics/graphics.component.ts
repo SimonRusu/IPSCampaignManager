@@ -780,11 +780,14 @@ export class GraphicsComponent {
   public pointsChartType: ChartType = 'line';
 
   getRandomColor() {
-    let r = Math.floor(Math.random() * 256);
-    let g = Math.floor(Math.random() * 256);
-    let b = Math.floor(Math.random() * 256);
+    let highChannel = Math.floor(Math.random() * 3);
+
+    let r = highChannel === 0 ? 200 + Math.floor(Math.random() * 56) : Math.floor(Math.random() * 156);
+    let g = highChannel === 1 ? 200 + Math.floor(Math.random() * 56) : Math.floor(Math.random() * 156);
+    let b = highChannel === 2 ? 200 + Math.floor(Math.random() * 56) : Math.floor(Math.random() * 156);
+
     return 'rgb(' + r + ',' + g + ',' + b + ')';
-  }
+}
 
   insertPrecisionData(){
     this.totalSeries = [];
