@@ -68,7 +68,7 @@ def applySVRmethod(data_train, data_test, kernel, cs, gammas, description):
             y_pred = wrapper.predict(X_test)
             y_pred_list = y_pred.tolist() 
 
-            newKeyName = keyName + f'[k={f"C{c}_G{gamma}"}]'
+            newKeyName = keyName + f'[k={f"C{c}_G{gammas}"}]'
             results[newKeyName] = y_pred_list
 
     return results
@@ -104,7 +104,7 @@ def applyNuSVRmethod(data_train, data_test, kernel, cs, gammas, nus, description
 
                 y_pred = wrapper.predict(X_test)
                 y_pred_list = y_pred.tolist()
-                newKeyName = keyName + f'[k={f"nu{nu}_C{c}_G{gamma}"}]'
+                newKeyName = keyName + f'[k={f"nu{nu}_C{c}_G{gammas}"}]'
                 results[newKeyName] = y_pred_list
 
     return results
@@ -135,7 +135,7 @@ def applyLinearSVRmethod(data_train, data_test, Is, cs, description):
 
     return results
 
-def calculate_error(aleMatrix, results):
+def calculateError(aleMatrix, results):
 
     y_test = aleMatrix[:, -3:]
     errors = {}

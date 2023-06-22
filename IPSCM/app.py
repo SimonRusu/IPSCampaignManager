@@ -23,7 +23,7 @@ with app.app_context():
     api.add_resource(GetBeaconConfigurationByCampaignId, '/api/configsByCampaign/<int:campaignId>')
 
     #post resources
-    api.add_resource(UploadCampaign, '/api/upload_campaign')
+    api.add_resource(UploadCampaign, '/api/uploadCampaign')
     api.add_resource(DataProcessing, '/api/applyMethod')
 
     #delete resources

@@ -17,14 +17,14 @@ export class ApiService {
     return this.http.get(this.baseUrl + "campaigns");
   }
 
+  getMethodPredictionsById(id: any){
+    return this.http.get(this.baseUrl + `predictionsByCampaign/${id}`);
+  }
+
   getTaskHistory(){
     return this.http.get(this.baseUrl + "taskHistory");
   }
 
-  getMethodPredictionsById(id: any){
-    return this.http.get(this.baseUrl + `predictionsByCampaign/${id}`);
-  }
-  
   pollTaskHistory(): Observable<any> {
     return timer(0, 5000).pipe(
       takeUntil(this.destroy$),
@@ -79,7 +79,7 @@ export class ApiService {
   }
 
   uploadCampaign(formData: FormData): Observable<any> {
-    return this.http.post(this.baseUrl + 'upload_campaign', formData);
+    return this.http.post(this.baseUrl + 'uploadCampaign', formData);
   }
 
   deleteCampaignById(id: any){

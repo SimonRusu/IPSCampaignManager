@@ -173,7 +173,6 @@ export class IpsCampaignCardComponent {
     onMethodSelected(method: string){
         this.selectedMethod = method;
         this.validateAndClearFields();
-
         this.WKNNparams = false;
         this.SVRparams = false;
         this.NuSVRparams = false;
@@ -216,7 +215,6 @@ export class IpsCampaignCardComponent {
             this.form.get('kernels')?.setValidators(null);
             break;
         }
-        
         Object.keys(this.form?.controls).forEach(key => {
           this.form?.get(key)?.updateValueAndValidity();
         });
@@ -265,7 +263,7 @@ export class IpsCampaignCardComponent {
       this.form.get('kernels')?.reset();
     }
 
-    applyMethod(){
+    applyMethodBtn(){
       let formData = new FormData();
       let campaignId = this.campaign.Id;
       let campaignName = this.campaign.Name;

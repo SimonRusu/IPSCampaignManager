@@ -165,168 +165,168 @@
     </ng-template>
   </mat-tab>
   <mat-tab label="Gráfica de exactitud">
-          <ng-template matTabContent>
-            <div class="has-text-centered overflow-hidden p-2 mt-6">
-              <div class="columns p-2">
-                <div class="column">
-                  <form [formGroup]="form">
-                    <mat-form-field class="formField mr-2">
-                      <mat-label>Método</mat-label>
-                      <mat-select placeholder="Sin selección" formControlName="methods">
-                        <mat-option *ngFor="let method of methods" [value]="method" (click)="onMethodSelected(method)">
-                          {{ method }}
-                        </mat-option>
-                      </mat-select>
-                    </mat-form-field>
-                    <mat-form-field class="formField mr-2">
-                      <mat-label>Protocolo</mat-label>
-                      <mat-select placeholder="Sin selección" multiple formControlName="protocols">
-                        <mat-option class="mat-option" value="allMethods" (click)="selectAllProtocols()">Seleccionar todos</mat-option>
-                        <mat-option *ngFor="let protocol of protocols" [value]="protocol">
-                          {{ protocol }}
-                        </mat-option>
-                      </mat-select>
-                    </mat-form-field>
-                    <mat-form-field class="formField mr-2">
-                      <mat-label>Canal</mat-label>
-                      <mat-select placeholder="Sin selección" multiple formControlName="channels">
-                        <mat-option class="mat-option" value="allMethods" (click)="selectAllChannels()">Seleccionar todos</mat-option>
-                        <mat-option *ngFor="let channel of channels" [value]="channel">
-                          {{ channel }}
-                        </mat-option>
-                      </mat-select>
-                    </mat-form-field>
-                    <div class="field" *ngIf="WKNNparams">
-                      <mat-form-field class="formField">
-                        <mat-label>Métrica</mat-label>
-                        <mat-select placeholder="Sin selección" multiple formControlName="metrics">
-                          <mat-option class="mat-option" value="allMetrics" (click)="selectAllMetrics()">Seleccionar todos</mat-option>
-                          <mat-option *ngFor="let metric of metricParams" [value]="metric">
-                            {{ metric }}
-                          </mat-option>
-                        </mat-select>
-                      </mat-form-field>
-                      <mat-form-field class="ml-3 formField">
-                        <mat-label>Algoritmo</mat-label>
-                        <mat-select placeholder="Sin selección" multiple formControlName="algorithms" >
-                          <mat-option class="mat-option" value="allAlgorithms" (click)="selectAllAlgorithms()">Seleccionar todos</mat-option>
-                          <mat-option *ngFor="let algorithm of algorithmParams" [value]="algorithm">
-                            {{ algorithm }}
-                          </mat-option>
-                        </mat-select>
-                      </mat-form-field>
-                      <div class="custom-container">
-                        <label class="custom-label has-text-weight-bold has-text-grey">Rango de K vecinos</label>
-                        <br>
-                        <mat-slider class="custom-slider" min="1" max="20" step="1" showTickMarks discrete>
-                          <input matSliderStartThumb formControlName="kRangeStart">
-                          <input matSliderEndThumb formControlName="kRangeEnd">
-                        </mat-slider>
-                      </div>
-                    </div>
-                    <div class="field" *ngIf="SVRparams">
-                      <mat-form-field class="formField">
-                        <mat-label>Kernel</mat-label>
-                        <mat-select placeholder="Sin selección" multiple formControlName="kernels">
-                          <mat-option class="mat-option" value="allKernels" (click)="selectAllKernels()">Seleccionar todos</mat-option>
-                          <mat-option *ngFor="let kernel of kernelParams" [value]="kernel">
-                            {{ kernel }}
-                          </mat-option>
-                        </mat-select>
-                      </mat-form-field>
-                      <mat-form-field class="ml-3 formField">
-                        <mat-label>Gamma</mat-label>
-                        <mat-select placeholder="Sin selección" formControlName="gamma">
-                          <mat-option *ngFor="let gamma of gammaParams" [value]="gamma" (click)="onSVRGammaSelected(gamma)">
-                            {{ gamma }}
-                          </mat-option>
-                        </mat-select>
-                      </mat-form-field>
-                      <div class="custom-container">
-                        <label class="custom-label has-text-weight-bold has-text-grey">Rango de C</label>
-                        <mat-slider class="custom-slider" min="0.1" max="20" step="0.1" showTickMarks discrete>
-                          <input matSliderStartThumb formControlName="cRangeStart">
-                          <input matSliderEndThumb formControlName="cRangeEnd">
-                        </mat-slider>
-                      </div>
-                      <div class="custom-container" *ngIf="SVRgammaRange">
-                        <label class="custom-label has-text-weight-bold has-text-grey">Rango de Gamma</label>
-                        <mat-slider class="custom-slider" min="0.01" max="1" step="0.01" showTickMarks discrete>
-                          <input matSliderStartThumb formControlName="gRangeStart">
-                          <input matSliderEndThumb formControlName="gRangeEnd">
-                        </mat-slider>
-                      </div>
-                    </div>
-                    <div class="field" *ngIf="NuSVRparams">
-                      <mat-form-field class="formField">
-                        <mat-label>Kernel</mat-label>
-                        <mat-select placeholder="Sin selección" multiple formControlName="kernels">
-                          <mat-option class="mat-option" value="allKernels" (click)="selectAllKernels()">Seleccionar todos</mat-option>
-                          <mat-option *ngFor="let kernel of kernelParams" [value]="kernel">
-                            {{ kernel }}
-                          </mat-option>
-                        </mat-select>
-                      </mat-form-field>
-                      <mat-form-field class="ml-3 formField">
-                        <mat-label>Gamma</mat-label>
-                        <mat-select placeholder="Sin selección" formControlName="gamma">
-                          <mat-option *ngFor="let gamma of gammaParams" [value]="gamma" (click)="onNuSVRgammaSelected(gamma)">
-                            {{ gamma }}
-                          </mat-option>
-                        </mat-select>
-                      </mat-form-field>
-                      <div class="custom-container">
-                        <label class="custom-label has-text-weight-bold has-text-grey">Rango de Nu</label>
-                        <mat-slider class="custom-slider" min="0.01" max="1" step="0.01" showTickMarks discrete>
-                          <input matSliderStartThumb formControlName="nuRangeStart">
-                          <input matSliderEndThumb formControlName="nuRangeEnd">
-                        </mat-slider>
-                      </div>
-                      <div class="custom-container">
-                        <label class="custom-label has-text-weight-bold has-text-grey">Rango de C</label>
-                        <mat-slider class="custom-slider" min="0.1" max="20" step="0.1" showTickMarks discrete>
-                          <input matSliderStartThumb formControlName="cRangeStart">
-                          <input matSliderEndThumb formControlName="cRangeEnd">
-                        </mat-slider>
-                      </div>
-                      <div class="custom-container" *ngIf="NuSVRgammaRange">
-                        <label class="custom-label has-text-weight-bold has-text-grey">Rango de Gamma</label>
-                        <mat-slider class="custom-slider" min="0.01" max="1" step="0.01" showTickMarks discrete>
-                          <input matSliderStartThumb formControlName="gRangeStart">
-                          <input matSliderEndThumb formControlName="gRangeEnd">
-                        </mat-slider>
-                      </div>
-                    </div>
-                    <div class="field" *ngIf="LinearSVRparams">
-                      <div class="custom-container">
-                        <label class="custom-label has-text-weight-bold has-text-grey">Rango de I</label>
-                        <mat-slider class="custom-slider" min="0" max="10000" step="100" showTickMarks discrete>
-                          <input matSliderStartThumb formControlName="iRangeStart">
-                          <input matSliderEndThumb formControlName="iRangeEnd">
-                        </mat-slider>
-                      </div>
-                      <div class="custom-container">
-                        <label class="custom-label has-text-weight-bold has-text-grey">Rango de C</label>
-                        <mat-slider class="custom-slider" min="0.1" max="20" step="0.1" showTickMarks discrete>
-                          <input matSliderStartThumb formControlName="cRangeStart">
-                          <input matSliderEndThumb formControlName="cRangeEnd">
-                        </mat-slider>
-                      </div>
-                    </div>
-                    <div class="has-text-centered buttonPosition">
-                      <button [disabled]="form.invalid" (click)="insertAccuracyData()" class="button is-link is-rounded">Insertar datos</button>
-                    </div>
-                  </form>
+    <ng-template matTabContent>
+      <div class="has-text-centered overflow-hidden p-2 mt-6">
+        <div class="columns p-2">
+          <div class="column">
+            <form [formGroup]="form">
+              <mat-form-field class="formField mr-2">
+                <mat-label>Método</mat-label>
+                <mat-select placeholder="Sin selección" formControlName="methods">
+                  <mat-option *ngFor="let method of methods" [value]="method" (click)="onMethodSelected(method)">
+                    {{ method }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+              <mat-form-field class="formField mr-2">
+                <mat-label>Protocolo</mat-label>
+                <mat-select placeholder="Sin selección" multiple formControlName="protocols">
+                  <mat-option class="mat-option" value="allMethods" (click)="selectAllProtocols()">Seleccionar todos</mat-option>
+                  <mat-option *ngFor="let protocol of protocols" [value]="protocol">
+                    {{ protocol }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+              <mat-form-field class="formField mr-2">
+                <mat-label>Canal</mat-label>
+                <mat-select placeholder="Sin selección" multiple formControlName="channels">
+                  <mat-option class="mat-option" value="allMethods" (click)="selectAllChannels()">Seleccionar todos</mat-option>
+                  <mat-option *ngFor="let channel of channels" [value]="channel">
+                    {{ channel }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+              <div class="field" *ngIf="WKNNparams">
+                <mat-form-field class="formField">
+                  <mat-label>Métrica</mat-label>
+                  <mat-select placeholder="Sin selección" multiple formControlName="metrics">
+                    <mat-option class="mat-option" value="allMetrics" (click)="selectAllMetrics()">Seleccionar todos</mat-option>
+                    <mat-option *ngFor="let metric of metricParams" [value]="metric">
+                      {{ metric }}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+                <mat-form-field class="ml-3 formField">
+                  <mat-label>Algoritmo</mat-label>
+                  <mat-select placeholder="Sin selección" multiple formControlName="algorithms" >
+                    <mat-option class="mat-option" value="allAlgorithms" (click)="selectAllAlgorithms()">Seleccionar todos</mat-option>
+                    <mat-option *ngFor="let algorithm of algorithmParams" [value]="algorithm">
+                      {{ algorithm }}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+                <div class="custom-container">
+                  <label class="custom-label has-text-weight-bold has-text-grey">Rango de K vecinos</label>
+                  <br>
+                  <mat-slider class="custom-slider" min="1" max="20" step="1" showTickMarks discrete>
+                    <input matSliderStartThumb formControlName="kRangeStart">
+                    <input matSliderEndThumb formControlName="kRangeEnd">
+                  </mat-slider>
                 </div>
               </div>
-              <div class="columns is-centered custom-padding">
-                <div class="is-narrow custom-padding">
-                  <div class="box chart-container">
-                      <canvas baseChart class="chart is-fullwidth" [data]="pointsChartData" [options]="pointsChartOptions" [type]="pointsChartType"></canvas>
-                  </div>
+              <div class="field" *ngIf="SVRparams">
+                <mat-form-field class="formField">
+                  <mat-label>Kernel</mat-label>
+                  <mat-select placeholder="Sin selección" multiple formControlName="kernels">
+                    <mat-option class="mat-option" value="allKernels" (click)="selectAllKernels()">Seleccionar todos</mat-option>
+                    <mat-option *ngFor="let kernel of kernelParams" [value]="kernel">
+                      {{ kernel }}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+                <mat-form-field class="ml-3 formField">
+                  <mat-label>Gamma</mat-label>
+                  <mat-select placeholder="Sin selección" formControlName="gamma">
+                    <mat-option *ngFor="let gamma of gammaParams" [value]="gamma" (click)="onSVRGammaSelected(gamma)">
+                      {{ gamma }}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+                <div class="custom-container">
+                  <label class="custom-label has-text-weight-bold has-text-grey">Rango de C</label>
+                  <mat-slider class="custom-slider" min="0.1" max="20" step="0.1" showTickMarks discrete>
+                    <input matSliderStartThumb formControlName="cRangeStart">
+                    <input matSliderEndThumb formControlName="cRangeEnd">
+                  </mat-slider>
+                </div>
+                <div class="custom-container" *ngIf="SVRgammaRange">
+                  <label class="custom-label has-text-weight-bold has-text-grey">Rango de Gamma</label>
+                  <mat-slider class="custom-slider" min="0.01" max="1" step="0.01" showTickMarks discrete>
+                    <input matSliderStartThumb formControlName="gRangeStart">
+                    <input matSliderEndThumb formControlName="gRangeEnd">
+                  </mat-slider>
                 </div>
               </div>
+              <div class="field" *ngIf="NuSVRparams">
+                <mat-form-field class="formField">
+                  <mat-label>Kernel</mat-label>
+                  <mat-select placeholder="Sin selección" multiple formControlName="kernels">
+                    <mat-option class="mat-option" value="allKernels" (click)="selectAllKernels()">Seleccionar todos</mat-option>
+                    <mat-option *ngFor="let kernel of kernelParams" [value]="kernel">
+                      {{ kernel }}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+                <mat-form-field class="ml-3 formField">
+                  <mat-label>Gamma</mat-label>
+                  <mat-select placeholder="Sin selección" formControlName="gamma">
+                    <mat-option *ngFor="let gamma of gammaParams" [value]="gamma" (click)="onNuSVRgammaSelected(gamma)">
+                      {{ gamma }}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+                <div class="custom-container">
+                  <label class="custom-label has-text-weight-bold has-text-grey">Rango de Nu</label>
+                  <mat-slider class="custom-slider" min="0.01" max="1" step="0.01" showTickMarks discrete>
+                    <input matSliderStartThumb formControlName="nuRangeStart">
+                    <input matSliderEndThumb formControlName="nuRangeEnd">
+                  </mat-slider>
+                </div>
+                <div class="custom-container">
+                  <label class="custom-label has-text-weight-bold has-text-grey">Rango de C</label>
+                  <mat-slider class="custom-slider" min="0.1" max="20" step="0.1" showTickMarks discrete>
+                    <input matSliderStartThumb formControlName="cRangeStart">
+                    <input matSliderEndThumb formControlName="cRangeEnd">
+                  </mat-slider>
+                </div>
+                <div class="custom-container" *ngIf="NuSVRgammaRange">
+                  <label class="custom-label has-text-weight-bold has-text-grey">Rango de Gamma</label>
+                  <mat-slider class="custom-slider" min="0.01" max="1" step="0.01" showTickMarks discrete>
+                    <input matSliderStartThumb formControlName="gRangeStart">
+                    <input matSliderEndThumb formControlName="gRangeEnd">
+                  </mat-slider>
+                </div>
+              </div>
+              <div class="field" *ngIf="LinearSVRparams">
+                <div class="custom-container">
+                  <label class="custom-label has-text-weight-bold has-text-grey">Rango de I</label>
+                  <mat-slider class="custom-slider" min="0" max="10000" step="100" showTickMarks discrete>
+                    <input matSliderStartThumb formControlName="iRangeStart">
+                    <input matSliderEndThumb formControlName="iRangeEnd">
+                  </mat-slider>
+                </div>
+                <div class="custom-container">
+                  <label class="custom-label has-text-weight-bold has-text-grey">Rango de C</label>
+                  <mat-slider class="custom-slider" min="0.1" max="20" step="0.1" showTickMarks discrete>
+                    <input matSliderStartThumb formControlName="cRangeStart">
+                    <input matSliderEndThumb formControlName="cRangeEnd">
+                  </mat-slider>
+                </div>
+              </div>
+              <div class="has-text-centered buttonPosition">
+                <button [disabled]="form.invalid" (click)="insertAccuracyData()" class="button is-link is-rounded">Insertar datos</button>
+              </div>
+            </form>
+          </div>
+        </div>
+        <div class="columns is-centered custom-padding">
+          <div class="is-narrow custom-padding">
+            <div class="box chart-container">
+                <canvas baseChart class="chart is-fullwidth" [data]="pointsChartData" [options]="pointsChartOptions" [type]="pointsChartType"></canvas>
             </div>
-          </ng-template>
-        </mat-tab>
+          </div>
+        </div>
+      </div>
+    </ng-template>
+  </mat-tab>
 </mat-tab-group>

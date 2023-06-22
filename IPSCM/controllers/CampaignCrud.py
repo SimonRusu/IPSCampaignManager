@@ -43,8 +43,13 @@ def createCampaign(name, date, description, images, relatedCampaignId, campaignP
 
 
 def getCampaigns():
-    campaigns = Campaign.query.filter(Campaign.Id_related_campaign != None).all()
-    return jsonify([campaign.serialize() for campaign in campaigns])
+    try:
+        campaigns = Campaign.query.filter(Campaign.Id_related_campaign != None).all()
+        return jsonify([campaign.serialize() for campaign in campaigns])
+    except Exception as e:
+        print("New database generation")
+        return None
+
 
 def getRelatedCampaignById(relatedCampaignId):
     campaign = Campaign.query.filter_by(Id=relatedCampaignId).first()

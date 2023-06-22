@@ -35,7 +35,7 @@ def getCaptureIdsByCampaignId(campaignId):
 def getCapturesByCampaignId(campaignId):
     return jsonify([capture.serialize() for capture in Capture.query.filter_by(Id_campaign=campaignId).all()])
 
-def getCapturesByIdAndRotation(id):
+def getCapturesById(id):
     return Capture.query.filter(
         Capture.Id.in_(id)
     ).all()

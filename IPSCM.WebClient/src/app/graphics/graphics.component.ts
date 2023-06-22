@@ -498,11 +498,11 @@ export class GraphicsComponent {
     return parsedData;
   }
 
-  calculateCDF(sortedData: any) {
+  calculateCDF(data: any) {
     const cdfData = [];
 
-    for (let i = 0; i < sortedData.length; i++) {
-        let meanErrors = sortedData[i].meanError;
+    for (let i = 0; i < data.length; i++) {
+        let meanErrors = data[i].meanError;
         let cdf:any = [];
         let totalCount = meanErrors.length;
         let cumulativeCount = 0;
@@ -516,7 +516,7 @@ export class GraphicsComponent {
         cdf.unshift({ x: 0, y: 0 });
 
         cdfData.push({
-            key: sortedData[i].key,
+            key: data[i].key,
             cdf: cdf
         });
     }

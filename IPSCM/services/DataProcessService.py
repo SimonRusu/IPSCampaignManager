@@ -4,15 +4,15 @@ from datetime import datetime
 from controllers.BeaconBleSignalCrud import getBeaconBleSignalById, existsBeaconWithProtocol
 from controllers.BeaconConfigurationCrud import getBeaconConfigurationByCampaignId
 from controllers.CampaignCrud import getPointsByCampaignId
-from controllers.CaptureCrud import getCaptureIdsByCampaignId, getCapturesByIdAndRotation
+from controllers.CaptureCrud import getCaptureIdsByCampaignId, getCapturesById
 from controllers.MethodPredataCrud import createMethodPredataBatch, getFilteredPredataSamples, getUniqueCoordinatesByCampaignId
 from controllers.MethodPredictionCrud import checkExistingMethodPrediction, createMethodPrediction
-from services.MethodsService import applyMethod, calculate_error
+from services.MethodsService import applyMethod, calculateError
 from controllers.TaskHistoryCrud import createTaskHistory, updateTaskHistory
 
 def generatePredata(campaignId):
     captureIds = getCaptureIdsByCampaignId(campaignId)
-    filteredCapture = getCapturesByIdAndRotation(captureIds)
+    filteredCapture = getCapturesById(captureIds)
 
     batch_data = []
 
@@ -67,25 +67,30 @@ def dataProcessing(data):
                         
                         if not checkExistingMethodPrediction(campaignId, taskId):
 
-                            datetime_start = datetime.now()
-                            createTaskHistory(campaignId, campaignName, "Obteniendo matriz de puntos de referencia...", taskId, datetime_start)
-                            
-                            refRSSIMatrix = getRefPointsMatrix(ref_points, ref_points_conf, refBeaconMacs, campaignId, protocol, channel, rssiSamples)
+                            try:
+                                datetime_start = datetime.now()
+                                createTaskHistory(campaignId, campaignName, "Obteniendo matriz de puntos de referencia...", taskId, datetime_start)
+                                
+                                refRSSIMatrix = getRefPointsMatrix(ref_points, ref_points_conf, refBeaconMacs, campaignId, protocol, channel, rssiSamples)
 
-                            updateTaskHistory(campaignId, taskId, "Obteniendo matriz de puntos aleatorios...")
+                                updateTaskHistory(campaignId, taskId, "Obteniendo matriz de puntos aleatorios...")
 
-                            aleRSSIMatrix= getAlePointsMatrix(ale_points, ale_points_conf, aleBeaconMacs, campaignId-1, protocol, channel, rssiSamples)
+                                aleRSSIMatrix= getAlePointsMatrix(ale_points, ale_points_conf, aleBeaconMacs, campaignId-1, protocol, channel, rssiSamples)
 
-                            updateTaskHistory(campaignId, taskId, "Aplicando método de posicionamiento...")
+                                updateTaskHistory(campaignId, taskId, "Aplicando método de posicionamiento...")
 
-                            predicted_points = applyMethod(refRSSIMatrix, aleRSSIMatrix, method, metric, algorithm, ksRange, kernel, cs, gammas, nus, Is, taskId)
+                                predicted_points = applyMethod(refRSSIMatrix, aleRSSIMatrix, method, metric, algorithm, ksRange, kernel, cs, gammas, nus, Is, taskId)
 
-                            mean_error = calculate_error(aleRSSIMatrix, predicted_points)
+                                mean_error = calculateError(aleRSSIMatrix, predicted_points)
 
-                            createMethodPrediction(campaignId, taskId, json.dumps(predicted_points), json.dumps(mean_error))
+                                createMethodPrediction(campaignId, taskId, json.dumps(predicted_points), json.dumps(mean_error))
 
-                            datetime_end = datetime.now()
-                            updateTaskHistory(campaignId, taskId, "Completado", datetime_end)
+                                datetime_end = datetime.now()
+                                updateTaskHistory(campaignId, taskId, "Completado", datetime_end)
+
+                            except Exception as e: 
+                                 updateTaskHistory(campaignId, taskId, "Error")
+                                 print("Method processing error:", str(e))
 
         
 

@@ -21,3 +21,4 @@ FROM nginx:latest
 
 # Copiar los archivos de la primera etapa al directorio del servidor NGINX
 COPY --from=node /app/dist/ipscm.web-client /usr/share/nginx/html
+
